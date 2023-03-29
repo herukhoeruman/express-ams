@@ -1,5 +1,5 @@
 # express-ams
 
 
-npm install 
-nodemon
+-npm install 
+-nodemon
