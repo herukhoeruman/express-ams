@@ -1,0 +1,83 @@
+<!-- modal create -->
+<div class="modal fade" tabindex="-1" id="createNotaDinasModal">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Buat Nota Dinas</h3>
+                <!--begin::Close-->
+                <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal"
+                    aria-label="Close">
+                    <span class="svg-icon svg-icon-1">
+                        <span class="svg-icon svg-icon-primary svg-icon-2x">
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                    <g transform="translate(12.000000, 12.000000) rotate(-45.000000) translate(-12.000000, -12.000000) translate(4.000000, 4.000000)"
+                                        fill="currentColor">
+                                        <rect x="0" y="7" width="16" height="2" rx="1" />
+                                        <rect opacity="0.3"
+                                            transform="translate(8.000000, 8.000000) rotate(-270.000000) translate(-8.000000, -8.000000) "
+                                            x="0" y="7" width="16" height="2" rx="1" />
+                                    </g>
+                                </g>
+                            </svg>
+                        </span>
+                    </span>
+                </div>
+                <!--end::Close-->
+            </div>
+
+            <div class="modal-body">
+                <form action="/notadinas" method="post">
+                    <div class="form-group mb-5">
+                        <label class="required form-label" for="nameCoin"> Tahun Agenda</label>
+                        <select class="form-select form-select-solid" name="tahunAgenda" id="tahunAgenda"
+                            data-control="select2" data-dropdown-parent="#createNotaDinasModal"
+                            data-placeholder="Pilih tahun" data-allow-clear="true" required>
+                            <option></option>
+                            <option value=" 2022">2022</option>
+                            <option value="2023">2023</option>
+                        </select>
+                    </div>
+                    <div class="form-group mb-5">
+                        <label class="required form-label"> Tanggal Nota Dinas</label>
+                        <input type="date" id="tglNotaDinas" name="tglNotaDinas" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-5">
+                        <label class="required form-label"> Dari</label>
+                        <input type="text" id="dari" name="dari" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-5">
+                        <label class="required form-label">Kepada</label>
+                        <input type="text" id="kepada" name="kepada" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-5">
+                        <label class="required form-label">Perihal</label>
+                        <input type="textarea" id="perihal" name="perihal" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-5">
+                        <label class="required form-label">Lampiran</label>
+                        <input type="text" id="lampiran" name="lampiran" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-5">
+                        <label class="required form-label">Permasalahan</label>
+                        <input type="text" id="permasalahan" name="permasalahan" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-5">
+                        <label class="required form-label">Sifat</label>
+                        <input type="text" id="sifat" name="sifat" class="form-control" required />
+                    </div>
+                    <div class="form-group mb-5">
+                        <label class="required form-label">Keterangan</label>
+                        <input type="textarea" id="keterangan" name="keterangan" class="form-control" required />
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>

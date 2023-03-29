@@ -1,0 +1,60 @@
+<%- include ../partials/header.ejs %>
+    <%- include ../partials/navbar.ejs %>
+        <%- include ../partials/sidebar.ejs %>
+            <div id="kt_app_toolbar" class="py-3 py-lg-6">
+                <div id="kt_app_toolbar_container" class="app-container">
+                    <%# include ../partials/message.ejs %>
+                        <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
+                            <h1
+                                class="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">
+                                Nota Dinas</h1>
+                            <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
+                                <li class="breadcrumb-item text-muted">
+                                    <a href="/" class="text-muted text-hover-primary">Home</a>
+                                </li>
+                                <li class="breadcrumb-item">
+                                    <span class="bullet bg-gray-400 w-5px h-2px"></span>
+                                </li>
+                                <li class="breadcrumb-item text-muted">Nota Dinas</li>
+                            </ul>
+                        </div>
+                        <div class="card shadow-sm mt-5">
+                            <div class="card-header">
+                                <div class="card-title"> </div>
+                                <div class="card-toolbar">
+                                    <a href="notadinas/create" type="button" class="btn btn-primary btn-sm">
+                                        <span class="svg-icon svg-icon-primary svg-icon-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px"
+                                                viewBox="0 0 24 24" version="1.1">
+                                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                    <rect fill="currentColor" x="4" y="11" width="16" height="2"
+                                                        rx="1" />
+                                                    <rect fill="currentColor" opacity="0.3"
+                                                        transform="translate(12.000000, 12.000000) rotate(-270.000000) translate(-12.000000, -12.000000) "
+                                                        x="4" y="11" width="16" height="2" rx="1" />
+                                                </g>
+                                            </svg>
+                                        </span>
+                                        Buat Nota Dinas
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <%- include ./table.ejs %>
+                            </div>
+                        </div>
+
+
+
+                </div>
+            </div>
+
+
+
+
+
+            <%# include ../partials/modals.ejs %>
+
+                <%- include ../partials/footer.ejs %>
+                    <%- include ../partials/js.ejs %>
