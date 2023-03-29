@@ -87,6 +87,32 @@ module.exports = {
     }
   },
 
+  viewEdit: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const notaDinas = await NotaDinas.findOne({ _id: id });
+
+      const lastNoAgenda = await NotaDinas.findOne()
+        .sort({ noAgenda: -1 })
+        .limit(1);
+      const disposisiMaster = await DisposisiMaster.find();
+      const users = await Users.find();
+
+      res.render("notadinas/edit", {
+        notaDinas,
+        lastNoAgenda,
+        disposisiMaster,
+        users,
+        title: "Dashboard",
+        username: req.session.user.username,
+        jabatan: req.session.user.jabatan,
+      });
+    } catch (err) {
+      console.log(err);
+      res.redirect("/notadinas");
+    }
+  },
+
   insertNotaDinasSent: async (req, res) => {
     try {
       const { pengirim, notaDinasKode, sentKode, tindakLanjut } = req.body;

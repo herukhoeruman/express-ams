@@ -4,6 +4,7 @@ const {
   index,
   viewCreate,
   actionCreate,
+  viewEdit,
   insertNotaDinasSent,
   insertNotaDinasInbox,
 } = require("./controller");
@@ -15,6 +16,7 @@ router.use(isLogin);
 router.get("/", index);
 router.get("/create", viewCreate);
 router.post("/create", actionCreate);
+router.get("/edit/:id", viewEdit);
 router.post("/notadinas-sent", insertNotaDinasSent);
 router.post("/notadinas-inbox", insertNotaDinasInbox);
 
