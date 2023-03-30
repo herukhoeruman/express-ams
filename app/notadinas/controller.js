@@ -42,7 +42,7 @@ module.exports = {
         lastNoAgenda,
         disposisiMaster,
         users,
-        title: "Dashboard",
+        title: "Buat Nota Dinas",
         username: req.session.user.username,
         jabatan: req.session.user.jabatan,
       });
@@ -82,6 +82,8 @@ module.exports = {
         keterangan,
       });
       await notaDinas.save();
+
+      res.status(200).json(notaDinas);
     } catch (err) {
       console.log(err);
     }
@@ -103,7 +105,7 @@ module.exports = {
         lastNoAgenda,
         disposisiMaster,
         users,
-        title: "Dashboard",
+        title: "Edit Nota Dinas",
         username: req.session.user.username,
         jabatan: req.session.user.jabatan,
       });
