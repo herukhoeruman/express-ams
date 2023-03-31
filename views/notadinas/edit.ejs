@@ -70,13 +70,12 @@
                             </div>
                             <div class="form-group mb-5">
                                 <label class="form-label"> Keterangan </label>
-                                <textarea type="text" id="keterangan" name="keterangan" class="form-control"></textarea>
+                                <textarea type="text" id="keterangan" name="keterangan" class="form-control"><%= notaDinas.keterangan %></textarea>
                             </div>
-                            <button type="submit" class="btn btn-info btn-sm" id="btnCreate">Save</button>
                         </form>
                     </div>
                     <div class="col">
-                        <form action="" id="formDisposisi">
+                        <form>
                             <div class="form-group mb-5">
                                 <label class="form-label"> Upload Dokumen Surat/Fax </label>
                                 <input type="file" class="dropify" data-height="100" />
@@ -109,7 +108,7 @@
                                 </div>
                                 <div class="form-group mb-5">
                                     <label class="form-label"> Keterangan </label>
-                                    <textarea type="text" id="tindakLanjut" name="tindakLanjut" class="form-control"  value="<%= notaDinas.keterangan %>"></textarea>
+                                    <textarea type="text" id="tindakLanjut" name="tindakLanjut" class="form-control"></textarea>
                                 </div>
                             </div>
                             <label class="form-label"> History Disposisi/Tindak Lanjut</label>
@@ -117,14 +116,13 @@
                                 ...
                             </div>                                                      
                             <!-- <div class="form-group d-flex justify-content-end"> -->
-                                <!-- <button type="submit" class="btn btn-info btn-sm" id="btnCreate">Save</button> -->
+                                <!-- <button type="button" class="btn btn-warning btn-sm" onclick="btnSaveDisposisi()">Save</button> -->
                                 <!-- <button type="button" class="btn btn-info btn-sm" id="" onclick="submitNotadinasSent()">Savesasasa</button> -->
                             <!-- </div> -->
                         </form>
                     </div> 
                     <div class="form-group d-flex justify-content-end">
-                        <button type="button" class="btn btn-info btn-sm" id="" onclick="btnSaveChanges()">Save</button>
-                        <!-- <button type="button" class="btn btn-info btn-sm" id="" onclick="submitNotadinasSent()">Savesasasa</button> -->
+                        <button type="button" class="btn btn-info btn-sm" id="" onclick="update()">Save</button> 
                     </div>
                 </div>
             </div>
@@ -159,10 +157,11 @@
 
     $('.select2-multiple').select2();
 
-    function btnSaveChanges(){ //edit 
-        const valueNoAgenda = `<%= typeof lastNoAgenda !== 'undefined' && lastNoAgenda !== null ? lastNoAgenda.noAgenda + 1 : 1 %>`;
-        const noAgenda = valueNoAgenda;
-        const noNotaDinas = $('#noNotaDinas').val();
+    
+
+    function update(){ //edit 
+        // const valueNoAgenda = `<%# typeof lastNoAgenda !== 'undefined' && lastNoAgenda !== null ? lastNoAgenda.noAgenda + 1 : 1 %>`;
+        // const noAgenda = valueNoAgenda;
         const tahunAgenda = $('#tahunAgenda').val();
         const tglNotaDinas = $('#tglNotaDinas').val();
         const dari = $('#dari').val();
@@ -172,7 +171,19 @@
         const kodeMasalah = $('#kodeMasalah').val();
         const sifat = $('#sifat').val();
         const keterangan = $('#keterangan').val();
+        const userUpdate = '<%= username %>'
 
+        const noNotaDinas = '<%= notaDinas.noAgenda %>' +"/"+ kodeMasalah.toUpperCase() +"/"+ '<%= username.toUpperCase() +"/"+ notaDinas.tahunAgenda %>'
+        //disposisi
+        const penerima = $('#penerima').select2('val');
+        const disposisi = [];
+        $('.disposisi').each(function() {
+            if ($(this).is(":checked")) {
+                disposisi.push($(this).val());
+            }
+        });
+
+        
         if (tahunAgenda === "") {
             Swal.fire("Perhatian", "Tahun Agenda harus diisi", "warning");
         } else if (tglNotaDinas === "") {
@@ -185,18 +196,92 @@
             Swal.fire("Perhatian", "Perihal harus diisi", "warning");
         } else if (kodeMasalah === "") {
             Swal.fire("Perhatian", "Kode Masalah harus diisi", "warning");
-        } else {
+        } else if (penerima == "") {
+            Swal.fire("Perhatian", "Kepada disposisi harus diisi", "warning");
+        } else if (disposisi == "") {
+            Swal.fire("Perhatian", "Disposisi harus diisi", "warning");
+        }  else {
             $.ajax({
-                url: '/notadinas/create',
+                url: '/notadinas/edit/<%= notaDinas._id %>',
                 method: 'PUT',
-                data: { noAgenda, noNotaDinas, tahunAgenda, tglNotaDinas, dari, kepada, perihal, lampiran, kodeMasalah, sifat, keterangan },
+                data: {noNotaDinas, tahunAgenda, tglNotaDinas, dari, kepada, perihal, lampiran, kodeMasalah, sifat, keterangan, userUpdate },
                 success: function (response) {
                     console.log("Sukses: ", response);
-                    Swal.fire("Berhasil", "Simpan Data Nota Dinas Berhasil.", "success");
+                    Swal.fire("Berhasil", "Update Nota Dinas Berhasil.", "success");
                 },
+                error: function(jqXHR, textStatus, errorThrown) {
+					console.log("Error: " + textStatus + " - " + errorThrown);
+				}
             });
+            notaDinasSent();
+            notaDinasInbox();
         }
+
     }
 
+    function notaDinasSent(){ //disposisi
+        const pengirim = $('#dari').val();        
+        const penerima = $('#penerima').select2('val');
+        const tindakLanjut = $('#tindakLanjut').val();
+        const notaDinasKode = '<%= notaDinas._id %>';
+        const sentKode = '<%= notaDinas._id %>';
+        const disposisi = [];
+        $('.disposisi').each(function() {
+            if ($(this).is(":checked")) {
+                disposisi.push($(this).val());
+            }
+        });
+        console.log(penerima);  
+        console.log(disposisi);
+
+ 
+        $.ajax({
+            url: '/notadinas/notadinas-sent',
+            method: 'POST',
+            data: { pengirim, penerima: JSON.stringify(penerima), notaDinasKode, sentKode, disposisi: JSON.stringify(disposisi), tindakLanjut},
+            success: function (response) {
+                console.log("Berhasil save disposisi: ", response);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.log("Error save disposisi: " + textStatus + " - " + errorThrown);
+            }
+        });
+ 
+
+    }
+
+    function notaDinasInbox(){
+        const pengirim = $('#dari').val();        
+        const penerima = $('#penerima').select2('val');
+        const sentKode = '<%= notaDinas._id %>';
+        const notaDinasKode = '<%= notaDinas._id %>';
+        const disposisi = [];
+        $('.disposisi').each(function() {
+            if ($(this).is(":checked")) {
+                disposisi.push($(this).val());
+            }
+        });
+        const tindakLanjut = $('#tindakLanjut').val();
+        const tanggal = new Date().toLocaleDateString('id-ID');
+        const flagRead = "";
+        const flagDone= "";
+        
+        $.ajax({
+            url: '/notadinas/notadinas-inbox',
+            method: 'POST',
+            data: { 
+                pengirim: pengirim,  
+                penerima: JSON.stringify(penerima), 
+                notaDinasKode: notaDinasKode,  
+                sentKode: sentKode,  
+                disposisi: JSON.stringify(disposisi), 
+                tindakLanjut: tindakLanjut,
+                tanggal: tanggal
+            },
+            success: function (response) {
+                console.log("berhasil menyimpan inbox: ", response);
+            },
+        });
+    }
 
 </script>

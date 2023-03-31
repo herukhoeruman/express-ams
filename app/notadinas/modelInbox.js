@@ -16,8 +16,8 @@ const notaDinasInboxSchema = mongoose.Schema({
     },
   ],
   tindakLanjut: { type: String },
-  flagRead: { type: String },
-  flagDone: { type: String },
+  flagRead: { type: Number, default: 0 },
+  flagDone: { type: Number, default: 0 },
   tanggal: { type: String },
 });
 

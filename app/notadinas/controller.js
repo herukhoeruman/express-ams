@@ -115,6 +115,43 @@ module.exports = {
     }
   },
 
+  actionEdit: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const {
+        noNotaDinas,
+        tahunAgenda,
+        tglNotaDinas,
+        dari,
+        kepada,
+        perihal,
+        lampiran,
+        kodeMasalah,
+        sifat,
+        keterangan,
+        userUpdate,
+      } = req.body;
+
+      const updateNotaDinas = await NotaDinas.findOneAndUpdate(
+        { _id: id },
+        {
+          noNotaDinas,
+          tahunAgenda,
+          tglNotaDinas,
+          dari,
+          kepada,
+          perihal,
+          lampiran,
+          kodeMasalah,
+          sifat,
+          keterangan,
+          userUpdate,
+        }
+      );
+      res.status(200).json(updateNotaDinas);
+    } catch (err) {}
+  },
+
   insertNotaDinasSent: async (req, res) => {
     try {
       const { pengirim, notaDinasKode, sentKode, tindakLanjut } = req.body;
@@ -133,6 +170,7 @@ module.exports = {
         tindakLanjut,
       });
       await notaDinasSent.save();
+      res.status(200).json(notaDinasSent);
     } catch (err) {
       console.log(err);
     }
@@ -161,6 +199,7 @@ module.exports = {
         tanggal: tanggal,
       });
       await notaDinasInbox.save();
+      res.status(200).json(notaDinasInbox);
     } catch (err) {
       console.log(err);
     }
