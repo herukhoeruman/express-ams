@@ -42,11 +42,12 @@
 								<div class="form-group mb-5">
 									<label class="required form-label">Kepada</label> 
 									<select class="form-select form-select-solid" id="kepada" name="kepada" data-control="select2" data-placeholder="Dikirimkan kepada" data-allow-clear="true">
+										<option value="">Dikirimkan kepada</option>
 										<% users.forEach(user=> { %>
 											<option value="<%= user.username %>">
 												<%= user.username %> - <%= user.jabatan %>
 											</option>
-											<% }) %>
+										<% }) %>
 									</select>
 								</div>
 								<div class="form-group mb-5">

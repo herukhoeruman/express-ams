@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const multer = require("multer");
+const os = require("os");
 const {
   index,
   viewCreate,
@@ -18,7 +20,11 @@ router.get("/", index);
 router.get("/create", viewCreate);
 router.post("/create", actionCreate);
 router.get("/edit/:id", viewEdit);
-router.put("/edit/:id", actionEdit);
+router.put(
+  "/edit/:id",
+  multer({ dest: os.tmpdir() }).single("files"),
+  actionEdit
+);
 router.post("/notadinas-sent", insertNotaDinasSent);
 router.post("/notadinas-inbox", insertNotaDinasInbox);
 

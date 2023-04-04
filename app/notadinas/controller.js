@@ -4,6 +4,10 @@ const NotaDinasSent = require("../../app/notadinas/modelSent");
 const NotaDinasInbox = require("../../app/notadinas/modelInbox");
 const Users = require("../../app/users/model");
 
+const path = require("path");
+const fs = require("fs");
+const config = require("../../config");
+
 module.exports = {
   index: async (req, res) => {
     try {
@@ -132,24 +136,86 @@ module.exports = {
         userUpdate,
       } = req.body;
 
-      const updateNotaDinas = await NotaDinas.findOneAndUpdate(
-        { _id: id },
-        {
-          noNotaDinas,
-          tahunAgenda,
-          tglNotaDinas,
-          dari,
-          kepada,
-          perihal,
-          lampiran,
-          kodeMasalah,
-          sifat,
-          keterangan,
-          userUpdate,
-        }
-      );
-      res.status(200).json(updateNotaDinas);
-    } catch (err) {}
+      if (req.file) {
+        const tmp_path = req.file.path;
+        const originalExt =
+          req.file.originalname.split(".")[
+            req.file.originalname.split(".").length - 1
+          ];
+        const filename = req.file.originalname + "." + originalExt;
+        const target_path = path.resolve(
+          config.rootPath,
+          `public/upload/${filename}`
+        );
+
+        const src = fs.createReadStream(tmp_path);
+        const dest = fs.createWriteStream(target_path);
+        src.pipe(dest);
+
+        src.on("end", async () => {
+          try {
+            const updateNotaDinas = await NotaDinas.findOneAndUpdate(
+              { _id: id },
+              {
+                noNotaDinas,
+                tahunAgenda,
+                tglNotaDinas,
+                dari,
+                kepada,
+                perihal,
+                lampiran,
+                kodeMasalah,
+                sifat,
+                keterangan,
+                userUpdate,
+                files: filename,
+              }
+            );
+            res.status(200).json(updateNotaDinas);
+          } catch (err) {
+            console.log(err);
+          }
+        });
+      } else {
+        const updateNotaDinas = await NotaDinas.findOneAndUpdate(
+          { _id: id },
+          {
+            noNotaDinas,
+            tahunAgenda,
+            tglNotaDinas,
+            dari,
+            kepada,
+            perihal,
+            lampiran,
+            kodeMasalah,
+            sifat,
+            keterangan,
+            userUpdate,
+          }
+        );
+        res.status(200).json(updateNotaDinas);
+      }
+
+      // const updateNotaDinas = await NotaDinas.findOneAndUpdate(
+      //   { _id: id },
+      //   {
+      //     noNotaDinas,
+      //     tahunAgenda,
+      //     tglNotaDinas,
+      //     dari,
+      //     kepada,
+      //     perihal,
+      //     lampiran,
+      //     kodeMasalah,
+      //     sifat,
+      //     keterangan,
+      //     userUpdate,
+      //   }
+      // );
+      // res.status(200).json(updateNotaDinas);
+    } catch (err) {
+      console.log(err);
+    }
   },
 
   insertNotaDinasSent: async (req, res) => {

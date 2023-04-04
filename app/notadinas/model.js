@@ -38,6 +38,7 @@ const notaDinasSchema = mongoose.Schema(
     simpanRuang: { type: String },
     simpanNoAlmari: { type: String },
     simpanNoOrder: { type: String },
+    files: { type: String },
     tglBuat: { type: String },
     userBuat: { type: String },
     tglUpdate: { type: String },

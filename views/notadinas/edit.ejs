@@ -72,16 +72,19 @@
                                 <label class="form-label"> Keterangan </label>
                                 <textarea type="text" id="keterangan" name="keterangan" class="form-control"><%= notaDinas.keterangan %></textarea>
                             </div>
+
+                            <div class="form-group mb-5">
+                                <label class="form-label" for="files"> Upload Dokumen Surat/Fax </label>
+                                <input type="file" name="files" id="files" class="dropify" data-height="100" />
+                                <div class="text-danger">
+                                    <i>*Drop File atau klik disini untuk mengupload.</i>
+                                </div>
+                            </div>
                         </form>
                     </div>
                     <div class="col">
                         <form>
-                            <div class="form-group mb-5">
-                                <label class="form-label"> Upload Dokumen Surat/Fax </label>
-                                <input type="file" class="dropify" data-height="100" />
-                                <div class="text-danger"><i>*Drop File atau klik disini untuk mengupload.</i>
-                                </div>
-                            </div>
+                            
                             <label class="form-label"> Disposisi/Tindak Lanjut</label>
                             <div class="rounded border border-gray-300 p-5 mb-5">
                                 <div class="row mb-5">
@@ -159,9 +162,7 @@
 
     
 
-    function update(){ //edit 
-        // const valueNoAgenda = `<%# typeof lastNoAgenda !== 'undefined' && lastNoAgenda !== null ? lastNoAgenda.noAgenda + 1 : 1 %>`;
-        // const noAgenda = valueNoAgenda;
+    function update(){ 
         const tahunAgenda = $('#tahunAgenda').val();
         const tglNotaDinas = $('#tglNotaDinas').val();
         const dari = $('#dari').val();
@@ -172,9 +173,7 @@
         const sifat = $('#sifat').val();
         const keterangan = $('#keterangan').val();
         const userUpdate = '<%= username %>'
-
         const noNotaDinas = '<%= notaDinas.noAgenda %>' +"/"+ kodeMasalah.toUpperCase() +"/"+ '<%= username.toUpperCase() +"/"+ notaDinas.tahunAgenda %>'
-        //disposisi
         const penerima = $('#penerima').select2('val');
         const disposisi = [];
         $('.disposisi').each(function() {
@@ -183,7 +182,24 @@
             }
         });
 
-        
+        // tambahkan file ke form data
+        const formData = new FormData();
+        const filesInput = document.querySelector('input[name="files"]');
+        const files = filesInput.files;
+        for (let i = 0; i < files.length; i++) {
+            formData.append('files', files[i]);
+        }
+        formData.append('noNotaDinas', noNotaDinas);
+        formData.append('tahunAgenda', tahunAgenda);
+        formData.append('tglNotaDinas', tglNotaDinas);
+        formData.append('dari', dari);
+        formData.append('kepada', kepada);
+        formData.append('perihal', perihal);
+        formData.append('lampiran', lampiran);
+        formData.append('kodeMasalah', kodeMasalah);
+        formData.append('sifat', sifat);
+        formData.append('keterangan', keterangan);
+        formData.append('userUpdate', userUpdate);        
         if (tahunAgenda === "") {
             Swal.fire("Perhatian", "Tahun Agenda harus diisi", "warning");
         } else if (tglNotaDinas === "") {
@@ -204,7 +220,10 @@
             $.ajax({
                 url: '/notadinas/edit/<%= notaDinas._id %>',
                 method: 'PUT',
-                data: {noNotaDinas, tahunAgenda, tglNotaDinas, dari, kepada, perihal, lampiran, kodeMasalah, sifat, keterangan, userUpdate },
+                //data: {noNotaDinas, tahunAgenda, tglNotaDinas, dari, kepada, perihal, lampiran, kodeMasalah, sifat, keterangan, userUpdate },
+                data: formData,
+                processData: false,
+                contentType: false,
                 success: function (response) {
                     console.log("Sukses: ", response);
                     Swal.fire("Berhasil", "Update Nota Dinas Berhasil.", "success");
@@ -234,7 +253,6 @@
         console.log(penerima);  
         console.log(disposisi);
 
- 
         $.ajax({
             url: '/notadinas/notadinas-sent',
             method: 'POST',
@@ -246,8 +264,6 @@
                 console.log("Error save disposisi: " + textStatus + " - " + errorThrown);
             }
         });
- 
-
     }
 
     function notaDinasInbox(){
