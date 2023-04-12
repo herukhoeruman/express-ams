@@ -103,12 +103,16 @@ module.exports = {
         .limit(1);
       const disposisiMaster = await DisposisiMaster.find();
       const users = await Users.find();
+      const historyDisposisi = await NotaDinasSent.find({
+        notaDinasKode: id,
+      });
 
       res.render("notadinas/edit", {
         notaDinas,
         lastNoAgenda,
         disposisiMaster,
         users,
+        historyDisposisi,
         title: "Edit Nota Dinas",
         username: req.session.user.username,
         jabatan: req.session.user.jabatan,
@@ -142,7 +146,8 @@ module.exports = {
           req.file.originalname.split(".")[
             req.file.originalname.split(".").length - 1
           ];
-        const filename = req.file.originalname + "." + originalExt;
+        // const filename = req.file.filename + "." + originalExt;
+        const filename = id + "_" + req.file.originalname;
         const target_path = path.resolve(
           config.rootPath,
           `public/upload/${filename}`
@@ -195,24 +200,6 @@ module.exports = {
         );
         res.status(200).json(updateNotaDinas);
       }
-
-      // const updateNotaDinas = await NotaDinas.findOneAndUpdate(
-      //   { _id: id },
-      //   {
-      //     noNotaDinas,
-      //     tahunAgenda,
-      //     tglNotaDinas,
-      //     dari,
-      //     kepada,
-      //     perihal,
-      //     lampiran,
-      //     kodeMasalah,
-      //     sifat,
-      //     keterangan,
-      //     userUpdate,
-      //   }
-      // );
-      // res.status(200).json(updateNotaDinas);
     } catch (err) {
       console.log(err);
     }
@@ -225,7 +212,6 @@ module.exports = {
       const jsonpenerima = req.body.penerima;
       const disposisi = JSON.parse(jsondisposisi);
       const penerima = JSON.parse(jsonpenerima);
-      // return;
 
       const notaDinasSent = await NotaDinasSent({
         pengirim,
@@ -251,8 +237,6 @@ module.exports = {
       const jsonpenerima = req.body.penerima;
       const disposisi = JSON.parse(jsondisposisi);
       const penerima = JSON.parse(jsonpenerima);
-      // console.log("=============" + pengirim + "=============");
-      // return;
 
       const notaDinasInbox = await NotaDinasInbox({
         username: username,
