@@ -120,9 +120,12 @@
                 <% let no = 1 %>
                 <% historyDisposisi.forEach( disposisi => { %>
                 <table class="mb-3">
-                  <tr class="text-danger">
-                    <td><%= no++ %>. </td>
-                    <td><%= disposisi.pengirim %></td>
+                  <div class="d-flex justify-content-end">
+                    <%= disposisi.createdAt.toISOString().slice(0, 10) %>
+                  </div>
+                  <tr>
+                    <td><%= no++ %> . </td>
+                    <td class="badge badge-info"><%= disposisi.pengirim %></td>
                   </tr>
                   <tr>
                     <td></td>

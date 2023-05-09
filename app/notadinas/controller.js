@@ -7,6 +7,12 @@ const Users = require("../../app/users/model");
 const path = require("path");
 const fs = require("fs");
 const config = require("../../config");
+const PDFDocument = require("pdfkit");
+const blobStream = require("blob-stream");
+const pdfjsLib = require("pdfjs-dist");
+
+// const pdfjsLib = require("pdfjs-dist");
+// const { PDFDocumentFactory } = pdfjsLib;
 
 module.exports = {
   index: async (req, res) => {
@@ -103,7 +109,7 @@ module.exports = {
         .limit(1);
       const disposisiMaster = await DisposisiMaster.find();
       const users = await Users.find();
-      const historyDisposisi = await NotaDinasSent.find({
+      const historyDisposisi = await NotaDinasInbox.find({
         notaDinasKode: id,
       });
 
@@ -255,8 +261,23 @@ module.exports = {
     }
   },
 
-  viewNotaDinasInbox: async (req, res) => {
+  konsepNotaDinas: async (req, res) => {
     try {
-    } catch (err) {}
+      res.render("notadinas/konsep", {
+        title: "Konsep Nota Dinas",
+        username: req.session.user.username,
+        jabatan: req.session.user.jabatan,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  },
+
+  reviewKonsepNotaDinas: async (req, res) => {
+    try {
+      //
+    } catch (err) {
+      console.log(err);
+    }
   },
 };

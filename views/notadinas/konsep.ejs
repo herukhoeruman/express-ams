@@ -1,0 +1,158 @@
+<%- include ../partials/header.ejs %>
+<%- include ../partials/navbar.ejs %>
+<%- include ../partials/sidebar.ejs %>
+
+<div id="kt_app_toolbar" class="py-3 py-lg-6">
+  <div id="kt_app_toolbar_container" class="app-container">
+    <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
+      <h1 class="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0"> <%= title %> </h1>
+      <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
+        <li class="breadcrumb-item text-muted"> <a href="/" class="text-muted text-hover-primary">Home</a> </li>
+        <li class="breadcrumb-item"> <span class="bullet bg-gray-400 w-5px h-2px"></span> </li>
+        <li class="breadcrumb-item text-muted"> <a href="/notadinas" class="text-muted text-hover-primary">Nota Dinas</a> </li>
+        <li class="breadcrumb-item"> <span class="bullet bg-gray-400 w-5px h-2px"></span> </li>
+        <li class="breadcrumb-item text-muted"><%= title %></li>
+      </ul>
+    </div>
+    <div class="card shadow-sm mt-5">
+      <div class="card-body">
+        <div class="mb-5">
+          <div class="row">
+            <div class="col-md-6">
+              <h3>Isi Nota Dinas</h3>
+              <form>
+                <div class="form-group mb-3">
+                  <label class="required form-label">Kepada</label>
+                  <select class="form-select form-select-solid" id="kepada" name="kepada" data-control="select2" data-placeholder="Dikirimkan kepada" data-allow-clear="true">
+                    <option value="user2">Dikirimkan kepada</option>
+                  </select>
+                </div>
+                <div class="form-group mb-3">
+                  <label class="required form-label"> Dari</label>
+                  <input type="text" id="dari" name="dari" class="form-control" value="<%= username %>" />
+                </div>
+                <div class="form-group mb-3">
+                  <label class="required form-label" for="sifat">Sifat</label>
+                  <select class="form-select form-select-solid" name="sifat" id="sifat" data-control="select2" data-placeholder="Pilih sifat" data-allow-clear="true">
+                    <option></option>
+                    <option value="Segera">Segera</option>
+                    <option value="Amat Segera">Amat Segera
+                    </option>
+                  </select>
+                </div>
+                <div class="form-group mb-3">
+                  <label class="required form-label"> Lampiran</label>
+                  <input type="text" id="lampiran" name="lampiran" class="form-control" value="" />
+                </div>
+                <div class="form-group mb-3">
+                  <label class="required form-label">Hal</label>
+                  <textarea type="textarea" id="perihal" name="perihal" class="form-control"></textarea>
+                </div>
+                <!-- <div class="form-group mb-3">
+                  <label for="name">Name</label>
+                  <input type="text" class="form-control" name="name" id="name" required>
+                </div>
+                <div class="form-group mb-3">
+                  <label for="email">Email</label>
+                  <input type="email" class="form-control" name="email" id="email" required>
+                </div>
+                <label for="message">Message:</label>
+                <textarea class="form-control mb-3" id="message" name="message"></textarea> -->
+                <button id="generate-pdf" class="btn btn-primary" onclick="generatePDF()">Review</button>
+              </form>
+            </div>
+            <div class="col-md-6 row-divider">
+              <h3>Review</h3>
+              <iframe id="pdf-viewer" width="100%" height="940px"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .row-divider {
+    border-left: 1px solid #ccc;
+    height: 100%;
+  }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.0/jspdf.umd.min.js"></script>
+<script>
+  function generatePDF() {
+    event.preventDefault();
+    const dari = $('#dari').val();
+    const kepada = $('#kepada').val();
+    const sifat = $('#sifat').val();
+    const perihal = $('#perihal').val();
+    const lampiran = $('#lampiran').val();
+
+    // Create new PDF document
+    window.jsPDF = window.jspdf.jsPDF;
+    const doc = new jsPDF();
+
+    doc.setFontSize(14);
+    const font = doc.getFontList()
+    console.log(font);
+    doc.setFont("times", "bold")
+    doc.text(`NOTA DINAS`, 100, 10, {
+      align: "center"
+    });
+
+    doc.setFontSize(12);
+    doc.setFont("times", "normal")
+
+    doc.text(`Kepada`, 10, 20, );
+    doc.text(`Dari`, 10, 25, );
+    doc.text(`Sifat`, 10, 30, );
+    doc.text(`Hal`, 10, 40, );
+    doc.text(`Lampiran`, 10, 35, );
+
+    doc.text(`: ${dari}`, 40, 20);
+    doc.text(`: ${kepada}`, 40, 25);
+    doc.text(`: ${sifat}`, 40, 30);
+    doc.text(`: ${perihal}`, 40, 35);
+    doc.text(`: ${lampiran}`, 40, 40);
+
+    const pdfViewer = document.getElementById("pdf-viewer");
+    pdfViewer.src = doc.output("datauristring");
+  }
+
+  $(document).ready(function() {
+    window.jsPDF = window.jspdf.jsPDF;
+
+    const doc = new jsPDF();
+
+    doc.setFontSize(14);
+    doc.setFont("times", "bold")
+    doc.text(`NOTA DINAS`, 100, 10, {
+      align: "center"
+    });
+    doc.setFontSize(12);
+    doc.setFont("times", "normal")
+    doc.text(`Kepada`, 10, 20, );
+    doc.text(`Dari`, 10, 25, );
+    doc.text(`Sifat`, 10, 30, );
+    doc.text(`Lampiran`, 10, 35, );
+    doc.text(`Hal`, 10, 40, );
+
+    const separatorWidth = 30;
+    const separatorText = ':';
+
+    doc.text(separatorText, 10 + separatorWidth, 20, null, null, 'right');
+    doc.text(separatorText, 10 + separatorWidth, 25, null, null, 'right');
+    doc.text(separatorText, 10 + separatorWidth, 30, null, null, 'right');
+    doc.text(separatorText, 10 + separatorWidth, 35, null, null, 'right');
+    doc.text(separatorText, 10 + separatorWidth, 40, null, null, 'right');
+
+    const pdfViewer = document.getElementById("pdf-viewer");
+    pdfViewer.src = doc.output("datauristring");
+  });
+</script>
+
+
+
+<%- include ../partials/footer.ejs %>
+<%- include ../partials/js.ejs %>

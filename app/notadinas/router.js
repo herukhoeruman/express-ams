@@ -10,6 +10,8 @@ const {
   actionEdit,
   insertNotaDinasSent,
   insertNotaDinasInbox,
+  konsepNotaDinas,
+  reviewKonsepNotaDinas,
 } = require("./controller");
 
 const { isLogin } = require("../middleware/auth");
@@ -27,5 +29,7 @@ router.put(
 );
 router.post("/notadinas-sent", insertNotaDinasSent);
 router.post("/notadinas-inbox", insertNotaDinasInbox);
+router.get("/konsep", konsepNotaDinas);
+router.post("/konsep", reviewKonsepNotaDinas);
 
 module.exports = router;
