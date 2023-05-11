@@ -19,50 +19,68 @@
         <div class="mb-5">
           <div class="row">
             <div class="col-md-6">
-              <h3>Isi Nota Dinas</h3>
-              <form>
-                <div class="form-group mb-3">
-                  <label class="required form-label">Kepada</label>
-                  <select class="form-select form-select-solid" id="kepada" name="kepada" data-control="select2" data-placeholder="Dikirimkan kepada" data-allow-clear="true">
-                    <option value="user2">Dikirimkan kepada</option>
-                  </select>
+
+              <div class="mb-5 hover-scroll-x">
+                <div class="d-grid">
+                  <ul class="nav nav-tabs flex-nowrap text-nowrap">
+                    <li class="nav-item">
+                      <a class="nav-link active btn btn-active-light btn-color-gray-600 btn-active-color-primary rounded-bottom-0" data-bs-toggle="tab" href="#kt_tab_pane_1">Kelapa Surat</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link  btn btn-active-light btn-color-gray-600 btn-active-color-primary rounded-bottom-0" data-bs-toggle="tab" href="#kt_tab_pane_2">Isi Surat</a>
+                    </li>
+                  </ul>
                 </div>
-                <div class="form-group mb-3">
-                  <label class="required form-label"> Dari</label>
-                  <input type="text" id="dari" name="dari" class="form-control" value="<%= username %>" />
+              </div>
+
+              <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="kt_tab_pane_1" role="tabpanel">
+                  <form>
+                    <div class="form-group mb-3">
+                      <label class="required form-label">Kepada</label>
+                      <select class="form-select form-select-solid" id="kepada" name="kepada" data-control="select2" data-placeholder="Dikirimkan kepada" data-allow-clear="true">
+                        <option value="user2">Dikirimkan kepada</option>
+                      </select>
+                    </div>
+                    <div class="form-group mb-3">
+                      <label class="required form-label"> Dari</label>
+                      <input type="text" id="dari" name="dari" class="form-control" value="<%= username %>" />
+                    </div>
+                    <div class="form-group mb-3">
+                      <label class="required form-label" for="sifat">Sifat</label>
+                      <select class="form-select form-select-solid" name="sifat" id="sifat" data-control="select2" data-placeholder="Pilih sifat" data-allow-clear="true">
+                        <option></option>
+                        <option value="Segera">Segera</option>
+                        <option value="Amat Segera">Amat Segera
+                        </option>
+                      </select>
+                    </div>
+                    <div class="form-group mb-3">
+                      <label class="required form-label"> Lampiran</label>
+                      <input type="text" id="lampiran" name="lampiran" class="form-control" value="" />
+                    </div>
+                    <div class="form-group mb-3">
+                      <label class="required form-label">Hal</label>
+                      <textarea type="textarea" id="perihal" name="perihal" class="form-control"></textarea>
+                    </div>
+                    <button id="generate-pdf" class="btn btn-primary" onclick="generatePDF()">Preview</button>
+                  </form>
                 </div>
-                <div class="form-group mb-3">
-                  <label class="required form-label" for="sifat">Sifat</label>
-                  <select class="form-select form-select-solid" name="sifat" id="sifat" data-control="select2" data-placeholder="Pilih sifat" data-allow-clear="true">
-                    <option></option>
-                    <option value="Segera">Segera</option>
-                    <option value="Amat Segera">Amat Segera
-                    </option>
-                  </select>
+                <div class="tab-pane fade" id="kt_tab_pane_2" role="tabpanel">
+                  <form action="">
+                    <textarea id="my-expressjs-tinymce-app">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo veniam omnis nostrum iste magni veritatis ipsa. Est, vitae totam. In ipsam fugiat reprehenderit, non officia quisquam earum? Mollitia sit ipsam placeat aut repellendus aperiam pariatur nostrum veritatis facilis, nam quam hic nobis numquam incidunt praesentium, ex exercitationem magnam nemo! Est ipsa, voluptatum quaerat vel delectus dolorum odit asperiores exercitationem, at commodi culpa quae explicabo numquam necessitatibus blanditiis illum? Veritatis quidem quo, neque ut atque, tempore aliquid placeat perferendis in repellat minus facilis! Necessitatibus deserunt esse veniam tempora, ullam hic? Inventore, eaque? Aperiam nulla voluptate numquam adipisci, quae repudiandae ullam blanditiis!</textarea>
+                    <button id="generate-pdf" class="btn btn-primary mt-3" onclick="generatePDF()">Preview</button>
+                  </form>
                 </div>
-                <div class="form-group mb-3">
-                  <label class="required form-label"> Lampiran</label>
-                  <input type="text" id="lampiran" name="lampiran" class="form-control" value="" />
+
+                <div class="tab-pane fade" id="kt_tab_pane_3" role="tabpanel">
+                  .....
                 </div>
-                <div class="form-group mb-3">
-                  <label class="required form-label">Hal</label>
-                  <textarea type="textarea" id="perihal" name="perihal" class="form-control"></textarea>
-                </div>
-                <!-- <div class="form-group mb-3">
-                  <label for="name">Name</label>
-                  <input type="text" class="form-control" name="name" id="name" required>
-                </div>
-                <div class="form-group mb-3">
-                  <label for="email">Email</label>
-                  <input type="email" class="form-control" name="email" id="email" required>
-                </div>
-                <label for="message">Message:</label>
-                <textarea class="form-control mb-3" id="message" name="message"></textarea> -->
-                <button id="generate-pdf" class="btn btn-primary" onclick="generatePDF()">Review</button>
-              </form>
+              </div>
+
+
             </div>
             <div class="col-md-6 row-divider">
-              <h3>Review</h3>
               <iframe id="pdf-viewer" width="100%" height="940px"></iframe>
             </div>
           </div>
@@ -80,6 +98,8 @@
 </style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.0/jspdf.umd.min.js"></script>
+<script type="text/javascript" src="/dompurify/dist/purify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.7/dist/html2canvas.min.js"></script>
 <script>
   function generatePDF() {
     event.preventDefault();
@@ -88,33 +108,57 @@
     const sifat = $('#sifat').val();
     const perihal = $('#perihal').val();
     const lampiran = $('#lampiran').val();
+    const isiSurat = tinymce.activeEditor.getContent();
 
     // Create new PDF document
     window.jsPDF = window.jspdf.jsPDF;
-    const doc = new jsPDF();
+    const doc = new jsPDF('p', 'pt', 'a4');
+
 
     doc.setFontSize(14);
     const font = doc.getFontList()
     console.log(font);
-    doc.setFont("times", "bold")
-    doc.text(`NOTA DINAS`, 100, 10, {
+    doc.setFont("Helvetica", "bold")
+    doc.text(`NOTA DINAS`, 300, 72, {
       align: "center"
     });
 
     doc.setFontSize(12);
-    doc.setFont("times", "normal")
+    doc.setFont("Helvetica", "")
+    doc.text(`Nomor : .../.../.../2023`, 300, 85, {
+      align: "center"
+    });
 
-    doc.text(`Kepada`, 10, 20, );
-    doc.text(`Dari`, 10, 25, );
-    doc.text(`Sifat`, 10, 30, );
-    doc.text(`Hal`, 10, 40, );
-    doc.text(`Lampiran`, 10, 35, );
+    doc.text(`Kepada`, 72, 120, );
+    doc.text(`Dari`, 72, 140, );
+    doc.text(`Sifat`, 72, 160, );
+    doc.text(`Hal`, 72, 180, );
+    doc.text(`Lampiran`, 72, 200, );
 
-    doc.text(`: ${dari}`, 40, 20);
-    doc.text(`: ${kepada}`, 40, 25);
-    doc.text(`: ${sifat}`, 40, 30);
-    doc.text(`: ${perihal}`, 40, 35);
-    doc.text(`: ${lampiran}`, 40, 40);
+    doc.text(`: ${kepada}`, 140, 120);
+    doc.text(`: ${dari}`, 140, 140);
+    doc.text(`: ${sifat}`, 140, 160);
+    doc.text(`: ${perihal}`, 140, 180);
+    doc.text(`: ${lampiran}`, 140, 200);
+    // doc.text(`${isiSurat}`, 40, 70);
+
+    doc.html(isiSurat, {
+      callback: function(doc) {
+        // doc.setFontSize(12);
+        // doc.setFont("Helvetica", "bold");
+        // const fontSize = doc.getFontSize();
+        // console.log("font size : " + fontSize);
+
+        // const getfont = doc.getFont();
+        // console.log(getfont);
+
+        const pdfViewer = document.getElementById("pdf-viewer");
+        pdfViewer.src = doc.output("datauristring");
+      },
+      margin: [300, 72, 72, 72],
+      width: 450,
+      windowWidth: 450,
+    });
 
     const pdfViewer = document.getElementById("pdf-viewer");
     pdfViewer.src = doc.output("datauristring");
@@ -122,30 +166,33 @@
 
   $(document).ready(function() {
     window.jsPDF = window.jspdf.jsPDF;
-
-    const doc = new jsPDF();
+    const doc = new jsPDF('p', 'pt', 'a4');
 
     doc.setFontSize(14);
-    doc.setFont("times", "bold")
-    doc.text(`NOTA DINAS`, 100, 10, {
+    doc.setFont("Helvetica", "bold")
+    doc.text(`NOTA DINAS`, 300, 72, {
       align: "center"
     });
     doc.setFontSize(12);
-    doc.setFont("times", "normal")
-    doc.text(`Kepada`, 10, 20, );
-    doc.text(`Dari`, 10, 25, );
-    doc.text(`Sifat`, 10, 30, );
-    doc.text(`Lampiran`, 10, 35, );
-    doc.text(`Hal`, 10, 40, );
+    doc.setFont("Helvetica", "")
+    doc.text(`Nomor : .../.../.../2023`, 300, 85, {
+      align: "center"
+    });
 
-    const separatorWidth = 30;
+    doc.text(`Kepada`, 72, 120, );
+    doc.text(`Dari`, 72, 140, );
+    doc.text(`Sifat`, 72, 160, );
+    doc.text(`Hal`, 72, 180, );
+    doc.text(`Lampiran`, 72, 200, );
+
+    const separatorWidth = 72;
     const separatorText = ':';
 
-    doc.text(separatorText, 10 + separatorWidth, 20, null, null, 'right');
-    doc.text(separatorText, 10 + separatorWidth, 25, null, null, 'right');
-    doc.text(separatorText, 10 + separatorWidth, 30, null, null, 'right');
-    doc.text(separatorText, 10 + separatorWidth, 35, null, null, 'right');
-    doc.text(separatorText, 10 + separatorWidth, 40, null, null, 'right');
+    doc.text(separatorText, 72 + separatorWidth, 120, null, null, 'right');
+    doc.text(separatorText, 72 + separatorWidth, 140, null, null, 'right');
+    doc.text(separatorText, 72 + separatorWidth, 160, null, null, 'right');
+    doc.text(separatorText, 72 + separatorWidth, 180, null, null, 'right');
+    doc.text(separatorText, 72 + separatorWidth, 200, null, null, 'right');
 
     const pdfViewer = document.getElementById("pdf-viewer");
     pdfViewer.src = doc.output("datauristring");

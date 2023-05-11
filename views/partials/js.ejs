@@ -1,4 +1,6 @@
-<script> var hostUrl = "/dist/assets/"; </script>
+<script>
+  var hostUrl = "/dist/assets/";
+</script>
 <!--begin::Global Javascript Bundle(mandatory for all pages)-->
 <script src="/dist/assets/plugins/global/plugins.bundle.js"></script>
 <!-- <script src="/dist/assets/js/scripts.bundle.js"></script> -->
@@ -32,12 +34,18 @@
 <script src="/dist/assets/plugins/custom/prismjs/prismjs.bundle.js"></script>
 
 <script src="/dropify/dist/js/dropify.min.js"></script>
+
+<!-- Script element sourcing TinyMCE -->
+<script type="application/javascript" src="/tinymce/tinymce.min.js"></script>
+<!-- Script element sourcing the TinyMCE configuration -->
+<script type="application/javascript" src="/javascripts/my-tinymce-config.js"></script>
+
 <!--end::Javascript-->
 <script>
-    $(document).ready(function () {
-        $("#tabel_category").DataTable();
-    });
-    // alert('cek tabels');
+  $(document).ready(function() {
+    $("#tabel_category").DataTable();
+  });
+  // alert('cek tabels');
 </script>
 </body>
 <!--end::Body-->

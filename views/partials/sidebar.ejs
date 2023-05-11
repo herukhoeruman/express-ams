@@ -47,12 +47,52 @@
               </div>
             </div>
           </div>
+
           <div class="menu-item pt-5">
             <div class="menu-content">
               <span class="menu-heading fw-bold text-uppercase fs-7">Pages</span>
             </div>
           </div>
-          <div data-kt-menu-trigger="click" class="menu-item menu-accordion <%= title.includes('Nota Dinas') ? 'here show' : '' %> ">
+
+          <div data-kt-menu-trigger="click" class="menu-item menu-accordion <% if (title == "Konsep Nota Dinas") { %>
+            here show
+          <%} %>">
+            <span class="menu-link">
+              <span class="menu-icon">
+                <span class="svg-icon svg-icon-2">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2" y="2" width="9" height="9" rx="2" fill="currentColor" />
+                    <rect opacity="0.3" x="13" y="2" width="9" height="9" rx="2" fill="currentColor" />
+                    <rect opacity="0.3" x="13" y="13" width="9" height="9" rx="2" fill="currentColor" />
+                    <rect opacity="0.3" x="2" y="13" width="9" height="9" rx="2" fill="currentColor" />
+                  </svg>
+                </span>
+              </span>
+              <span class="menu-title">Buat Naskah Dinas</span>
+              <span class="menu-arrow"></span>
+            </span>
+            <div class="menu-sub menu-sub-accordion">
+              <div class="menu-item">
+                <a class="menu-link <%= title == 'Konsep Nota Dinas' ? 'active' : '' %>" href="/notadinas/konsep">
+                  <span class="menu-bullet">
+                    <span class="bullet bullet-dot"></span>
+                  </span>
+                  <span class="menu-title">Konsep Nota Dinas</span>
+                </a>
+              </div>
+              <div class="menu-item">
+                <a class="menu-link" href="#">
+                  <span class="menu-bullet">
+                    <span class="bullet bullet-dot"></span>
+                  </span>
+                  <span class="menu-title">Konsep Surat Keluar</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+
+          <div data-kt-menu-trigger="click" class="menu-item menu-accordion <%= title == 'Nota Dinas' ? 'here show' : '' %> ">
             <span class="menu-link">
               <span class="menu-icon">
                 <span class="svg-icon svg-icon-2">
@@ -66,18 +106,17 @@
               <span class="menu-arrow"></span>
             </span>
             <div class="menu-sub menu-sub-accordion">
-
               <div class="menu-item">
-                <a class="menu-link" href="/notadinas/konsep">
+                <a class="menu-link" href="#">
                   <span class="menu-bullet">
                     <span class="bullet bullet-dot"></span>
                   </span>
-                  <span class="menu-title">Konsep Nota Dinas</span>
+                  <span class="menu-title">Konsep</span>
                 </a>
               </div>
 
               <div class="menu-item">
-                <a class="menu-link <%= title.includes('Nota Dinas') ? 'active' : '' %>" href="/notadinas">
+                <a class="menu-link <%= title == "Nota Dinas" ? 'active' : '' %>" href="/notadinas">
                   <span class="menu-bullet">
                     <span class="bullet bullet-dot"></span>
                   </span>

@@ -39,6 +39,14 @@ app.use(
   "/dropify",
   express.static(path.join(__dirname, "/node_modules/dropify/"))
 );
+app.use(
+  "/tinymce",
+  express.static(path.join(__dirname, "node_modules", "tinymce"))
+);
+app.use(
+  "/dompurify",
+  express.static(path.join(__dirname, "node_modules", "dompurify"))
+);
 
 app.use("/", usersRouter);
 app.use("/dashboard", dashboardRouter);
