@@ -11,7 +11,8 @@ const {
   insertNotaDinasSent,
   insertNotaDinasInbox,
   konsepNotaDinas,
-  reviewKonsepNotaDinas,
+  savePdf,
+  setSign,
 } = require("./controller");
 
 const { isLogin } = require("../middleware/auth");
@@ -30,6 +31,7 @@ router.put(
 router.post("/notadinas-sent", insertNotaDinasSent);
 router.post("/notadinas-inbox", insertNotaDinasInbox);
 router.get("/konsep", konsepNotaDinas);
-router.post("/konsep", reviewKonsepNotaDinas);
+router.post("/konsep", savePdf);
+router.post("/kirim", setSign);
 
 module.exports = router;

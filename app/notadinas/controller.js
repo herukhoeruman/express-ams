@@ -1,18 +1,14 @@
+const path = require("path");
+const fs = require("fs");
+const config = require("../../config");
+const axios = require("axios");
+const FormData = require("form-data");
+
 const NotaDinas = require("../../app/notadinas/model");
 const DisposisiMaster = require("../../app/notadinas/modelDisposisi");
 const NotaDinasSent = require("../../app/notadinas/modelSent");
 const NotaDinasInbox = require("../../app/notadinas/modelInbox");
 const Users = require("../../app/users/model");
-
-const path = require("path");
-const fs = require("fs");
-const config = require("../../config");
-const PDFDocument = require("pdfkit");
-const blobStream = require("blob-stream");
-const pdfjsLib = require("pdfjs-dist");
-
-// const pdfjsLib = require("pdfjs-dist");
-// const { PDFDocumentFactory } = pdfjsLib;
 
 module.exports = {
   index: async (req, res) => {
@@ -273,9 +269,74 @@ module.exports = {
     }
   },
 
-  reviewKonsepNotaDinas: async (req, res) => {
+  savePdf: async (req, res) => {
     try {
-      //
+      const pdfBase64 = req.body.document;
+      const nomor = req.body.nomor;
+      const nomorModifikasi = nomor.replace(/\//g, "_");
+      const outputPath = path.resolve(
+        config.rootPath,
+        `public/upload/NOTA_DINAS_${nomorModifikasi}.pdf`
+      );
+
+      const dataPdf = pdfBase64.replace(/^data:application\/pdf;base64,/, "");
+      const buffer = Buffer.from(dataPdf, "base64");
+
+      fs.writeFile(outputPath, buffer, (err) => {
+        if (err) {
+          console.error(err);
+          res
+            .status(500)
+            .json({ status: "error", message: "file failed to save" });
+        } else {
+          // console.log("File PDF berhasil disimpan:", outputPath);
+          res
+            .status(200)
+            .json({ status: "ok", message: "file saved successfully" });
+        }
+      });
+      // console.log(buffer);
+      // return;
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  setSign: async (req, res) => {
+    try {
+      const document = path.resolve(
+        config.rootPath,
+        `public/upload/document.pdf`
+      );
+      // const signature = `[{"email": "heru@gsp.co.id","detail": [{"p": 1,"x": 119,"y": 63,"w": 63,"h": 31}]}]`;
+      const signature = `[{"email":"heru@gmail.com","detail":[{"p":1,"x":129,"y":203,"w":57,"h":27}]}]`;
+
+      let data = new FormData();
+      data.append("document", fs.createReadStream(document));
+      data.append("signature", signature);
+
+      // console.log(data);
+      // return;
+      axios
+        .post("https://apix.sandbox-111094.com/v2/document/upload", data, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            apikey: "TkhRZ7XmPVEOTNtY3XWq7htqWoGpJntl",
+            ...data.getHeaders(),
+          },
+        })
+        .then((response) => {
+          console.log(response.data);
+          res.status(200).json({
+            status: "ok",
+            message: "document berhasil dikirim",
+            data: response.data,
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+          // Tangani kesalahan yang terjadi
+        });
     } catch (err) {
       console.log(err);
     }
