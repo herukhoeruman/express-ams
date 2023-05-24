@@ -3,6 +3,7 @@ const fs = require("fs");
 const config = require("../../config");
 const axios = require("axios");
 const FormData = require("form-data");
+const CryptoJS = require("crypto-js");
 
 const NotaDinas = require("../../app/notadinas/model");
 const DisposisiMaster = require("../../app/notadinas/modelDisposisi");
@@ -306,19 +307,32 @@ module.exports = {
     try {
       const document = path.resolve(
         config.rootPath,
-        `public/upload/document.pdf`
+        `public\\upload\\NOTA_DINAS_001_DEV_II_2023.pdf`
       );
-      // const signature = `[{"email": "heru@gsp.co.id","detail": [{"p": 1,"x": 119,"y": 63,"w": 63,"h": 31}]}]`;
-      const signature = `[{"email":"heru@gmail.com","detail":[{"p":1,"x":129,"y":203,"w":57,"h":27}]}]`;
+      const signature = `[{"email":"heru@gs.co.id","detail":[{"p":1,"x":129,"y":203,"w":57,"h":27}]}]`;
+
+      const filename = document.split("\\").pop();
+      const crn = "ams-gsp-nodejs";
+      const timestamp = new Date().toLocaleString();
+      const key = "rahasiauth";
+      const requestBody = {
+        document: filename,
+        signature: signature,
+        timestamp: timestamp,
+      };
+      const requestBodyString = JSON.stringify(requestBody);
+      const payload = requestBodyString + timestamp;
+      const hash = CryptoJS.HmacSHA256(payload, key).toString();
 
       let data = new FormData();
       data.append("document", fs.createReadStream(document));
       data.append("signature", signature);
+      data.append("crn", crn);
+      data.append("ceksum", hash);
+      data.append("timestamp", timestamp);
 
-      // console.log(data);
-      // return;
       axios
-        .post("https://apix.sandbox-111094.com/v2/document/upload", data, {
+        .post("http://localhost/tekencallback/setposisi/", data, {
           headers: {
             "Content-Type": "multipart/form-data",
             apikey: "TkhRZ7XmPVEOTNtY3XWq7htqWoGpJntl",
@@ -335,10 +349,11 @@ module.exports = {
         })
         .catch((error) => {
           console.error(error);
-          // Tangani kesalahan yang terjadi
+          res.status(400).json({ error });
         });
     } catch (err) {
       console.log(err);
+      res.status(400).json({ err });
     }
   },
 };
