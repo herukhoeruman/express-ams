@@ -10,6 +10,7 @@ const DisposisiMaster = require("../../app/notadinas/modelDisposisi");
 const NotaDinasSent = require("../../app/notadinas/modelSent");
 const NotaDinasInbox = require("../../app/notadinas/modelInbox");
 const Users = require("../../app/users/model");
+const Response = require("../../app/notadinas/modelResponse");
 
 module.exports = {
   index: async (req, res) => {
@@ -305,6 +306,7 @@ module.exports = {
 
   setSign: async (req, res) => {
     try {
+      // const {url} = req.body;
       const document = path.resolve(
         config.rootPath,
         `public\\upload\\NOTA_DINAS_001_DEV_II_2023.pdf`
@@ -339,13 +341,12 @@ module.exports = {
             ...data.getHeaders(),
           },
         })
-        .then((response) => {
+        .then(async (response) => {
           console.log(response.data);
-          res.status(200).json({
-            status: "ok",
-            message: "document berhasil dikirim",
-            data: response.data,
+          const responseData = await Response({
+            json: JSON.stringify(response.data),
           });
+          await responseData.save();
         })
         .catch((error) => {
           console.error(error);
