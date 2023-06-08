@@ -44,6 +44,7 @@ module.exports = {
             id: check._id,
             username: check.username,
             jabatan: check.jabatan,
+            divisi: check.divisi,
           };
           res.redirect("/dashboard");
         } else {

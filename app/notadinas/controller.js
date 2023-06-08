@@ -4,6 +4,8 @@ const config = require("../../config");
 const axios = require("axios");
 const FormData = require("form-data");
 const CryptoJS = require("crypto-js");
+const { v4: uuidv4 } = require("uuid");
+const trxId = uuidv4();
 
 const NotaDinas = require("../../app/notadinas/model");
 const DisposisiMaster = require("../../app/notadinas/modelDisposisi");
@@ -11,6 +13,7 @@ const NotaDinasSent = require("../../app/notadinas/modelSent");
 const NotaDinasInbox = require("../../app/notadinas/modelInbox");
 const Users = require("../../app/users/model");
 const Response = require("../../app/notadinas/modelResponse");
+const Request = require("../../app/notadinas/modelRequest");
 
 module.exports = {
   index: async (req, res) => {
@@ -19,7 +22,9 @@ module.exports = {
       const alertStatus = req.flash("alertStatus");
       const alert = { message: alertMessage, status: alertStatus };
 
-      const notaDinas = await NotaDinas.find();
+      const notaDinas = await NotaDinas.find({
+        kepada: req.session.user.username,
+      });
 
       const { startDate, endDate } = req.body;
       const searchData = notaDinas.filter(
@@ -261,10 +266,19 @@ module.exports = {
 
   konsepNotaDinas: async (req, res) => {
     try {
+      const divisi = req.session.user.divisi;
+      const lastNoAgenda = await NotaDinas.findOne({ divisi: divisi })
+        .sort({ noAgenda: -1 })
+        .limit(1);
+      const users = await Users.find();
+      console.log(lastNoAgenda);
       res.render("notadinas/konsep", {
+        lastNoAgenda,
+        users,
         title: "Konsep Nota Dinas",
         username: req.session.user.username,
         jabatan: req.session.user.jabatan,
+        divisi,
       });
     } catch (err) {
       console.log(err);
@@ -297,8 +311,6 @@ module.exports = {
             .json({ status: "ok", message: "file saved successfully" });
         }
       });
-      // console.log(buffer);
-      // return;
     } catch (error) {
       console.log(error);
     }
@@ -306,25 +318,86 @@ module.exports = {
 
   setSign: async (req, res) => {
     try {
-      // const {url} = req.body;
+      const {
+        noNotaDinas,
+        noAgenda,
+        tanggal,
+        tahun,
+        dari,
+        kepada,
+        perihal,
+        lampiran,
+        kodeMasalah,
+        sifat,
+        keterangan,
+        fileAttachment,
+        flag,
+      } = req.body;
+      const divisi = req.session.user.divisi;
+      const email = req.session.user.email;
+      const nomorModifikasi = noNotaDinas.replace(/\//g, "_");
       const document = path.resolve(
         config.rootPath,
-        `public\\upload\\NOTA_DINAS_001_DEV_II_2023.pdf`
+        `public/upload/NOTA_DINAS_${nomorModifikasi}.pdf`
       );
-      const signature = `[{"email":"heru@gs.co.id","detail":[{"p":1,"x":129,"y":203,"w":57,"h":27}]}]`;
+      // const document = path.resolve(
+      //   config.rootPath,
+      //   `public\\upload\\NOTA_DINAS_001_DEV_II_2023.pdf`
+      // );
+      const signature = `[{"email":"heru@gsp.co.id","detail":[{"p":1,"x":129,"y":203,"w":57,"h":27}]}]`;
+      const ematerai = "";
+      const estamp = "";
+      const clientId = "TkhRZ7XmPVEOTNtY3XWq7htqWoGpJntl";
+
+      const notaDinas = await NotaDinas({
+        noNotaDinas,
+        noAgenda,
+        tanggal,
+        tahun,
+        dari,
+        kepada,
+        perihal,
+        lampiran,
+        // kodeMasalah,
+        sifat,
+        // keterangan,
+        email,
+        divisi,
+        // fileAttachment,
+        flag,
+      });
+      await notaDinas.save();
+
+      // return;
 
       const filename = document.split("\\").pop();
       const crn = "ams-gsp-nodejs";
       const timestamp = new Date().toLocaleString();
-      const key = "rahasiauth";
+      const key = "RAHASIA";
       const requestBody = {
         document: filename,
-        signature: signature,
+        signature: JSON.parse(signature),
         timestamp: timestamp,
       };
       const requestBodyString = JSON.stringify(requestBody);
       const payload = requestBodyString + timestamp;
       const hash = CryptoJS.HmacSHA256(payload, key).toString();
+
+      console.log("hash : " + hash);
+      console.log("payload : " + payload);
+      // return;
+
+      const newRequest = new Request({
+        trxId: trxId,
+        document: filename,
+        signature: signature,
+        ematerai: ematerai,
+        estamp: estamp,
+        clientId: clientId,
+        crn: crn,
+        timestamp: timestamp,
+      });
+      newRequest.save();
 
       let data = new FormData();
       data.append("document", fs.createReadStream(document));
@@ -334,19 +407,25 @@ module.exports = {
       data.append("timestamp", timestamp);
 
       axios
-        .post("http://localhost/tekencallback/setposisi/", data, {
+        .post("https://plnsign.id/setposisi/index.php", data, {
+          // .post("http://localhost/tekencallback/setposisi/", data, {
           headers: {
             "Content-Type": "multipart/form-data",
             apikey: "TkhRZ7XmPVEOTNtY3XWq7htqWoGpJntl",
+            // apikey: "amj6Oqx234ON0kxFoFGt8wQeIRIapIby",
             ...data.getHeaders(),
           },
         })
-        .then(async (response) => {
-          console.log(response.data);
-          const responseData = await Response({
+        .then((response) => {
+          const newResponse = new Response({
+            trxId: trxId,
             json: JSON.stringify(response.data),
+            data: response.data.data,
           });
-          await responseData.save();
+          newResponse.save();
+
+          console.log(response.data);
+          res.status(200).json(response.data);
         })
         .catch((error) => {
           console.error(error);
@@ -355,6 +434,15 @@ module.exports = {
     } catch (err) {
       console.log(err);
       res.status(400).json({ err });
+    }
+  },
+
+  signed: async (req, res) => {
+    try {
+      const data = req.body.data;
+      console.log(data);
+    } catch (error) {
+      console.log(error);
     }
   },
 };

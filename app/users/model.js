@@ -11,30 +11,9 @@ let userSchema = mongoose.Schema(
       type: String,
       require: [true, "password tidak boleh kosong"],
     },
-    jabatan: {
-      type: String,
-    },
-    tglDaftar: {
-      type: String,
-    },
-    wilayah: {
-      type: String,
-    },
-    deskripsi: {
-      type: String,
-    },
-    tglBuat: {
-      type: String,
-    },
-    userBuat: {
-      type: String,
-    },
-    tglUpdate: {
-      type: String,
-    },
-    userUpdate: {
-      type: String,
-    },
+    email: { type: String },
+    divisi: { type: String },
+    jabatan: { type: String },
   },
   { timestamps: true }
 );

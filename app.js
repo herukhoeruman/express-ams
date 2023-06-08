@@ -11,6 +11,7 @@ const bodyParser = require("body-parser");
 const dashboardRouter = require("./app/dashboard/router");
 const usersRouter = require("./app/users/router");
 const notaDinasRouter = require("./app/notadinas/router");
+const callbackRouter = require("./app/callback/router");
 
 const app = express();
 
@@ -51,6 +52,7 @@ app.use(
 app.use("/", usersRouter);
 app.use("/dashboard", dashboardRouter);
 app.use("/notadinas", notaDinasRouter);
+app.use("/callback", callbackRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -24,7 +24,7 @@
                 <div class="d-grid">
                   <ul class="nav nav-tabs flex-nowrap text-nowrap">
                     <li class="nav-item">
-                      <a class="nav-link active btn btn-active-light btn-color-gray-600 btn-active-color-primary rounded-bottom-0" data-bs-toggle="tab" href="#kt_tab_pane_1">Kelapa Surat</a>
+                      <a class="nav-link active btn btn-active-light btn-color-gray-600 btn-active-color-primary rounded-bottom-0" data-bs-toggle="tab" href="#kt_tab_pane_1">Kepala Surat</a>
                     </li>
                     <li class="nav-item">
                       <a class="nav-link  btn btn-active-light btn-color-gray-600 btn-active-color-primary rounded-bottom-0" data-bs-toggle="tab" href="#kt_tab_pane_2">Isi Surat</a>
@@ -36,34 +36,50 @@
               <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="kt_tab_pane_1" role="tabpanel">
                   <form>
-                    <div class="form-group mb-3">
+                    <div class="form-group mb-5">
                       <label class="required form-label">Kepada</label>
                       <select class="form-select form-select-solid" id="kepada" name="kepada" data-control="select2" data-placeholder="Dikirimkan kepada" data-allow-clear="true">
-                        <option value="user2">Dikirimkan kepada</option>
+                        <option value="">Dikirimkan kepada</option>
+                        <% users.forEach(user=> { %>
+                        <option value="<%= user.username %>">
+                          <%= user.username %> - <%= user.jabatan %>/<%= user.divisi %>
+                        </option>
+                        <% }) %>
                       </select>
                     </div>
-                    <div class="form-group mb-3">
+                    <div class="form-group mb-5">
                       <label class="required form-label"> Dari</label>
                       <input type="text" id="dari" name="dari" class="form-control" value="<%= username %>" />
                     </div>
-                    <div class="form-group mb-3">
+                    <div class="form-group row mb-5">
                       <label class="required form-label" for="sifat">Sifat</label>
-                      <select class="form-select form-select-solid" name="sifat" id="sifat" data-control="select2" data-placeholder="Pilih sifat" data-allow-clear="true">
-                        <option></option>
-                        <option value="Segera">Segera</option>
-                        <option value="Amat Segera">Amat Segera
-                        </option>
-                      </select>
+                      <div class="col-sm-8">
+                        <select class="form-select form-select-solid" name="sifat" id="sifat" data-control="select2" data-placeholder="Pilih sifat" data-allow-clear="true">
+                          <option></option>
+                          <option value="Segera">Segera</option>
+                          <option value="Amat Segera">Amat Segera
+                          </option>
+                        </select>
+                      </div>
                     </div>
-                    <div class="form-group mb-3">
+                    <div class="form-group row mb-5">
                       <label class="required form-label"> Lampiran</label>
-                      <input type="text" id="lampiran" name="lampiran" class="form-control" value="" />
+                      <div class="col-sm-4">
+                        <input type="number" class="form-control" id="jumlah-lampiran" name="" value="1">
+                      </div>
+                      <div class="col-sm-4">
+                        <select class=" form-control form-select form-select-solid" name="" id="tipe-lampiran" data-control="select2" data-placeholder="Lampiran" data-allow-clear="true">
+                          <option></option>
+                          <option value="Lembar">Lembar</option>
+                          <option value="Berkas">Berkas</option>
+                          <option value="Halaman">Halaman</option>
+                        </select>
+                      </div>
                     </div>
                     <div class="form-group mb-3">
                       <label class="required form-label">Hal</label>
                       <textarea type="textarea" id="perihal" name="perihal" class="form-control"></textarea>
                     </div>
-                    <!-- <button id="generate-pdf" class="btn btn-primary" onclick="generatePDF()">Preview</button> -->
                   </form>
                 </div>
                 <div class="tab-pane fade" id="kt_tab_pane_2" role="tabpanel">
@@ -159,13 +175,20 @@
 
   function generatePDF() {
     event.preventDefault();
+
+    const tahunIni = new Date().getFullYear();
     const dari = $('#dari').val();
     const kepada = $('#kepada').val();
     const sifat = $('#sifat').val();
     const perihal = $('#perihal').val();
-    const lampiran = $('#lampiran').val();
+    const jumlahLampiran = $("#jumlah-lampiran").val();
+    const tipeLampiran = $("#tipe-lampiran").val();
+    const lampiran = jumlahLampiran + " " + tipeLampiran;
     const isiSurat = tinymce.activeEditor.getContent();
 
+    const valueNoAgenda = `<%= typeof lastNoAgenda !== 'undefined' && lastNoAgenda !== null ? lastNoAgenda.noAgenda + 1 : 1 %>`;
+    const noAgenda = valueNoAgenda.toString().padStart(3, '0');
+    const nomorNotaDinas = `${noAgenda}/<%= divisi %>/I/${tahunIni}`;
     // Create new PDF document
     window.jsPDF = window.jspdf.jsPDF;
     const doc = new jsPDF('p', 'pt', 'a4');
@@ -197,7 +220,6 @@
     doc.setLineWidth(1);
     doc.line(startX2, 118, endX2, 118);
 
-
     doc.setFontSize(14);
     doc.setFont("Helvetica", "bold")
     doc.text(`NOTA DINAS`, x, 115, {
@@ -205,7 +227,7 @@
     });
     doc.setFontSize(12);
     doc.setFont("Helvetica", "")
-    doc.text(`Nomor : .../.../.../2023`, x, 135, {
+    doc.text(`Nomor : ${nomorNotaDinas}`, x, 135, {
       align: "center"
     });
 
@@ -244,7 +266,6 @@
 
         const out = doc.output();
         const url = 'data:application/pdf;base64,' + btoa(out);
-        const nomor = '001/DEV/II/2023';
 
         fetch('/notadinas/konsep', {
             method: 'POST',
@@ -253,7 +274,7 @@
             },
             body: JSON.stringify({
               document: url,
-              nomor: nomor
+              nomor: nomorNotaDinas
             })
           })
           .then(response => {
@@ -270,10 +291,49 @@
   }
 
   function sendPDF() {
+    const tahun = new Date().getFullYear();
+    const tanggal = new Date().toLocaleDateString('id-ID', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    });
+    const dari = $('#dari').val();
+    const kepada = $('#kepada').val();
+    const sifat = $('#sifat').val();
+    const perihal = $('#perihal').val();
+    const jumlahLampiran = $("#jumlah-lampiran").val();
+    const tipeLampiran = $("#tipe-lampiran").val();
+    const lampiran = jumlahLampiran + " " + tipeLampiran;
+
+    const valueNoAgenda = `<%= typeof lastNoAgenda !== 'undefined' && lastNoAgenda !== null ? lastNoAgenda.noAgenda + 1 : 1 %>`;
+    const noAgenda = valueNoAgenda.toString().padStart(3, '0');
+    const noNotaDinas = `${noAgenda}/<%= divisi %>/I/${tahun}`;
+
     fetch('/notadinas/kirim', {
-        method: 'POST'
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          noNotaDinas,
+          noAgenda,
+          tanggal,
+          tahun,
+          dari,
+          kepada,
+          perihal,
+          lampiran,
+          // kodeMasalah,
+          sifat,
+          // keterangan,
+          // email,s
+          // divisi,
+          // fileAttachment,
+          flag: '1',
+        })
       })
       .then(response => {
+        console.log(response);
         if (response.ok) {
           console.log(response);
           Swal.fire("Berhasil", "Nota dinas berhasil dikirim", "success");
