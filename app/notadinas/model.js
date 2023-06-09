@@ -18,7 +18,7 @@ const notaDinasSchema = mongoose.Schema(
     email: String,
     divisi: String,
     fileAttachment: String,
-    flag: String,
+    flag: Number,
   },
   { timestamps: true }
 );

@@ -14,6 +14,7 @@ const NotaDinasInbox = require("../../app/notadinas/modelInbox");
 const Users = require("../../app/users/model");
 const Response = require("../../app/notadinas/modelResponse");
 const Request = require("../../app/notadinas/modelRequest");
+const { trace } = require("console");
 
 module.exports = {
   index: async (req, res) => {
@@ -22,8 +23,9 @@ module.exports = {
       const alertStatus = req.flash("alertStatus");
       const alert = { message: alertMessage, status: alertStatus };
 
+      const username = req.session.user.username;
       const notaDinas = await NotaDinas.find({
-        kepada: req.session.user.username,
+        kepada: username,
       });
 
       const { startDate, endDate } = req.body;
@@ -35,7 +37,26 @@ module.exports = {
         notaDinas,
         alert,
         title: "Nota Dinas",
-        username: req.session.user.username,
+        subtitle: "Nota Dinas Masuk",
+        username,
+        jabatan: req.session.user.jabatan,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  },
+
+  terkirim: async (req, res) => {
+    try {
+      const username = req.session.user.username;
+      const notaDinasTerkirim = await NotaDinas.find({
+        dari: username,
+      });
+      res.render("notadinas/terkirim/index", {
+        notaDinasTerkirim,
+        title: "Nota Dinas",
+        subtitle: "Nota Dinas Terkirim",
+        username,
         jabatan: req.session.user.jabatan,
       });
     } catch (err) {
@@ -276,6 +297,7 @@ module.exports = {
         lastNoAgenda,
         users,
         title: "Konsep Nota Dinas",
+        subtitle: "Konsep Nota Dinas",
         username: req.session.user.username,
         jabatan: req.session.user.jabatan,
         divisi,
@@ -340,10 +362,6 @@ module.exports = {
         config.rootPath,
         `public/upload/NOTA_DINAS_${nomorModifikasi}.pdf`
       );
-      // const document = path.resolve(
-      //   config.rootPath,
-      //   `public\\upload\\NOTA_DINAS_001_DEV_II_2023.pdf`
-      // );
       const signature = `[{"email":"heru@gsp.co.id","detail":[{"p":1,"x":129,"y":203,"w":57,"h":27}]}]`;
       const ematerai = "";
       const estamp = "";
@@ -358,12 +376,9 @@ module.exports = {
         kepada,
         perihal,
         lampiran,
-        // kodeMasalah,
         sifat,
-        // keterangan,
         email,
         divisi,
-        // fileAttachment,
         flag,
       });
       await notaDinas.save();
@@ -417,9 +432,14 @@ module.exports = {
           },
         })
         .then((response) => {
+          // todo
           const newResponse = new Response({
             trxId: trxId,
             json: JSON.stringify(response.data),
+            user: {
+              username: req.session.user.username,
+              // email: req.session.user.email,
+            },
             data: response.data.data,
           });
           newResponse.save();

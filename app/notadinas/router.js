@@ -4,6 +4,7 @@ const multer = require("multer");
 const os = require("os");
 const {
   index,
+  terkirim,
   viewCreate,
   actionCreate,
   viewEdit,
@@ -20,6 +21,7 @@ router.use(isLogin);
 
 /* GET home page. */
 router.get("/", index);
+router.get("/terkirim", terkirim);
 router.get("/create", viewCreate);
 router.post("/create", actionCreate);
 router.get("/edit/:id", viewEdit);

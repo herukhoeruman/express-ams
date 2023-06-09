@@ -7,6 +7,7 @@ const ResponseSchema = mongoose.Schema({
   code: String,
   timestamp: Date,
   message: String,
+  ttdOleh: String,
   data: {
     id: String,
     stamp: Array,
