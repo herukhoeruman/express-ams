@@ -14,6 +14,7 @@ const NotaDinasInbox = require("../../app/notadinas/modelInbox");
 const Users = require("../../app/users/model");
 const Response = require("../../app/notadinas/modelResponse");
 const Request = require("../../app/notadinas/modelRequest");
+const Callback = require("../../app/callback/model");
 const { trace } = require("console");
 
 module.exports = {
@@ -28,10 +29,76 @@ module.exports = {
         kepada: username,
       });
 
-      const { startDate, endDate } = req.body;
-      const searchData = notaDinas.filter(
-        (item) => item.date >= startDate && item.date <= endDate
-      );
+      notaDinas.forEach(async (data) => {
+        const id = data.dataResponse.id;
+        const fileName = data.document;
+        const signed = await Callback.findOne({ documentId: id });
+        const outputFilePath = path.resolve(
+          config.rootPath,
+          `public/upload/signed/${fileName}`
+        );
+
+        if (fs.existsSync(outputFilePath)) {
+          console.log("File already exists.");
+        } else {
+          try {
+            const response = await axios({
+              url: signed.downloadUrl,
+              method: "GET",
+              responseType: "stream",
+            });
+
+            response.data.pipe(fs.createWriteStream(outputFilePath));
+
+            await new Promise((resolve, reject) => {
+              response.data.on("end", () => {
+                console.log("File downloaded successfully.");
+                resolve();
+              });
+
+              response.data.on("error", (err) => {
+                console.error("Error downloading file:", err);
+                reject(err);
+              });
+            });
+          } catch (error) {
+            console.error("Error downloading file:", error);
+          }
+        }
+      });
+      // // if (notaDinas.length > 0) {
+      //   const id = notaDinas[0].dataResponse.id;
+      //   const fileName = notaDinas[0].document;
+      //   const signed = await Callback.findOne({ documentId: id });
+      //   const outputFilePath = path.resolve(
+      //     config.rootPath,
+      //     `public/upload/signed/${fileName}`
+      //   );
+
+      //   if (fs.existsSync(outputFilePath)) {
+      //     console.log("File already exists. Skipping download.");
+      //   } else {
+      //     const response = await axios({
+      //       url: signed.downloadUrl,
+      //       method: "GET",
+      //       responseType: "stream",
+      //     });
+
+      //     response.data.pipe(fs.createWriteStream(outputFilePath));
+
+      //     new Promise((resolve, reject) => {
+      //       response.data.on("end", () => {
+      //         console.log("File downloaded successfully.");
+      //         resolve();
+      //       });
+
+      //       response.data.on("error", (err) => {
+      //         console.error("Error downloading file:", err);
+      //         reject(err);
+      //       });
+      //     });
+      //   }
+      // // }
 
       res.render("notadinas/index", {
         notaDinas,
@@ -362,28 +429,10 @@ module.exports = {
         config.rootPath,
         `public/upload/NOTA_DINAS_${nomorModifikasi}.pdf`
       );
-      const signature = `[{"email":"heru@gsp.co.id","detail":[{"p":1,"x":129,"y":203,"w":57,"h":27}]}]`;
+      const signature = `[{"email":"${email}","detail":[{"p":1,"x":129,"y":203,"w":57,"h":27}]}]`;
       const ematerai = "";
       const estamp = "";
       const clientId = "TkhRZ7XmPVEOTNtY3XWq7htqWoGpJntl";
-
-      const notaDinas = await NotaDinas({
-        noNotaDinas,
-        noAgenda,
-        tanggal,
-        tahun,
-        dari,
-        kepada,
-        perihal,
-        lampiran,
-        sifat,
-        email,
-        divisi,
-        flag,
-      });
-      await notaDinas.save();
-
-      // return;
 
       const filename = document.split("\\").pop();
       const crn = "ams-gsp-nodejs";
@@ -400,7 +449,6 @@ module.exports = {
 
       console.log("hash : " + hash);
       console.log("payload : " + payload);
-      // return;
 
       const newRequest = new Request({
         trxId: trxId,
@@ -436,13 +484,29 @@ module.exports = {
           const newResponse = new Response({
             trxId: trxId,
             json: JSON.stringify(response.data),
-            user: {
-              username: req.session.user.username,
-              // email: req.session.user.email,
-            },
+            ttdOleh: req.session.user.username,
             data: response.data.data,
           });
           newResponse.save();
+
+          const notaDinas = new NotaDinas({
+            noNotaDinas,
+            noAgenda,
+            tanggal,
+            tahun,
+            dari,
+            kepada,
+            perihal,
+            lampiran,
+            sifat,
+            email,
+            divisi,
+            document: filename,
+            // fileAttachment,
+            dataResponse: response.data.data,
+            flag,
+          });
+          notaDinas.save();
 
           console.log(response.data);
           res.status(200).json(response.data);
@@ -457,12 +521,12 @@ module.exports = {
     }
   },
 
-  signed: async (req, res) => {
+  detail: async (req, res) => {
     try {
-      const data = req.body.data;
-      console.log(data);
-    } catch (error) {
-      console.log(error);
+      const { id } = req.params.id;
+      const notaDinas = await NotaDinas.findOne({ _id: id });
+    } catch (err) {
+      console.log(err);
     }
   },
 };

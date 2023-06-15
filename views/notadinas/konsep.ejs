@@ -155,7 +155,9 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.0/jspdf.umd.min.js"></script>
 <script type="text/javascript" src="/dompurify/dist/purify.min.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script> -->
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.7/dist/html2canvas.min.js"></script>
+<!-- <script src="/jspdf/dist/jspdf.umd.min.js"></script> -->
 
 <script>
   const btnPreview = document.querySelector("#generate-pdf");
@@ -329,7 +331,7 @@
           // email,s
           // divisi,
           // fileAttachment,
-          flag: '1',
+          flag: 1,
         })
       })
       .then(response => {

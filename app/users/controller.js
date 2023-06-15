@@ -25,6 +25,7 @@ module.exports = {
           title: "Dashboard",
           username: req.session.user.username,
           jabatan: req.session.user.jabatan,
+          email: req.session.user.email,
         });
       }
     } catch (err) {
@@ -45,6 +46,7 @@ module.exports = {
             username: check.username,
             jabatan: check.jabatan,
             divisi: check.divisi,
+            email: check.email,
           };
           res.redirect("/dashboard");
         } else {

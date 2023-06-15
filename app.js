@@ -48,6 +48,10 @@ app.use(
   "/dompurify",
   express.static(path.join(__dirname, "node_modules", "dompurify"))
 );
+// app.use(
+//   "/jspdf",
+//   express.static(path.join(__dirname, "node_modules", "jspdf"))
+// );
 
 app.use("/", usersRouter);
 app.use("/dashboard", dashboardRouter);

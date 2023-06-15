@@ -17,7 +17,19 @@ const notaDinasSchema = mongoose.Schema(
     keterangan: String,
     email: String,
     divisi: String,
+    document: String,
     fileAttachment: String,
+    dataResponse: {
+      id: String,
+      stamp: Array,
+      sign: [
+        {
+          teken_id: String,
+          email: String,
+          url: String,
+        },
+      ],
+    },
     flag: Number,
   },
   { timestamps: true }

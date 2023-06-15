@@ -1,3 +1,6 @@
+<!-- <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.7.107/build/pdf.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.7.107/web/pdf_viewer.min.css" rel="stylesheet"> -->
+
 <form action="/notadinas" method="get" class="mb-5">
   <div class="row">
     <div class="form-group col-sm-2">
@@ -23,6 +26,7 @@
         <th class="">Hal</th>
         <th class="">Tanggal</th>
         <th class="">Action</th>
+        <th class="">Action</th>
       </tr>
     </thead>
     <tbody class="fw-semibold">
@@ -47,20 +51,11 @@
           <%= notaDinas[i].tanggal %>
         </td>
         <td>
+          <%= notaDinas[i].document %>
+        </td>
+        <td>
 
-          <!-- <a data-id="<%= notaDinas[i]._id %>" class="btn btn-sm btn-light-primary btn-icon mr-2" title="Forward">
-            <span class="svg-icon svg-icon-primary svg-icon-2x">
-              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
-                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                  <rect x="0" y="0" width="24" height="24" />
-                  <path d="M6.82866499,18.2771971 L13.5693679,12.3976203 C13.7774696,12.2161036 13.7990211,11.9002555 13.6175044,11.6921539 C13.6029128,11.6754252 13.5872233,11.6596867 13.5705402,11.6450431 L6.82983723,5.72838979 C6.62230202,5.54622572 6.30638833,5.56679309 6.12422426,5.7743283 C6.04415337,5.86555116 6,5.98278612 6,6.10416552 L6,17.9003957 C6,18.1765381 6.22385763,18.4003957 6.5,18.4003957 C6.62084305,18.4003957 6.73759731,18.3566309 6.82866499,18.2771971 Z" fill="currentColor" opacity="0.3" />
-                  <path d="M12.828665,18.2771971 L19.5693679,12.3976203 C19.7774696,12.2161036 19.7990211,11.9002555 19.6175044,11.6921539 C19.6029128,11.6754252 19.5872233,11.6596867 19.5705402,11.6450431 L12.8298372,5.72838979 C12.622302,5.54622572 12.3063883,5.56679309 12.1242243,5.7743283 C12.0441534,5.86555116 12,5.98278612 12,6.10416552 L12,17.9003957 C12,18.1765381 12.2238576,18.4003957 12.5,18.4003957 C12.6208431,18.4003957 12.7375973,18.3566309 12.828665,18.2771971 Z" fill="currentColor" />
-                </g>
-              </svg>
-            </span>
-          </a> -->
-
-          <a href="notadinas/edit/<%= notaDinas[i]._id %>" class="btn btn-sm btn-light-info btn-icon mr-2" title="Edit">
+          <a data-id="<%= notaDinas[i]._id %>" class="btn btn-sm btn-light-primary btn-icon mr-2" data-bs-toggle="modal" data-bs-target="#signatureModal<%= notaDinas[i]._id %>" title="Signature">
             <span class="svg-icon svg-icon-primary svg-icon-2">
               <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
                 <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -71,26 +66,26 @@
               </svg>
             </span>
           </a>
-
-          <a data-id="<%= notaDinas[i]._id %>" class="btn btn-sm btn-light-danger btn-icon mr-2" data-bs-toggle="modal" data-bs-target="#deletenotaDinasModal<%= notaDinas[i]._id %>" title="Delete">
-            <span class="svg-icon svg-icon-primary svg-icon-2">
+          <a data-id="<%= notaDinas[i]._id %>" class="btn btn-sm btn-light-danger btn-icon mr-2" data-bs-toggle="modal" data-bs-target="#documentModal<%= notaDinas[i]._id %>" title="Lihat Nota Dinas">
+            <span class="svg-icon svg-icon-info svg-icon-2">
               <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
                 <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                  <rect x="0" y="0" width="24" height="24"></rect>
-                  <path d="M6,8 L6,20.5 C6,21.3284271 6.67157288,22 7.5,22 L16.5,22 C17.3284271,22 18,21.3284271 18,20.5 L18,8 L6,8 Z" fill="currentColor" fill-rule="nonzero"></path>
-                  <path d="M14,4.5 L14,4 C14,3.44771525 13.5522847,3 13,3 L11,3 C10.4477153,3 10,3.44771525 10,4 L10,4.5 L5.5,4.5 C5.22385763,4.5 5,4.72385763 5,5 L5,5.5 C5,5.77614237 5.22385763,6 5.5,6 L18.5,6 C18.7761424,6 19,5.77614237 19,5.5 L19,5 C19,4.72385763 18.7761424,4.5 18.5,4.5 L14,4.5 Z" fill="currentColor" opacity="0.3"></path>
+                  <polygon points="0 0 24 0 24 24 0 24" />
+                  <path d="M5.85714286,2 L13.7364114,2 C14.0910962,2 14.4343066,2.12568431 14.7051108,2.35473959 L19.4686994,6.3839416 C19.8056532,6.66894833 20,7.08787823 20,7.52920201 L20,20.0833333 C20,21.8738751 19.9795521,22 18.1428571,22 L5.85714286,22 C4.02044787,22 4,21.8738751 4,20.0833333 L4,3.91666667 C4,2.12612489 4.02044787,2 5.85714286,2 Z" fill="#dbcafe" fill-rule="nonzero" opacity="0.3" />
+                  <rect fill="#f1416c" x="6" y="11" width="9" height="2" rx="1" />
+                  <rect fill="#f1416c" x="6" y="15" width="5" height="2" rx="1" />
                 </g>
               </svg>
+              <!--end::Svg Icon-->
             </span>
           </a>
 
-          <!-- modal edit -->
-          <div class="modal fade" tabindex="-1" id="editnotaDinasModal<%= notaDinas[i]._id %>">
+          <!-- modal view document pdf -->
+          <div class="modal fade modal-lg" tabindex="-1" id="documentModal<%= notaDinas[i]._id %>">
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h3 class="modal-title">Edit notaDinas</h3>
-                  <!--begin::Close-->
+                  <h3 class="modal-title">Nota Dinas <%= notaDinas[i].noNotaDinas %> </h3>
                   <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
                     <span class="svg-icon svg-icon-1">
                       <span class="svg-icon svg-icon-primary svg-icon-2x">
@@ -105,73 +100,122 @@
                       </span>
                     </span>
                   </div>
-                  <!--end::Close-->
                 </div>
-                <form action="/notaDinas/edit/<%= notaDinas[i]._id %>?_method=PUT" method="POST">
-                  <div class="modal-body">
-                    <div class="form-group mb-5">
-                      <label class="required form-label" for="nameCoin"> Coin Name</label>
-                      <select class="form-select form-select-solid" name="coinName" id="coinName" data-control="select2" data-dropdown-parent="#createnotaDinasModal" data-placeholder="Select a Coin Name" data-allow-clear="true" required oninvalid="this.setCustomValidity('Data cannot be null')" oninput="setCustomValidity('')">
-                        <option>
-                          <%= notaDinas[i].coinName %>
-                        </option>
-                        <option value="Diamonds">Diamonds</option>
-                        <option value="UC">UC</option>
-                        <option value="Gold">Gold</option>
-                        <option value="Genesis Crystals">Genesis Crystals</option>
-                        <option value="Points">Points</option>
-                        <option value="PB Cash">PB Cash</option>
-                      </select>
-                    </div>
-                    <div class="form-group mb-5">
-                      <label class="required form-label" for="coinQuantity"> Coin
-                        Quantity</label>
-                      <input type="number" id="coinQuantity" name="coinQuantity" value="<%= notaDinas[i].coinQuantity %>" class="form-control" required oninvalid="this.setCustomValidity('Data cannot be null')" oninput="setCustomValidity('')" />
-                    </div>
-                    <div class="form-group">
-                      <label class="required form-label" for="price"> Price</label>
-                      <input type="number" id="price" name="price" class="form-control" value="<%= notaDinas[i].price %>" required oninvalid="this.setCustomValidity('Data cannot be null')" oninput="setCustomValidity('')" />
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
-                  </div>
-                </form>
+                <div class="modal-body">
+                  <p id="errorMessage<%= notaDinas[i]._id %>" style="display: none;">Dokumen belum tersedia.</p>
+                  <embed src="/upload/signed/<%= notaDinas[i].document %>" width="100%" height="1100" type="application/pdf">
+                  <!-- <div id="pdfViewer"></div>
+                  <script>
+                    // Mendapatkan referensi ke elemen div yang akan menampilkan PDF
+                    var viewerContainer = document.getElementById("pdfViewer");
+
+                    // Mendefinisikan URL atau path ke file PDF
+                    // var pdfUrl = "path_to_your_pdf_file.pdf";
+                    var pdfUrl = "/upload/signed/<%= notaDinas[i].document %>";
+
+                    // Memuat file PDF menggunakan PDF.js
+                    pdfjsLib.getDocument(pdfUrl).promise.then(function(pdfDoc) {
+                      // Mengatur nomor halaman pertama yang akan ditampilkan
+                      var pageNumber = 1;
+
+                      // Mengambil halaman PDF dari dokumen
+                      pdfDoc.getPage(pageNumber).then(function(page) {
+                        // Mengatur skala tampilan PDF
+                        var scale = 1.3;
+
+                        // Mendapatkan ukuran halaman PDF
+                        var viewport = page.getViewport({
+                          scale: scale
+                        });
+
+                        // Membuat elemen canvas
+                        var canvas = document.createElement("canvas");
+
+                        // Mendapatkan konteks rendering canvas
+                        var context = canvas.getContext("2d");
+                        canvas.width = viewport.width;
+                        canvas.height = viewport.height;
+
+                        // Menambahkan canvas ke wadah tampilan PDF
+                        viewerContainer.appendChild(canvas);
+
+                        // Membuat objek tampilan PDF
+                        var renderContext = {
+                          canvasContext: context,
+                          viewport: viewport
+                        };
+
+                        // Merender halaman PDF ke dalam canvas
+                        page.render(renderContext);
+                      });
+                    });
+                  </script> -->
+
+                  <!-- <div id="pdfViewer<%= notaDinas[i]._id %>">
+                    <p id="errorMessage<%= notaDinas[i]._id %>" style="display: none;">Dokumen belum tersedia.</p>
+                  </div> -->
+
+                  <!-- <script id="<%= notaDinas[i]._id %>">
+                    var viewerContainer = document.getElementById("pdfViewer<%= notaDinas[i]._id %>");
+                    var errorMessage = document.getElementById("errorMessage<%= notaDinas[i]._id %>");
+                    var pdfUrl = "/upload/signed/<%= notaDinas[i].document %>";
+
+                    pdfjsLib.getDocument(pdfUrl).promise
+                      .then(function(pdfDoc) {
+                        var pageNumber = 1;
+
+                        return pdfDoc.getPage(pageNumber).then(function(page) {
+                          var scale = 1.3;
+                          var viewport = page.getViewport({
+                            scale: scale
+                          });
+                          var canvas = document.createElement("canvas");
+                          canvas.id = 'pdfViewer<%= notaDinas[i]._id %>'
+                          var context = canvas.getContext("2d");
+                          canvas.width = viewport.width;
+                          canvas.height = viewport.height;
+                          viewerContainer.appendChild(canvas);
+
+                          var renderContext = {
+                            canvasContext: context,
+                            viewport: viewport
+                          };
+
+                          page.render(renderContext);
+                        });
+                      })
+                      .catch(function(error) {
+                        // Jika terjadi error saat memuat dokumen PDF
+                        errorMessage.style.display = "block";
+                        // console.error("Error: " + error);
+                      })
+                  </script> -->
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- modal delete -->
-          <div class="modal fade" tabindex="-1" id="deletenotaDinasModal<%= notaDinas[i]._id %>">
-            <div class="modal-dialog">
-              <div class="modal-content">
+          <!-- modal signature -->
+          <div class="modal bg-body fade" tabindex="-1" id="signatureModal<%= notaDinas[i]._id %>">
+            <div class="modal-dialog modal-fullscreen">
+              <div class="modal-content shadow-none">
                 <div class="modal-header">
-                  <h3 class="modal-title">Are you sure?</h3>
-                  <!--begin::Close-->
-                  <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
-                    <span class="svg-icon svg-icon-1">
-                      <span class="svg-icon svg-icon-primary svg-icon-2x">
-                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
-                          <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                            <g transform="translate(12.000000, 12.000000) rotate(-45.000000) translate(-12.000000, -12.000000) translate(4.000000, 4.000000)" fill="currentColor">
-                              <rect x="0" y="7" width="16" height="2" rx="1" />
-                              <rect opacity="0.3" transform="translate(8.000000, 8.000000) rotate(-270.000000) translate(-8.000000, -8.000000) " x="0" y="7" width="16" height="2" rx="1" />
-                            </g>
-                          </g>
-                        </svg>
-                      </span>
-                    </span>
-                  </div>
-                  <!--end::Close-->
-                </div>
-                <form action="/notaDinas/delete/<%= notaDinas[i]._id %>?_method=DELETE" method="POST">
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Delete</button>
-                  </div>
+                  <h5 class="modal-title">Signature <%= notaDinas[i].dataResponse.sign[0].url %></h5>
+                  <!-- <a href="https://ttd.sandbox-111094.com/l5rknGpkAUCSJN">https://ttd.sandbox-111094.com/l5rknGpkAUCSJN</a> -->
 
-                </form>
+                  <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="ki-duotone ki-cross fs-2x"><span class="path1"></span><span class="path2"></span></i>
+                  </div>
+                </div>
+
+                <div class="h-100 w-100">
+                  <!-- <iframe id="myIframe" src="<%= notaDinas[i].dataResponse.sign[0].url %>" class="h-100 w-100"></iframe> -->
+                </div>
+
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
               </div>
             </div>
           </div>
