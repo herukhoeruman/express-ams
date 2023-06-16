@@ -28,6 +28,8 @@ module.exports = {
       const notaDinas = await NotaDinas.find({
         kepada: username,
       });
+      const disposisiMaster = await DisposisiMaster.find();
+      const users = await Users.find();
 
       notaDinas.forEach(async (data) => {
         const id = data.dataResponse.id;
@@ -103,6 +105,8 @@ module.exports = {
       res.render("notadinas/index", {
         notaDinas,
         alert,
+        disposisiMaster,
+        users,
         title: "Nota Dinas",
         subtitle: "Nota Dinas Masuk",
         username,

@@ -44,7 +44,16 @@
 <!--end::Javascript-->
 <script>
   $(document).ready(function() {
-    $("#tabel_category").DataTable();
+    // $("#tabel_category").DataTable();
+    $('#tabel_category').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": true,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+    });
   });
   // alert('cek tabels');
 </script>

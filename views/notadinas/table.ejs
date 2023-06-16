@@ -1,7 +1,7 @@
 <!-- <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.7.107/build/pdf.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.7.107/web/pdf_viewer.min.css" rel="stylesheet"> -->
 
-<form action="/notadinas" method="get" class="mb-5">
+<!-- <form action="/notadinas" method="get" class="mb-5">
   <div class="row">
     <div class="form-group col-sm-2">
       <input class="form-control input-sm" type="date" id="startdate" name="startdate">
@@ -13,9 +13,16 @@
       <button class="btn btn-primary btn-sm" type="submit">Search</button>
     </div>
   </div>
-</form>
+</form> -->
 
-<div class="table-responsive">
+<!-- <div class="row">
+  <div class="col-sm"></div>
+  <div class="col-sm"> -->
+<!-- <button class="btn btn-primary btn-sm mb-3" onclick="refresh()">Reload</button> -->
+<!-- </div>
+</div> -->
+
+<div class=" table-responsive">
   <table class="table table-hover table-rounded table-row-bordered" id="tabel_category">
     <thead>
       <tr class="fw-bold fs-6 text-gray-800">
@@ -25,36 +32,21 @@
         <th class="">Kepada</th>
         <th class="">Hal</th>
         <th class="">Tanggal</th>
-        <th class="">Action</th>
+        <th class="">Dokumen</th>
         <th class="">Action</th>
       </tr>
     </thead>
     <tbody class="fw-semibold">
       <% for(let i=0; i < notaDinas.length; i++) { %>
       <tr class="odd">
+        <td> <%= i +1 %></td>
+        <td> <%= notaDinas[i].noNotaDinas %></td>
+        <td> <%= notaDinas[i].dari %></td>
+        <td> <%= notaDinas[i].kepada %></td>
+        <td> <%= notaDinas[i].perihal %></td>
+        <td> <%= notaDinas[i].tanggal %></td>
+        <td> <%= notaDinas[i].document %></td>
         <td>
-          <%= i +1 %>
-        </td>
-        <td>
-          <%= notaDinas[i].noNotaDinas %>
-        </td>
-        <td>
-          <%= notaDinas[i].dari %>
-        </td>
-        <td>
-          <%= notaDinas[i].kepada %>
-        </td>
-        <td>
-          <%= notaDinas[i].perihal %>
-        </td>
-        <td>
-          <%= notaDinas[i].tanggal %>
-        </td>
-        <td>
-          <%= notaDinas[i].document %>
-        </td>
-        <td>
-
           <a data-id="<%= notaDinas[i]._id %>" class="btn btn-sm btn-light-primary btn-icon mr-2" data-bs-toggle="modal" data-bs-target="#signatureModal<%= notaDinas[i]._id %>" title="Signature">
             <span class="svg-icon svg-icon-primary svg-icon-2">
               <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
@@ -103,7 +95,10 @@
                 </div>
                 <div class="modal-body">
                   <p id="errorMessage<%= notaDinas[i]._id %>" style="display: none;">Dokumen belum tersedia.</p>
-                  <embed src="/upload/signed/<%= notaDinas[i].document %>" width="100%" height="1100" type="application/pdf">
+                  <iframe src="/upload/signed/<%= notaDinas[i].document %>#toolbar=0" width="100%" height="1080" type="application/pdf"></iframe>
+
+
+
                   <!-- <div id="pdfViewer"></div>
                   <script>
                     // Mendapatkan referensi ke elemen div yang akan menampilkan PDF
@@ -225,3 +220,9 @@
     </tbody>
   </table>
 </div>
+
+<script>
+  function refresh() {
+    location.reload();
+  }
+</script>

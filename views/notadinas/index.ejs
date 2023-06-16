@@ -17,9 +17,181 @@
         <li class="breadcrumb-item text-muted"><%= subtitle %></li>
       </ul>
     </div>
+
     <div class="card shadow-sm mt-5">
       <div class="card-body">
-        <%- include ./table.ejs %>
+        <table id="kt_datatable_dom_positioning" class="table table-striped table-row-bordered gy-5 gs-7 border rounded">
+          <thead>
+            <tr class="fw-bold fs-6 text-gray-800 px-7">
+              <th class="">No.</th>
+              <th class="">No Nota Dinas</th>
+              <th class="">Dari</th>
+              <th class="">Kepada</th>
+              <th class="">Hal</th>
+              <th class="">Tanggal</th>
+              <th class="">Dokumen</th>
+              <th class="">Action</th>
+            </tr>
+          </thead>
+          <tbody class="fw-semibold">
+            <% for(let i=0; i < notaDinas.length; i++) { %>
+            <tr class="odd">
+              <td> <%= i +1 %></td>
+              <td> <%= notaDinas[i].noNotaDinas %></td>
+              <td> <%= notaDinas[i].dari %></td>
+              <td> <%= notaDinas[i].kepada %></td>
+              <td> <%= notaDinas[i].perihal %></td>
+              <td> <%= notaDinas[i].tanggal %></td>
+              <td> <%= notaDinas[i].document %></td>
+              <td>
+                <a data-id="<%= notaDinas[i]._id %>" class="btn btn-sm btn-light-primary btn-icon mr-2" id="kt_drawer_chat_toggle_<%= notaDinas[i]._id %>" title="Disposisi">
+                  <span class="svg-icon svg-icon-primary svg-icon-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                      <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <rect x="0" y="0" width="24" height="24" />
+                        <path d="M8,17.9148182 L8,5.96685884 C8,5.56391781 8.16211443,5.17792052 8.44982609,4.89581508 L10.965708,2.42895648 C11.5426798,1.86322723 12.4640974,1.85620921 13.0496196,2.41308426 L15.5337377,4.77566479 C15.8314604,5.0588212 16,5.45170806 16,5.86258077 L16,17.9148182 C16,18.7432453 15.3284271,19.4148182 14.5,19.4148182 L9.5,19.4148182 C8.67157288,19.4148182 8,18.7432453 8,17.9148182 Z" fill="currentColor" fill-rule="nonzero" transform="translate(12.000000, 10.707409) rotate(-135.000000) translate(-12.000000, -10.707409) " />
+                        <rect fill="currentColor" opacity="0.3" x="5" y="20" width="15" height="2" rx="1" />
+                      </g>
+                    </svg>
+                  </span>
+                </a>
+                <a data-id="<%= notaDinas[i]._id %>" class="btn btn-sm btn-light-danger btn-icon mr-2" data-bs-toggle="modal" data-bs-target="#documentModal<%= notaDinas[i]._id %>" title="Lihat Nota Dinas">
+                  <span class="svg-icon svg-icon-info svg-icon-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                      <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <polygon points="0 0 24 0 24 24 0 24" />
+                        <path d="M5.85714286,2 L13.7364114,2 C14.0910962,2 14.4343066,2.12568431 14.7051108,2.35473959 L19.4686994,6.3839416 C19.8056532,6.66894833 20,7.08787823 20,7.52920201 L20,20.0833333 C20,21.8738751 19.9795521,22 18.1428571,22 L5.85714286,22 C4.02044787,22 4,21.8738751 4,20.0833333 L4,3.91666667 C4,2.12612489 4.02044787,2 5.85714286,2 Z" fill="#dbcafe" fill-rule="nonzero" opacity="0.3" />
+                        <rect fill="#f1416c" x="6" y="11" width="9" height="2" rx="1" />
+                        <rect fill="#f1416c" x="6" y="15" width="5" height="2" rx="1" />
+                      </g>
+                    </svg>
+                    <!--end::Svg Icon-->
+                  </span>
+                </a>
+
+                <!-- modal view document pdf -->
+                <div class="modal fade modal-lg" tabindex="-1" id="documentModal<%= notaDinas[i]._id %>">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h3 class="modal-title">Nota Dinas <%= notaDinas[i].noNotaDinas %> </h3>
+                        <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                          <span class="svg-icon svg-icon-1">
+                            <span class="svg-icon svg-icon-primary svg-icon-2x">
+                              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                  <g transform="translate(12.000000, 12.000000) rotate(-45.000000) translate(-12.000000, -12.000000) translate(4.000000, 4.000000)" fill="currentColor">
+                                    <rect x="0" y="7" width="16" height="2" rx="1" />
+                                    <rect opacity="0.3" transform="translate(8.000000, 8.000000) rotate(-270.000000) translate(-8.000000, -8.000000) " x="0" y="7" width="16" height="2" rx="1" />
+                                  </g>
+                                </g>
+                              </svg>
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+                      <div class="modal-body">
+                        <p id="errorMessage<%= notaDinas[i]._id %>" style="display: none;">Dokumen belum tersedia.</p>
+                        <iframe src="/upload/signed/<%= notaDinas[i].document %>" width="100%" height="1080" type="application/pdf"></iframe>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- modal signature -->
+                <div class="modal bg-body fade" tabindex="-1" id="signatureModal<%= notaDinas[i]._id %>">
+                  <div class="modal-dialog modal-fullscreen">
+                    <div class="modal-content shadow-none">
+                      <div class="modal-header">
+                        <h5 class="modal-title">Signature <%= notaDinas[i].dataResponse.sign[0].url %></h5>
+                        <!-- <a href="https://ttd.sandbox-111094.com/l5rknGpkAUCSJN">https://ttd.sandbox-111094.com/l5rknGpkAUCSJN</a> -->
+                        <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                          <i class="ki-duotone ki-cross fs-2x"><span class="path1"></span><span class="path2"></span></i>
+                        </div>
+                      </div>
+
+                      <div class="h-100 w-100">
+                        <!-- <iframe id="myIframe" src="<%= notaDinas[i].dataResponse.sign[0].url %>" class="h-100 w-100"></iframe> -->
+                      </div>
+
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- forward drawer -->
+                <div id="kt_drawer_chat" class="bg-body" data-kt-drawer="true" data-kt-drawer-name="chat" data-kt-drawer-activate="true" data-kt-drawer-overlay="true" data-kt-drawer-width="{default:'300px', 'md': '500px'}" data-kt-drawer-direction="end" data-kt-drawer-toggle="#kt_drawer_chat_toggle_<%= notaDinas[i]._id %>" data-kt-drawer-close="#kt_drawer_chat_close">
+                  <!--begin::Messenger-->
+                  <div class="card w-100 rounded-0 border-0" id="kt_drawer_chat_messenger">
+                    <div class="card-header pe-5" id="kt_drawer_chat_messenger_header">
+                      <div class="card-title">
+                        <div class="d-flex justify-content-center flex-column me-3">
+                          <a href="#" class="fs-4 fw-bold text-gray-900 text-hover-primary me-1 mb-2 lh-1">Disposisi </a>
+                          <div class="mb-0 lh-1">
+                            <span class="fs-7 fw-semibold text-muted">No. <%= notaDinas[i].noNotaDinas %></span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="card-toolbar">
+                        <div class="btn btn-sm btn-icon btn-active-light-primary" id="kt_drawer_chat_close">
+                          <span class="svg-icon svg-icon-2">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="currentColor" />
+                              <rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="currentColor" />
+                            </svg>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card-body" id="kt_drawer_chat_messenger_body">
+                      <div class="scroll-y me-n5 pe-5" data-kt-element="messages" data-kt-scroll="true" data-kt-scroll-activate="true" data-kt-scroll-height="525px" data-kt-scroll-dependencies="#kt_drawer_chat_messenger_header, #kt_drawer_chat_messenger_footer" data-kt-scroll-wrappers="#kt_drawer_chat_messenger_body" data-kt-scroll-offset="0px">
+                        <div class="rounded border border-gray-300 mb-5">
+                          <div class="row mb-5">
+                            <% if (disposisiMaster.length > 5) { %>
+                            <% for(let i=0; i < disposisiMaster.length; i++) { %>
+                            <div class="col-sm-6">
+                              <div class="form-check form-check-custom mb-1">
+                                <input class="form-check-input disposisi" type="checkbox" id="disposisi_<%= disposisiMaster[i]._id %>" name="disposisi[]" value="<%= disposisiMaster[i].disposisi %>" />
+                                <label class="form-check-label" for="disposisi_<%= disposisiMaster[i]._id %>"> <%= disposisiMaster[i].disposisi %></label>
+                              </div>
+                            </div>
+                            <% } %>
+                            <% } %>
+                          </div>
+                          <div class="form-group mb-5">
+                            <label class="required form-label" for=""> Kepada</label>
+                            <select class="form-select" aria-label="Default select example">
+                              <option selected">...</option>
+                              <% users.forEach(user=> { %>
+                              <option value="<%= user.username %>">
+                                <%= user.username %> - <%= user.jabatan %>/<%= user.divisi %>
+                              </option>
+                              <% }) %>
+                            </select>
+                          </div>
+                          <div class="form-group mb-5">
+                            <label class="form-label"> Keterangan </label>
+                            <textarea type="text" id="tindakLanjut" name="tindakLanjut" class="form-control"></textarea>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card-footer pt-4" id="kt_drawer_chat_messenger_footer">
+                      <div class="d-flex flex-end">
+                        <button class="btn btn-primary" type="button" data-kt-element="send">Send</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+
       </div>
     </div>
   </div>
@@ -33,3 +205,42 @@
 
 <%- include ../partials/footer.ejs %>
 <%- include ../partials/js.ejs %>
+<script>
+  $('.select2-multiple').select2();
+
+
+  function refresh() {
+    location.reload();
+  }
+
+  $("#kt_datatable_dom_positioning").DataTable({
+    "language": {
+      "lengthMenu": "Show _MENU_",
+    },
+    "dom": "<'row'<'col-sm-6'l><'col-sm-5' f><'col-sm-1'<'button-container'>>>" +
+      "<'table-responsive'tr>" +
+      "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+    "initComplete": function() {
+      $("div.button-container").append(`<button class="btn btn-info btn-sm mt-4" onclick="refresh()"><span class="svg-icon svg-icon-primary svg-icon-2"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+          <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+            <rect x="0" y="0" width="24" height="24"/>
+            <path d="M12,8 L8,8 C5.790861,8 4,9.790861 4,12 L4,13 C4,14.6568542 5.34314575,16 7,16 L7,18 C4.23857625,18 2,15.7614237 2,13 L2,12 C2,8.6862915 4.6862915,6 8,6 L12,6 L12,4.72799742 C12,4.62015048 12.0348702,4.51519416 12.0994077,4.42878885 C12.264656,4.2075478 12.5779675,4.16215674 12.7992086,4.32740507 L15.656242,6.46136716 C15.6951359,6.49041758 15.7295917,6.52497737 15.7585249,6.56395854 C15.9231063,6.78569617 15.876772,7.09886961 15.6550344,7.263451 L12.798001,9.3840407 C12.7118152,9.44801079 12.607332,9.48254921 12.5,9.48254921 C12.2238576,9.48254921 12,9.25869158 12,8.98254921 L12,8 Z" fill="#fff"/>
+            <path d="M12.0583175,16 L16,16 C18.209139,16 20,14.209139 20,12 L20,11 C20,9.34314575 18.6568542,8 17,8 L17,6 C19.7614237,6 22,8.23857625 22,11 L22,12 C22,15.3137085 19.3137085,18 16,18 L12.0583175,18 L12.0583175,18.9825492 C12.0583175,19.2586916 11.8344599,19.4825492 11.5583175,19.4825492 C11.4509855,19.4825492 11.3465023,19.4480108 11.2603165,19.3840407 L8.40328311,17.263451 C8.18154548,17.0988696 8.13521119,16.7856962 8.29979258,16.5639585 C8.32872576,16.5249774 8.36318164,16.4904176 8.40207551,16.4613672 L11.2591089,14.3274051 C11.48035,14.1621567 11.7936615,14.2075478 11.9589099,14.4287888 C12.0234473,14.5151942 12.0583175,14.6201505 12.0583175,14.7279974 L12.0583175,16 Z" fill="#fff" opacity="0.3"/>
+          </g>
+        </svg>
+      </span>
+    </button>`);
+    }
+    // dom: "<'row'" +
+    //   "<'col-sm-6 d-flex align-items-center justify-conten-start'l>" +
+    //   "<'col-sm-6 d-flex align-items-center justify-content-end'f>" +
+    //   ">" +
+
+    //   "<'table-responsive'tr>" +
+
+    //   "<'row'" +
+    //   "<'col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start'i>" +
+    //   "<'col-sm-12 col-md-7 d-flex align-items-center justify-content-center justify-content-md-end'p>" +
+    //   ">"
+  });
+</script>

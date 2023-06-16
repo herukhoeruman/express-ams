@@ -4,7 +4,7 @@ const disposisiMasterSchema = mongoose.Schema({
   kode: {
     type: String,
   },
-  nama: {
+  disposisi: {
     type: String,
   },
 });
