@@ -14,6 +14,9 @@ const {
   konsepNotaDinas,
   savePdf,
   setSign,
+  kirim,
+  persetujuan,
+  viewPersetujuan,
 } = require("./controller");
 
 const { isLogin } = require("../middleware/auth");
@@ -22,6 +25,8 @@ router.use(isLogin);
 /* GET home page. */
 router.get("/", index);
 router.get("/terkirim", terkirim);
+router.get("/persetujuan", persetujuan);
+router.get("/persetujuan/:id", viewPersetujuan);
 router.get("/create", viewCreate);
 router.post("/create", actionCreate);
 router.get("/edit/:id", viewEdit);
@@ -34,6 +39,6 @@ router.post("/notadinas-sent", insertNotaDinasSent);
 router.post("/notadinas-inbox", insertNotaDinasInbox);
 router.get("/konsep", konsepNotaDinas);
 router.post("/konsep", savePdf);
-router.post("/kirim", setSign);
+router.post("/kirim", kirim);
 
 module.exports = router;

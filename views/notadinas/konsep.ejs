@@ -29,6 +29,12 @@
                     <li class="nav-item">
                       <a class="nav-link  btn btn-active-light btn-color-gray-600 btn-active-color-primary rounded-bottom-0" data-bs-toggle="tab" href="#kt_tab_pane_2">Isi Surat</a>
                     </li>
+                    <li class="nav-item">
+                      <a class="nav-link  btn btn-active-light btn-color-gray-600 btn-active-color-primary rounded-bottom-0" data-bs-toggle="tab" href="#kt_tab_pane_3">Attachment</a>
+                    </li>
+                    <!-- <li class="nav-item">
+                      <a class="nav-link  btn btn-active-light btn-color-gray-600 btn-active-color-primary rounded-bottom-0" data-bs-toggle="tab" href="#kt_tab_pane_4">Penerima</a>
+                    </li> -->
                   </ul>
                 </div>
               </div>
@@ -36,22 +42,58 @@
               <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="kt_tab_pane_1" role="tabpanel">
                   <form>
-                    <div class="form-group mb-5">
-                      <label class="required form-label">Kepada</label>
-                      <select class="form-select form-select-solid" id="kepada" name="kepada" data-control="select2" data-placeholder="Dikirimkan kepada" data-allow-clear="true">
-                        <option value="">Dikirimkan kepada</option>
+                    <!-- kepada -->
+                    <div class="form-group mb-8">
+                      <label class="required form-label">Penerima</label>
+                      <select class="form-select form-select-solid" id="penerima" name="penerima" data-control="select2" data-close-on-select="false" data-placeholder="dikirimkan kepada" data-allow-clear="true" multiple="multiple">
+                        <option></option>
                         <% users.forEach(user=> { %>
-                        <option value="<%= user.username %>">
-                          <%= user.username %> - <%= user.jabatan %>/<%= user.divisi %>
+                        <option value="<%= user.jabatan.sebutanJabatan %>">
+                          <%= user.username %> - <%= user.jabatan.sebutanJabatan %>
                         </option>
                         <% }) %>
                       </select>
                     </div>
-                    <div class="form-group mb-5">
-                      <label class="required form-label"> Dari</label>
-                      <input type="text" id="dari" name="dari" class="form-control" value="<%= username %>" />
+
+                    <div class="form-group mb-8">
+                      <label class="required form-label">Pemeriksa</label>
+                      <select class="form-select form-select-solid" id="pemeriksa" name="pemeriksa" data-control="select2" data-placeholder="diperiksa oleh" data-allow-clear="true">
+                        <option value=""></option>
+                        <% users.forEach(user=> { %>
+                        <option value="<%= user.jabatan.sebutanJabatan %>" data-email="<%= user.email %>" data-kode="<%= user.username %>" data-jabatan="<%= user.jabatan.sebutanJabatan %>" data-divisi="<%= user.divisi %>">
+                          <%= user.username %> - <%= user.jabatan.sebutanJabatan %>
+                        </option>
+                        <% }) %>
+                      </select>
                     </div>
-                    <div class="form-group row mb-5">
+
+                    <!-- dari -->
+                    <div class="form-group mb-8">
+                      <label class="required form-label"> Pengirim</label>
+                      <!-- <input type="text" id="pengirim" name="pengirim" class="form-control" value="<%= username %>" disable /> -->
+                      <select class="form-select form-select-solid" id="pengirim" name="pengirim" data-control="select2" data-placeholder="dikirim oleh" data-allow-clear="true">
+                        <option value=""></option>
+                        <% users.forEach(user=> { %>
+                        <option value="<%= user.jabatan.sebutanJabatan %>">
+                          <%= user.username %> - <%= user.jabatan.sebutanJabatan %>
+                        </option>
+                        <% }) %>
+                      </select>
+                    </div>
+                    <div class="form-group mb-8">
+                      <label class="required form-label">Kode Klasifikasi</label>
+                      <select class="form-select form-select-solid" id="kodeKlasifikasi" name="kodeKlasifikasi" data-control="select2" data-placeholder="pilih kode klasifikasi" data-allow-clear="true">
+                        <option value=""></option>
+                        <% klasifikasi.forEach(data=> { %>
+                        <% data.klasifikasi.forEach(index=> { %>
+                        <option value="<%= index.kode %>">
+                          <%= index.kode %> - <%= index.jenis %>
+                        </option>
+                        <% }) %>
+                        <% }) %>
+                      </select>
+                    </div>
+                    <div class="form-group row mb-8">
                       <label class="required form-label" for="sifat">Sifat</label>
                       <div class="col-sm-8">
                         <select class="form-select form-select-solid" name="sifat" id="sifat" data-control="select2" data-placeholder="Pilih sifat" data-allow-clear="true">
@@ -62,7 +104,7 @@
                         </select>
                       </div>
                     </div>
-                    <div class="form-group row mb-5">
+                    <div class="form-group row mb-8">
                       <label class="required form-label"> Lampiran</label>
                       <div class="col-sm-4">
                         <input type="number" class="form-control" id="jumlah-lampiran" name="" value="1">
@@ -84,33 +126,36 @@
                 </div>
                 <div class="tab-pane fade" id="kt_tab_pane_2" role="tabpanel">
                   <form action="">
-                    <textarea id="my-expressjs-tinymce-app">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Explicabo veniam omnis nostrum iste magni veritatis ipsa. Est, vitae totam. In ipsam fugiat reprehenderit, non officia quisquam earum? Mollitia sit ipsam placeat aut repellendus aperiam pariatur nostrum veritatis facilis, nam quam hic nobis numquam incidunt praesentium, ex exercitationem magnam nemo.
-                      <table class="MsoTableGrid" border="1" cellspacing="0">
-                        <tbody>
-                        <tr>
-                        <td valign="top" width="260">
-                        <p class="MsoNormal" align="center"><strong>Lorem</strong></p>
-                        </td>
-                        <td valign="top" width="260">
-                        <p class="MsoNormal" align="center"><strong>Ipsum</strong></p>
-                        </td>
-                        <td valign="top" width="261">
-                        <p class="MsoNormal" align="center"><strong>Dolor</strong></p>
-                        </td>
-                        </tr>
-                        <tr>
-                        <td valign="top" width="260">
-                        <p class="MsoNormal" align="center">Lorem ipsum dolor sit amet</p>
-                        </td>
-                        <td valign="top" width="260">
-                        <p class="MsoNormal" align="center">262.630</p>
-                        </td>
-                        <td valign="top" width="261">
-                        <p class="MsoNormal" align="center">consectetur adipisicing elit. </p>
-                        </td>
-                        </tr>
-                        </tbody>
-                        </table>
+                    <textarea id="my-expressjs-tinymce-app">
+                      <p class="MsoNormal" align="justify">Dengan Hormat,</p>
+                      <p class="MsoNormal" align="justify">Sehubungan akan dilaksanakan nya proses implementasi Digital Signed melalui Teken Aja, Berikut kami sampaikan Tambahan Komponen Rencana RAB untuk kebutuhan Teknis</p>
+                      <table class="MsoTableGrid" style="width: 99.9616%; height: 86.8px;" border="1" cellspacing="0">
+                      <tbody>
+                      <tr style="height: 10px;">
+                      <td style="width: 43.8293%; height: 10px;" valign="top" width="284">
+                      <p class="MsoNormal" align="center"><strong>Layanan</strong></p>
+                      </td>
+                      <td style="width: 26.727%; height: 10px;" valign="top" width="284">
+                      <p class="MsoNormal" align="center"><strong>Biaya</strong></p>
+                      </td>
+                      <td style="width: 29.4053%; height: 10px;" valign="top" width="285">
+                      <p class="MsoNormal" align="center"><strong>Keterangan</strong></p>
+                      </td>
+                      </tr>
+                      <tr style="height: 76.8px;">
+                      <td style="width: 43.8293%; height: 76.8px;" valign="top" width="284">
+                      <p class="MsoNormal" align="center">Domain Name Server (DNS)</p>
+                      </td>
+                      <td style="width: 26.727%; height: 76.8px;" valign="top" width="284">
+                      <p class="MsoNormal" align="center">Rp. 262.630</p>
+                      </td>
+                      <td style="width: 29.4053%; height: 76.8px;" valign="top" width="285">
+                      <p class="MsoNormal" align="center">Biaya Untuk 1 Tahun</p>
+                      </td>
+                      </tr>
+                      </tbody>
+                      </table>
+                      <p class="MsoNormal" align="justify">&nbsp;</p>
                     </textarea>
                     <div class="mt-4">
                       <button type="button" class="btn btn-primary hover-scale me-3 load-indicator" id="generate-pdf" onclick="generatePDF()">
@@ -128,9 +173,14 @@
                     </div>
                   </form>
                 </div>
-
                 <div class="tab-pane fade" id="kt_tab_pane_3" role="tabpanel">
-                  .....
+                  <div class="form-group mb-5">
+                    <label class="form-label" for="files"> Upload Dokumen Surat/Fax </label>
+                    <input type="file" name="files" id="files" class="dropify" data-height="100" data-default-file="" />
+                    <div class="text-danger">
+                      <i>*Drop File atau klik disini untuk mengupload.</i>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -160,6 +210,15 @@
 <!-- <script src="/jspdf/dist/jspdf.umd.min.js"></script> -->
 
 <script>
+  $('.dropify').dropify({
+    messages: {
+      'default': 'Drag and drop a file here or click',
+      'replace': 'Drag and drop or click to replace',
+      'remove': 'Remove',
+      'error': 'Ooops, something wrong happended.'
+    }
+  });
+
   const btnPreview = document.querySelector("#generate-pdf");
   btnPreview.addEventListener("click", function() {
     btnPreview.setAttribute("data-kt-indicator", "on");
@@ -179,39 +238,65 @@
     event.preventDefault();
 
     const tahunIni = new Date().getFullYear();
-    const dari = $('#dari').val();
-    const kepada = $('#kepada').val();
+    const tanggal = new Date().toLocaleDateString('id-ID', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    });
+    const pengirim = $('#pengirim').val();
+    const penerima = $('#penerima').val();
+    const pemeriksa = $('#pemeriksa').val();
+
+    const selectElement = document.getElementById("pemeriksa");
+    const selectedOption = selectElement.options[selectElement.selectedIndex];
+    const kodeJabatan = selectedOption.getAttribute('data-kode'); // Mendapatkan nilai user.username
+    const jabatan = selectedOption.getAttribute('data-jabatan'); // Mendapatkan nilai user.Jabatan
+    const email = selectedOption.getAttribute('data-email');
+    console.log("pemeriksa:", jabatan, kodeJabatan, email);
+
+    const kodeKlasifikasi = $('#kodeKlasifikasi').val();
     const sifat = $('#sifat').val();
     const perihal = $('#perihal').val();
-    const jumlahLampiran = $("#jumlah-lampiran").val();
-    const tipeLampiran = $("#tipe-lampiran").val();
-    const lampiran = jumlahLampiran + " " + tipeLampiran;
+    const lampiran = $("#jumlah-lampiran").val() + " " + $("#tipe-lampiran").val();
     const isiSurat = tinymce.activeEditor.getContent();
 
     const valueNoAgenda = `<%= typeof lastNoAgenda !== 'undefined' && lastNoAgenda !== null ? lastNoAgenda.noAgenda + 1 : 1 %>`;
     const noAgenda = valueNoAgenda.toString().padStart(3, '0');
-    const nomorNotaDinas = `${noAgenda}/<%= divisi %>/I/${tahunIni}`;
+    const nomorNotaDinas = `${noAgenda}/${kodeKlasifikasi}/${kodeJabatan}/${tahunIni}`;
+
     // Create new PDF document
     window.jsPDF = window.jspdf.jsPDF;
     const doc = new jsPDF('p', 'pt', 'a4');
 
     //header logo
+    //logo
     const img = new Image();
     img.src = '/images/logo-500px.png';
-    doc.addImage(img, 'png', 10, 10, 113, 85);
+    doc.addImage(img, 'png', 60, 10, 113, 85);
 
     const img2 = new Image();
-    img2.src = '/images/logo-header.png';
-    doc.addImage(img2, 'png', 360, 20, 200, 60);
+    img2.src = '/images/logo-kanan.png';
+    doc.addImage(img2, 'png', 320, 25, 200, 60);
 
-    //garis
+    //line config
     const x = doc.internal.pageSize.getWidth() / 2;
-    const panjangGaris = 550;
+    const panjangGaris = 450;
     const startX = x - (panjangGaris / 2);
     const endX = x + (panjangGaris / 2);
-
+    //line header
     doc.setLineWidth(1);
-    doc.line(startX, 85, endX, 85);
+    doc.line(startX, 100, endX, 100);
+    // line footer
+    doc.setLineWidth(1);
+    doc.line(startX, 770, endX, 770);
+
+    doc.setFontSize(8)
+    doc.setFont("Helvetica", "bold")
+    doc.text("PT. GERBANG SINERGI PRIMA", 72, 780)
+    doc.setFont("Helvetica", "")
+    doc.text("Jl. Cikutra No.219, Bandung - Jawa Barat", 72, 790)
+    doc.text("Tlp : 022-426 6778 / Fax : - ", 72, 800)
+    doc.text("Email : sekper@gsp.co.id", 72, 810)
 
     //body
     // garis
@@ -220,48 +305,48 @@
     const endX2 = x + (lineLength / 2);
 
     doc.setLineWidth(1);
-    doc.line(startX2, 118, endX2, 118);
+    doc.line(startX2, 127, endX2, 127);
 
     doc.setFontSize(14);
     doc.setFont("Helvetica", "bold")
-    doc.text(`NOTA DINAS`, x, 115, {
+    doc.text(`NOTA DINAS`, x, 125, {
       align: "center"
     });
     doc.setFontSize(12);
     doc.setFont("Helvetica", "")
-    doc.text(`Nomor : ${nomorNotaDinas}`, x, 135, {
+    doc.text(`Nomor : ${nomorNotaDinas}`, x, 145, {
       align: "center"
     });
+    // kepala surat
+    doc.text(`Kepada`, 72, 200, );
+    doc.text(`Dari`, 72, 220, );
+    doc.text(`Tanggal`, 72, 240, );
+    doc.text(`Sifat`, 72, 260, );
+    doc.text(`Lampiran`, 72, 280, );
+    doc.text(`Hal`, 72, 300, );
 
-    doc.text(`Kepada`, 72, 180, );
-    doc.text(`Dari`, 72, 200, );
-    doc.text(`Sifat`, 72, 220, );
-    doc.text(`Lampiran`, 72, 240, );
-    doc.text(`Hal`, 72, 260, );
+    doc.text(`: Yth. ${penerima}`, 140, 200);
+    doc.text(`: ${pengirim}`, 140, 220);
+    doc.text(`: ${tanggal}`, 140, 240);
+    doc.text(`: ${sifat}`, 140, 260);
+    doc.text(`: ${lampiran}`, 140, 280);
+    doc.text(`: ${perihal}`, 140, 300);
 
-    doc.text(`: ${kepada}`, 140, 180);
-    doc.text(`: ${dari}`, 140, 200);
-    doc.text(`: ${sifat}`, 140, 220);
-    doc.text(`: ${lampiran}`, 140, 240);
-    doc.text(`: ${perihal}`, 140, 260);
+    //tembusan
+    doc.text("Tembusan :", 140, 700)
+    doc.text("1. .....", 140, 730)
+    doc.text("2. .....", 140, 750)
 
-    const tandatangan = `
-    <p>&nbsp;</p>
-    <table style="border-collapse: collapse; width: 32.8323%; height: 39px; background-color: rgb(255, 255, 255); border: 1px hidden rgb(255, 255, 255); margin-right: 0px; margin-left: auto;" border="1"><colgroup><col style="width: 100%;"></colgroup>
-      <tbody>
-        <tr>
-          <td style="border-width: 1px; border-color: rgb(255, 255, 255);">
-            <p style="text-align: center;">Lorem Ipsum</p>
-            <p style="text-align: center;">&nbsp;</p>
-            <p style="text-align: center;">&nbsp;</p>
-            <p style="text-align: center;">Daniel</p>
-          </td>
-        </tr>
-      </tbody>
-      </table>
-    `;
+    //tandatangan
+    // const imgSign = new Image();
+    // imgSign.src = '/images/sign.png';
+    // doc.addImage(imgSign, 'png', 420, 620, 50, 50); // x, y, width, height
+    doc.text(`${jabatan}`, 440, 700, {
+      align: 'center',
+      maxWidth: 150
+    });
 
-    doc.html(isiSurat + tandatangan, {
+    doc.html(isiSurat, {
       callback: function(doc) {
         const pdfViewer = document.getElementById("pdfViewer");
         pdfViewer.src = doc.output("datauristring");
@@ -286,9 +371,11 @@
             console.error("error :" + error);
           });
       },
-      margin: [300, 72, 72, 72],
-      width: 450,
-      windowWidth: 450,
+      // margin: [320, 320, 0, 140], //[top, right, bottom, left].
+      width: 370,
+      windowWidth: 380,
+      x: 140,
+      y: 350
     });
   }
 
@@ -299,17 +386,28 @@
       month: 'long',
       year: 'numeric',
     });
-    const dari = $('#dari').val();
-    const kepada = $('#kepada').val();
+    const pengirim = $('#pengirim').val();
+    const penerima = $('#penerima').val();
+    const pemeriksa = $('#pemeriksa').val();
+
+    const selectElement = document.getElementById("pemeriksa");
+    const selectedOption = selectElement.options[selectElement.selectedIndex];
+    const kodeJabatan = selectedOption.getAttribute('data-kode'); // Mendapatkan nilai user.username
+    const email = selectedOption.getAttribute('data-email');
+    const divisi = selectedOption.getAttribute('data-divisi');
+    console.log("pemeriksa:", email);
+
+
+    //
     const sifat = $('#sifat').val();
     const perihal = $('#perihal').val();
-    const jumlahLampiran = $("#jumlah-lampiran").val();
-    const tipeLampiran = $("#tipe-lampiran").val();
-    const lampiran = jumlahLampiran + " " + tipeLampiran;
+    const lampiran = $("#jumlah-lampiran").val() + " " + $("#tipe-lampiran").val();
+    const kodeKlasifikasi = $('#kodeKlasifikasi').val();
 
     const valueNoAgenda = `<%= typeof lastNoAgenda !== 'undefined' && lastNoAgenda !== null ? lastNoAgenda.noAgenda + 1 : 1 %>`;
     const noAgenda = valueNoAgenda.toString().padStart(3, '0');
-    const noNotaDinas = `${noAgenda}/<%= divisi %>/I/${tahun}`;
+    const noNotaDinas = `${noAgenda}/${kodeKlasifikasi}/${kodeJabatan}/${tahun}`;
+
 
     fetch('/notadinas/kirim', {
         method: 'POST',
@@ -321,15 +419,16 @@
           noAgenda,
           tanggal,
           tahun,
-          dari,
-          kepada,
+          dari: pengirim,
+          kepada: penerima,
+          pemeriksa,
           perihal,
           lampiran,
-          // kodeMasalah,
+          kodeKlasifikasi,
           sifat,
           // keterangan,
-          // email,s
-          // divisi,
+          email,
+          divisi,
           // fileAttachment,
           flag: 1,
         })
@@ -356,20 +455,31 @@
     //logo
     const img = new Image();
     img.src = '/images/logo-500px.png';
-    doc.addImage(img, 'png', 10, 10, 113, 85);
+    doc.addImage(img, 'png', 60, 10, 113, 85);
 
     const img2 = new Image();
-    img2.src = '/images/logo-header.png';
-    doc.addImage(img2, 'png', 360, 20, 200, 60);
+    img2.src = '/images/logo-kanan.png';
+    doc.addImage(img2, 'png', 320, 25, 200, 60);
 
-    //garis
+    //line config
     const x = doc.internal.pageSize.getWidth() / 2;
-    const panjangGaris = 550;
+    const panjangGaris = 450;
     const startX = x - (panjangGaris / 2);
     const endX = x + (panjangGaris / 2);
-
+    //line header
     doc.setLineWidth(1);
-    doc.line(startX, 85, endX, 85);
+    doc.line(startX, 100, endX, 100);
+    // line footer
+    doc.setLineWidth(1);
+    doc.line(startX, 770, endX, 770);
+
+    doc.setFontSize(8)
+    doc.setFont("Helvetica", "bold")
+    doc.text("PT. GERBANG SINERGI PRIMA", 72, 780)
+    doc.setFont("Helvetica", "")
+    doc.text("Jl. Cikutra No.219, Bandung - Jawa Barat", 72, 790)
+    doc.text("Tlp : 022-426 6778 / Fax : - ", 72, 800)
+    doc.text("Email : sekper@gsp.co.id", 72, 810)
 
     //body
     // garis
@@ -378,34 +488,45 @@
     const endX2 = x + (lineLength / 2);
 
     doc.setLineWidth(1);
-    doc.line(startX2, 118, endX2, 118);
-
+    doc.line(startX2, 127, endX2, 127);
 
     doc.setFontSize(14);
     doc.setFont("Helvetica", "bold")
-    doc.text(`NOTA DINAS`, x, 115, {
+    doc.text(`NOTA DINAS`, x, 125, {
       align: "center"
     });
     doc.setFontSize(12);
     doc.setFont("Helvetica", "")
-    doc.text(`Nomor : .../.../.../2023`, x, 135, {
+    doc.text(`Nomor : .../.../.../2023`, x, 145, {
       align: "center"
     });
 
-    doc.text(`Kepada`, 72, 180, );
-    doc.text(`Dari`, 72, 200, );
-    doc.text(`Sifat`, 72, 220, );
-    doc.text(`Lampiran`, 72, 240, );
-    doc.text(`Hal`, 72, 260, );
+    doc.text(`Kepada`, 72, 200, );
+    doc.text(`Dari`, 72, 220, );
+    doc.text(`Tanggal`, 72, 240, );
+    doc.text(`Sifat`, 72, 260, );
+    doc.text(`Lampiran`, 72, 280, );
+    doc.text(`Hal`, 72, 300, );
 
-    const separatorWidth = 72;
-    const separatorText = ':';
+    doc.text(`: Yth. .....`, 140, 200);
+    doc.text(`: .....`, 140, 220);
+    doc.text(`: .....`, 140, 240);
+    doc.text(`: .....`, 140, 260);
+    doc.text(`: .....`, 140, 280);
+    doc.text(`: .....`, 140, 300);
+    //tembusan
+    doc.text("Tembusan :", 140, 700)
+    doc.text("1. .....", 140, 730)
+    doc.text("2. .....", 140, 750)
 
-    doc.text(separatorText, 72 + separatorWidth, 180, null, null, 'right');
-    doc.text(separatorText, 72 + separatorWidth, 200, null, null, 'right');
-    doc.text(separatorText, 72 + separatorWidth, 220, null, null, 'right');
-    doc.text(separatorText, 72 + separatorWidth, 240, null, null, 'right');
-    doc.text(separatorText, 72 + separatorWidth, 260, null, null, 'right');
+    //tandatangan
+    const imgSign = new Image();
+    imgSign.src = '/images/sign.png';
+    doc.addImage(imgSign, 'png', 420, 620, 50, 50); // x, y, width, height
+    doc.text(`########`, 440, 700, {
+      align: 'center',
+      maxWidth: 150
+    });
 
     const pdfViewer = document.getElementById("pdfViewer");
     pdfViewer.src = doc.output("datauristring");

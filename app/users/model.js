@@ -13,7 +13,13 @@ let userSchema = mongoose.Schema(
     },
     email: { type: String },
     divisi: { type: String },
-    jabatan: { type: String },
+    role: { type: String },
+    jabatan: {
+      kodeUnit: String,
+      namaUnit: String,
+      kodeSejab: String,
+      sebutanJabatan: String,
+    },
   },
   { timestamps: true }
 );

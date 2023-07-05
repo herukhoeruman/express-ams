@@ -23,6 +23,7 @@ module.exports = {
       } else {
         res.render("dashboard", {
           title: "Dashboard",
+          subtitle: "",
           username: req.session.user.username,
           jabatan: req.session.user.jabatan,
           email: req.session.user.email,

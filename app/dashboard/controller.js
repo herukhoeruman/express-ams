@@ -3,7 +3,7 @@ module.exports = {
     try {
       res.render("dashboard/index", {
         title: "Dashboard",
-        subtitle: "",
+        subtitle: "dashboard",
         username: req.session.user.username,
         jabatan: req.session.user.jabatan,
       });

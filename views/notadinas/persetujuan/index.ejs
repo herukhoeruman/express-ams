@@ -1,0 +1,197 @@
+<%- include ../../partials/header.ejs %>
+<%- include ../../partials/navbar.ejs %>
+<%- include ../../partials/sidebar.ejs %>
+<div id="kt_app_toolbar" class="py-3 py-lg-6">
+  <div id="kt_app_toolbar_container" class="app-container">
+    <%# include ../../partials/message.ejs %>
+    <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
+      <h1 class="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">
+        <%= subtitle %></h1>
+      <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
+        <li class="breadcrumb-item text-muted">
+          <a href="/" class="text-muted text-hover-primary">Home</a>
+        </li>
+        <li class="breadcrumb-item">
+          <span class="bullet bg-gray-400 w-5px h-2px"></span>
+        </li>
+        <li class="breadcrumb-item text-muted"><%= subtitle %></li>
+      </ul>
+    </div>
+
+    <div class="card shadow-sm mt-5">
+      <div class="card-body">
+        <table id="kt_datatable_dom_positioning" class="table table-striped table-row-bordered gy-5 gs-7 border rounded">
+          <thead>
+            <tr class="fw-bold fs-6 text-gray-800 px-7">
+              <th class="">No.</th>
+              <th class="">No Nota Dinas</th>
+              <th class="">Dari</th>
+              <th class="">Kepada</th>
+              <th class="">Hal</th>
+              <th class="">Tanggal</th>
+              <th class="">Status</th>
+              <th class="">Action</th>
+            </tr>
+          </thead>
+          <tbody class="fw-semibold">
+            <% for(let i=0; i < notaDinas.length; i++) { %>
+            <tr class="odd">
+              <td> <%= i +1 %></td>
+              <td> <%= notaDinas[i].noNotaDinas %></td>
+              <td> <%= notaDinas[i].dari %></td>
+              <td> <%= notaDinas[i].kepada %></td>
+              <td> <%= notaDinas[i].perihal %></td>
+              <td> <%= notaDinas[i].tanggal %></td>
+              <td>
+                <% if (notaDinas[i].flag === 1) { %>
+                <span class="badge badge-danger">Belum Disetujui</span>
+                <% } else { %>
+                <span class="badge badge-success">Disetujui</span>
+                <% } %>
+              </td>
+              <td>
+                <% if (notaDinas[i].flag === 1) { %>
+                <a href="persetujuan/<%= notaDinas[i]._id %>" class="btn btn-sm btn-light-primary btn-icon mr-2" title="Persetujuan">
+                  <span class="svg-icon svg-icon-primary svg-icon-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                      <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <rect x="0" y="0" width="24" height="24" />
+                        <path d="M8,17.9148182 L8,5.96685884 C8,5.56391781 8.16211443,5.17792052 8.44982609,4.89581508 L10.965708,2.42895648 C11.5426798,1.86322723 12.4640974,1.85620921 13.0496196,2.41308426 L15.5337377,4.77566479 C15.8314604,5.0588212 16,5.45170806 16,5.86258077 L16,17.9148182 C16,18.7432453 15.3284271,19.4148182 14.5,19.4148182 L9.5,19.4148182 C8.67157288,19.4148182 8,18.7432453 8,17.9148182 Z" fill="currentColor" fill-rule="nonzero" transform="translate(12.000000, 10.707409) rotate(-135.000000) translate(-12.000000, -10.707409) " />
+                        <rect fill="currentColor" opacity="0.3" x="5" y="20" width="15" height="2" rx="1" />
+                      </g>
+                    </svg>
+                  </span>
+                </a>
+                <% } %>
+                <a data-id="<%= notaDinas[i]._id %>" class="btn btn-sm btn-light-danger btn-icon mr-2" data-bs-toggle="modal" data-bs-target="#documentModal<%= notaDinas[i]._id %>" title="Lihat Nota Dinas">
+                  <span class="svg-icon svg-icon-info svg-icon-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                      <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <polygon points="0 0 24 0 24 24 0 24" />
+                        <path d="M5.85714286,2 L13.7364114,2 C14.0910962,2 14.4343066,2.12568431 14.7051108,2.35473959 L19.4686994,6.3839416 C19.8056532,6.66894833 20,7.08787823 20,7.52920201 L20,20.0833333 C20,21.8738751 19.9795521,22 18.1428571,22 L5.85714286,22 C4.02044787,22 4,21.8738751 4,20.0833333 L4,3.91666667 C4,2.12612489 4.02044787,2 5.85714286,2 Z" fill="currentColor" fill-rule="nonzero" opacity="0.3" />
+                        <rect fill="currentColor" x="6" y="11" width="9" height="2" rx="1" />
+                        <rect fill="currentColor" x="6" y="15" width="5" height="2" rx="1" />
+                      </g>
+                    </svg>
+                    <!--end::Svg Icon-->
+                  </span>
+                </a>
+
+                <!-- modal view document pdf -->
+                <div class="modal fade modal-lg" tabindex="-1" id="documentModal<%= notaDinas[i]._id %>">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h3 class="modal-title">Nota Dinas <%= notaDinas[i].noNotaDinas %> </h3>
+                        <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                          <span class="svg-icon svg-icon-1">
+                            <span class="svg-icon svg-icon-primary svg-icon-2x">
+                              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                  <g transform="translate(12.000000, 12.000000) rotate(-45.000000) translate(-12.000000, -12.000000) translate(4.000000, 4.000000)" fill="currentColor">
+                                    <rect x="0" y="7" width="16" height="2" rx="1" />
+                                    <rect opacity="0.3" transform="translate(8.000000, 8.000000) rotate(-270.000000) translate(-8.000000, -8.000000) " x="0" y="7" width="16" height="2" rx="1" />
+                                  </g>
+                                </g>
+                              </svg>
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+                      <div class="modal-body">
+                        <p id="errorMessage<%= notaDinas[i]._id %>" style="display: none;">Dokumen belum tersedia.</p>
+                        <iframe src="/upload/<%= notaDinas[i].document %>" width="100%" height="1080" type="application/pdf"></iframe>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<%# include ../../partials/modals.ejs %>
+
+<%- include ../../partials/footer.ejs %>
+<%- include ../../partials/js.ejs %>
+<script>
+  $('.select2-multiple').select2();
+
+
+  function refresh() {
+    location.reload();
+  }
+
+  function submitForm() {
+    const notaDinasKode = document.getElementById('notaDinasKode').value;
+    const checkboxes = document.querySelectorAll('.disposisi:checked');
+    const disposisiValues = Array.from(checkboxes).map((checkbox) => checkbox.value);
+    const penerima = document.getElementById(`penerima_${notaDinasKode}`).value;
+    const tindakLanjut = document.getElementById(`tindakLanjut_${notaDinasKode}`).value;
+
+    const data = {
+      notaDinasKode: notaDinasKode,
+      disposisi: disposisiValues,
+      penerima: penerima,
+      tindakLanjut: tindakLanjut
+    };
+
+    fetch('/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then((response) => response.json())
+      .then((result) => {
+        // Handle response from server
+        console.log(result);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  }
+
+
+  $("#kt_datatable_dom_positioning").DataTable({
+    "language": {
+      "lengthMenu": "Show _MENU_",
+    },
+    "dom": "<'row'<'col-sm-6'l><'col-sm-5' f><'col-sm-1'<'button-container'>>>" +
+      "<'table-responsive'tr>" +
+      "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+    "initComplete": function() {
+      $("div.button-container").append(`<button class="btn btn-sm btn-light-primary btn-icon mt-4" onclick="refresh()"><span class="svg-icon svg-icon-primary svg-icon-2x"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+          <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+            <rect x="0" y="0" width="24" height="24"/>
+            <path d="M12,8 L8,8 C5.790861,8 4,9.790861 4,12 L4,13 C4,14.6568542 5.34314575,16 7,16 L7,18 C4.23857625,18 2,15.7614237 2,13 L2,12 C2,8.6862915 4.6862915,6 8,6 L12,6 L12,4.72799742 C12,4.62015048 12.0348702,4.51519416 12.0994077,4.42878885 C12.264656,4.2075478 12.5779675,4.16215674 12.7992086,4.32740507 L15.656242,6.46136716 C15.6951359,6.49041758 15.7295917,6.52497737 15.7585249,6.56395854 C15.9231063,6.78569617 15.876772,7.09886961 15.6550344,7.263451 L12.798001,9.3840407 C12.7118152,9.44801079 12.607332,9.48254921 12.5,9.48254921 C12.2238576,9.48254921 12,9.25869158 12,8.98254921 L12,8 Z" fill="currentColor"/>
+            <path d="M12.0583175,16 L16,16 C18.209139,16 20,14.209139 20,12 L20,11 C20,9.34314575 18.6568542,8 17,8 L17,6 C19.7614237,6 22,8.23857625 22,11 L22,12 C22,15.3137085 19.3137085,18 16,18 L12.0583175,18 L12.0583175,18.9825492 C12.0583175,19.2586916 11.8344599,19.4825492 11.5583175,19.4825492 C11.4509855,19.4825492 11.3465023,19.4480108 11.2603165,19.3840407 L8.40328311,17.263451 C8.18154548,17.0988696 8.13521119,16.7856962 8.29979258,16.5639585 C8.32872576,16.5249774 8.36318164,16.4904176 8.40207551,16.4613672 L11.2591089,14.3274051 C11.48035,14.1621567 11.7936615,14.2075478 11.9589099,14.4287888 C12.0234473,14.5151942 12.0583175,14.6201505 12.0583175,14.7279974 L12.0583175,16 Z" fill="currentColor" opacity="0.3"/>
+          </g>
+        </svg>
+      </span>
+    </button>`);
+    }
+    // dom: "<'row'" +
+    //   "<'col-sm-6 d-flex align-items-center justify-conten-start'l>" +
+    //   "<'col-sm-6 d-flex align-items-center justify-content-end'f>" +
+    //   ">" +
+
+    //   "<'table-responsive'tr>" +
+
+    //   "<'row'" +
+    //   "<'col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start'i>" +
+    //   "<'col-sm-12 col-md-7 d-flex align-items-center justify-content-center justify-content-md-end'p>" +
+    //   ">"
+  });
+</script>

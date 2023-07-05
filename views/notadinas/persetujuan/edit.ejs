@@ -1,0 +1,159 @@
+<%- include ../../partials/header.ejs %>
+<%- include ../../partials/navbar.ejs %>
+<%- include ../../partials/sidebar.ejs %>
+<div id="kt_app_toolbar" class="py-3 py-lg-6">
+  <div id="kt_app_toolbar_container" class="app-container">
+    <%# include ../../partials/message.ejs %>
+    <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
+      <h1 class="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">
+        <%= subtitle %></h1>
+      <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0 pt-1">
+        <li class="breadcrumb-item text-muted">
+          <a href="/" class="text-muted text-hover-primary">Home</a>
+        </li>
+        <li class="breadcrumb-item">
+          <span class="bullet bg-gray-400 w-5px h-2px"></span>
+        </li>
+        <li class="breadcrumb-item text-muted"><%= subtitle %></li>
+      </ul>
+    </div>
+
+    <div class="card shadow-sm mt-5">
+      <div class="card-body">
+
+
+        <div class="row">
+          <!-- <div class="col"></div> -->
+          <div class="col-md-8">
+            <div class="card card-bordered mb-5">
+              <div class="card-body">
+                <div class="mb-4">
+                  <div class="row">
+                    <div class="col-sm-3">No Nota Dinas</div>
+                    <div class="col-sm-8">: <%= notaDinas.noNotaDinas %></div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-3">Dari</div>
+                    <div class="col-sm-8">: <%= notaDinas.dari %></div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-3">Kepada</div>
+                    <div class="col-sm-8">: <%= notaDinas.kepada %></div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-3">....</div>
+                    <div class="col-sm-8">: ....</div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-3">....</div>
+                    <div class="col-sm-8">: ....</div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-3">....</div>
+                    <div class="col-sm-8">: ....</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card card-bordered">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-4">
+
+                    <select name="" id="" class="form-select form-select-solid">
+                      <option value="<%= notaDinas.flag  %>"><%= (notaDinas.flag === 1 ? 'Belum Disetujui' : "Disetujui")  %></option>
+                      <option value="1">Approve</option>
+                      <option value="2">Approve</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<%# include ../../partials/modals.ejs %>
+
+<%- include ../../partials/footer.ejs %>
+<%- include ../../partials/js.ejs %>
+<script>
+  $('.select2-multiple').select2();
+
+
+  function refresh() {
+    location.reload();
+  }
+
+  function submitForm() {
+    const notaDinasKode = document.getElementById('notaDinasKode').value;
+    const checkboxes = document.querySelectorAll('.disposisi:checked');
+    const disposisiValues = Array.from(checkboxes).map((checkbox) => checkbox.value);
+    const penerima = document.getElementById(`penerima_${notaDinasKode}`).value;
+    const tindakLanjut = document.getElementById(`tindakLanjut_${notaDinasKode}`).value;
+
+    const data = {
+      notaDinasKode: notaDinasKode,
+      disposisi: disposisiValues,
+      penerima: penerima,
+      tindakLanjut: tindakLanjut
+    };
+
+    fetch('/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then((response) => response.json())
+      .then((result) => {
+        // Handle response from server
+        console.log(result);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  }
+
+
+  $("#kt_datatable_dom_positioning").DataTable({
+    "language": {
+      "lengthMenu": "Show _MENU_",
+    },
+    "dom": "<'row'<'col-sm-6'l><'col-sm-5' f><'col-sm-1'<'button-container'>>>" +
+      "<'table-responsive'tr>" +
+      "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+    "initComplete": function() {
+      $("div.button-container").append(`<button class="btn btn-sm btn-light-primary btn-icon mt-4" onclick="refresh()"><span class="svg-icon svg-icon-primary svg-icon-2x"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+          <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+            <rect x="0" y="0" width="24" height="24"/>
+            <path d="M12,8 L8,8 C5.790861,8 4,9.790861 4,12 L4,13 C4,14.6568542 5.34314575,16 7,16 L7,18 C4.23857625,18 2,15.7614237 2,13 L2,12 C2,8.6862915 4.6862915,6 8,6 L12,6 L12,4.72799742 C12,4.62015048 12.0348702,4.51519416 12.0994077,4.42878885 C12.264656,4.2075478 12.5779675,4.16215674 12.7992086,4.32740507 L15.656242,6.46136716 C15.6951359,6.49041758 15.7295917,6.52497737 15.7585249,6.56395854 C15.9231063,6.78569617 15.876772,7.09886961 15.6550344,7.263451 L12.798001,9.3840407 C12.7118152,9.44801079 12.607332,9.48254921 12.5,9.48254921 C12.2238576,9.48254921 12,9.25869158 12,8.98254921 L12,8 Z" fill="currentColor"/>
+            <path d="M12.0583175,16 L16,16 C18.209139,16 20,14.209139 20,12 L20,11 C20,9.34314575 18.6568542,8 17,8 L17,6 C19.7614237,6 22,8.23857625 22,11 L22,12 C22,15.3137085 19.3137085,18 16,18 L12.0583175,18 L12.0583175,18.9825492 C12.0583175,19.2586916 11.8344599,19.4825492 11.5583175,19.4825492 C11.4509855,19.4825492 11.3465023,19.4480108 11.2603165,19.3840407 L8.40328311,17.263451 C8.18154548,17.0988696 8.13521119,16.7856962 8.29979258,16.5639585 C8.32872576,16.5249774 8.36318164,16.4904176 8.40207551,16.4613672 L11.2591089,14.3274051 C11.48035,14.1621567 11.7936615,14.2075478 11.9589099,14.4287888 C12.0234473,14.5151942 12.0583175,14.6201505 12.0583175,14.7279974 L12.0583175,16 Z" fill="currentColor" opacity="0.3"/>
+          </g>
+        </svg>
+      </span>
+    </button>`);
+    }
+    // dom: "<'row'" +
+    //   "<'col-sm-6 d-flex align-items-center justify-conten-start'l>" +
+    //   "<'col-sm-6 d-flex align-items-center justify-content-end'f>" +
+    //   ">" +
+
+    //   "<'table-responsive'tr>" +
+
+    //   "<'row'" +
+    //   "<'col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start'i>" +
+    //   "<'col-sm-12 col-md-7 d-flex align-items-center justify-content-center justify-content-md-end'p>" +
+    //   ">"
+  });
+</script>

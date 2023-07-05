@@ -1,6 +1,9 @@
 tinymce.init({
   selector: "textarea#my-expressjs-tinymce-app",
+  // content_style: "body { padding: 100px 100px; }",
+
   height: 300,
+  // width: 300,
   menubar: false,
   branding: false,
   // statusbar: false,
