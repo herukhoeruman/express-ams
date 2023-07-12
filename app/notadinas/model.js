@@ -1,6 +1,4 @@
 const mongoose = require("mongoose");
-// const moment = require('moment-timezone');
-// const asiaJakarta = moment().tz('Asia/Jakarta').format();
 
 const notaDinasSchema = mongoose.Schema(
   {
@@ -9,12 +7,16 @@ const notaDinasSchema = mongoose.Schema(
     tanggal: String,
     tahun: String,
     dari: String,
-    kepada: [String],
+    kepada: String,
     pemeriksa: String,
+    pengirim: String,
     perihal: String,
-    lampiran: String,
+    jumlahLampiran: { type: Number, default: 0 },
+    jenisLampiran: String,
     kodeKlasifikasi: String,
     sifat: String,
+    isiSurat: String,
+    tembusan: [String],
     email: String,
     divisi: String,
     document: String,

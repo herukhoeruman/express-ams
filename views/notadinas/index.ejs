@@ -30,7 +30,7 @@
               <th class="">Hal</th>
               <th class="">Tanggal</th>
               <th class="">Dokumen</th>
-              <th class="">Action</th>
+              <th class=""></th>
             </tr>
           </thead>
           <tbody class="fw-semibold">
@@ -98,33 +98,8 @@
                   </div>
                 </div>
 
-                <!-- modal signature -->
-                <div class="modal bg-body fade" tabindex="-1" id="signatureModal<%= notaDinas[i]._id %>">
-                  <div class="modal-dialog modal-fullscreen">
-                    <div class="modal-content shadow-none">
-                      <div class="modal-header">
-                        <h5 class="modal-title">Signature <%= notaDinas[i].dataResponse.sign[0].url %></h5>
-                        <!-- <a href="https://ttd.sandbox-111094.com/l5rknGpkAUCSJN">https://ttd.sandbox-111094.com/l5rknGpkAUCSJN</a> -->
-                        <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
-                          <i class="ki-duotone ki-cross fs-2x"><span class="path1"></span><span class="path2"></span></i>
-                        </div>
-                      </div>
-
-                      <div class="h-100 w-100">
-                        <!-- <iframe id="myIframe" src="<%= notaDinas[i].dataResponse.sign[0].url %>" class="h-100 w-100"></iframe> -->
-                      </div>
-
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
                 <!-- forward drawer -->
                 <div id="kt_drawer_chat" class="bg-body" data-kt-drawer="true" data-kt-drawer-name="chat" data-kt-drawer-activate="true" data-kt-drawer-overlay="true" data-kt-drawer-width="{default:'300px', 'md': '500px'}" data-kt-drawer-direction="end" data-kt-drawer-toggle="#kt_drawer_chat_toggle_<%= notaDinas[i]._id %>" data-kt-drawer-close="#kt_drawer_chat_close_<%= notaDinas[i]._id %>">
-                  <!--begin::Messenger-->
                   <div class="card w-100 rounded-0 border-0" id="kt_drawer_chat_messenger">
                     <div class="card-header pe-5" id="kt_drawer_chat_messenger_header_<%= notaDinas[i]._id %>">
                       <div class="card-title">

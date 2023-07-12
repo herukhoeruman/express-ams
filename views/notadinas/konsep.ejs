@@ -42,61 +42,87 @@
               <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="kt_tab_pane_1" role="tabpanel">
                   <form>
-                    <!-- kepada -->
-                    <div class="form-group mb-8">
-                      <label class="required form-label">Penerima</label>
-                      <select class="form-select form-select-solid" id="penerima" name="penerima" data-control="select2" data-close-on-select="false" data-placeholder="dikirimkan kepada" data-allow-clear="true" multiple="multiple">
-                        <option></option>
-                        <% users.forEach(user=> { %>
-                        <option value="<%= user.jabatan.sebutanJabatan %>">
-                          <%= user.username %> - <%= user.jabatan.sebutanJabatan %>
-                        </option>
-                        <% }) %>
-                      </select>
+                    <div class="row mb-5 d-flex align-items-center">
+                      <div class="col-md-4">
+                        <label class="required form-label">Penerima</label>
+                      </div>
+                      <div class="col-md-8">
+                        <select class="form-select" id="penerima" name="penerima" data-control="select2" data-placeholder="dikirimkan kepada" data-allow-clear="true">
+                          <option></option>
+                          <% users.forEach(user=> { %>
+                          <option value="<%= user.jabatan.sebutanJabatan %>">
+                            <%= user.username %> - <%= user.jabatan.sebutanJabatan %>
+                          </option>
+                          <% }) %>
+                        </select>
+                      </div>
                     </div>
 
-                    <div class="form-group mb-8">
-                      <label class="required form-label">Pemeriksa</label>
-                      <select class="form-select form-select-solid" id="pemeriksa" name="pemeriksa" data-control="select2" data-placeholder="diperiksa oleh" data-allow-clear="true">
-                        <option value=""></option>
-                        <% users.forEach(user=> { %>
-                        <option value="<%= user.jabatan.sebutanJabatan %>" data-email="<%= user.email %>" data-kode="<%= user.username %>" data-jabatan="<%= user.jabatan.sebutanJabatan %>" data-divisi="<%= user.divisi %>">
-                          <%= user.username %> - <%= user.jabatan.sebutanJabatan %>
-                        </option>
-                        <% }) %>
-                      </select>
+                    <div class="row mb-5 d-flex align-items-center">
+                      <div class="col-md-4">
+                        <label class="required form-label">Pemeriksa</label>
+                      </div>
+                      <div class="col-md-8">
+                        <select class="form-select" id="pemeriksa" name="pemeriksa" data-control="select2" data-placeholder="diperiksa oleh" data-allow-clear="true">
+                          <option value=""></option>
+                          <% users.forEach(user=> { %>
+                          <option value="<%= user.jabatan.sebutanJabatan %>" data-email="<%= user.email %>" data-kode="<%= user.username %>" data-jabatan="<%= user.jabatan.sebutanJabatan %>" data-divisi="<%= user.jabatan.namaUnit %>">
+                            <%= user.username %> - <%= user.jabatan.sebutanJabatan %>
+                          </option>
+                          <% }) %>
+                        </select>
+                      </div>
                     </div>
 
-                    <!-- dari -->
-                    <div class="form-group mb-8">
-                      <label class="required form-label"> Pengirim</label>
-                      <!-- <input type="text" id="pengirim" name="pengirim" class="form-control" value="<%= username %>" disable /> -->
-                      <select class="form-select form-select-solid" id="pengirim" name="pengirim" data-control="select2" data-placeholder="dikirim oleh" data-allow-clear="true">
-                        <option value=""></option>
-                        <% users.forEach(user=> { %>
-                        <option value="<%= user.jabatan.sebutanJabatan %>">
-                          <%= user.username %> - <%= user.jabatan.sebutanJabatan %>
-                        </option>
-                        <% }) %>
-                      </select>
+                    <!-- <div class="row mb-5 d-flex align-items-center">
+                      <div class="col-md-4">
+                        <label class="required form-label"> Pengirim</label>
+                      </div>
+                      <div class="col-md-8">
+                        <select class="form-select" id="pengirim" name="pengirim" data-control="select2" data-placeholder="dikirim oleh" data-allow-clear="true">
+                          <option value=""></option>
+                          <% users.forEach(user=> { %>
+                          <option value="<%= user.jabatan.sebutanJabatan %>">
+                            <%= user.username %> - <%= user.jabatan.sebutanJabatan %>
+                          </option>
+                          <% }) %>
+                        </select>
+                      </div>
+                    </div> -->
+
+                    <div class="row mb-5 d-flex align-items-center">
+                      <div class="col-md-4">
+                        <label class="required form-label"> Tanggal </label>
+                      </div>
+                      <div class="col-md-8">
+                        <input class="form-control" name="tanggal" placeholder="pilih tanggal" id="tanggal" />
+                      </div>
                     </div>
-                    <div class="form-group mb-8">
-                      <label class="required form-label">Kode Klasifikasi</label>
-                      <select class="form-select form-select-solid" id="kodeKlasifikasi" name="kodeKlasifikasi" data-control="select2" data-placeholder="pilih kode klasifikasi" data-allow-clear="true">
-                        <option value=""></option>
-                        <% klasifikasi.forEach(data=> { %>
-                        <% data.klasifikasi.forEach(index=> { %>
-                        <option value="<%= index.kode %>">
-                          <%= index.kode %> - <%= index.jenis %>
-                        </option>
-                        <% }) %>
-                        <% }) %>
-                      </select>
+
+                    <div class="row mb-5 d-flex align-items-center">
+                      <div class="col-md-4">
+                        <label class="required form-label">Kode Klasifikasi</label>
+                      </div>
+                      <div class="col-md-8">
+                        <select class="form-select" id="kodeKlasifikasi" name="kodeKlasifikasi" data-control="select2" data-placeholder="pilih kode klasifikasi" data-allow-clear="true">
+                          <option value=""></option>
+                          <% klasifikasi.forEach(data=> { %>
+                          <% data.klasifikasi.forEach(index=> { %>
+                          <option value="<%= index.kode %>">
+                            <%= index.kode %> - <%= index.jenis %>
+                          </option>
+                          <% }) %>
+                          <% }) %>
+                        </select>
+                      </div>
                     </div>
-                    <div class="form-group row mb-8">
-                      <label class="required form-label" for="sifat">Sifat</label>
-                      <div class="col-sm-8">
-                        <select class="form-select form-select-solid" name="sifat" id="sifat" data-control="select2" data-placeholder="Pilih sifat" data-allow-clear="true">
+
+                    <div class="row mb-5 d-flex align-items-center">
+                      <div class="col-md-4">
+                        <label class="required form-label" for="sifat">Sifat</label>
+                      </div>
+                      <div class="col-md-8">
+                        <select class="form-select" name="sifat" id="sifat" data-control="select2" data-placeholder="Pilih sifat" data-allow-clear="true">
                           <option></option>
                           <option value="Segera">Segera</option>
                           <option value="Amat Segera">Amat Segera
@@ -104,23 +130,51 @@
                         </select>
                       </div>
                     </div>
-                    <div class="form-group row mb-8">
-                      <label class="required form-label"> Lampiran</label>
-                      <div class="col-sm-4">
-                        <input type="number" class="form-control" id="jumlah-lampiran" name="" value="1">
+
+                    <div class="row mb-5 d-flex align-items-center">
+                      <div class="col-md-4">
+                        <label class="required form-label"> Lampiran</label>
                       </div>
-                      <div class="col-sm-4">
-                        <select class=" form-control form-select form-select-solid" name="" id="tipe-lampiran" data-control="select2" data-placeholder="Lampiran" data-allow-clear="true">
-                          <option></option>
-                          <option value="Lembar">Lembar</option>
-                          <option value="Berkas">Berkas</option>
-                          <option value="Halaman">Halaman</option>
-                        </select>
+                      <div class="col-md-8">
+                        <div class="row">
+                          <div class="col-sm-4">
+                            <input type="number" class="form-control" id="jumlah-lampiran" name="" value="" placeholder="0">
+                          </div>
+                          <div class="col-sm-8">
+                            <select class=" form-control form-select" name="" id="tipe-lampiran" data-control="select2" data-placeholder="Lampiran" data-allow-clear="true">
+                              <option></option>
+                              <option value="Lembar">Lembar</option>
+                              <option value="Berkas">Berkas</option>
+                              <option value="Halaman">Halaman</option>
+                            </select>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <div class="form-group mb-3">
-                      <label class="required form-label">Hal</label>
-                      <textarea type="textarea" id="perihal" name="perihal" class="form-control"></textarea>
+
+                    <div class="row mb-5 d-flex align-items-center">
+                      <div class="col-md-4">
+                        <label class="required form-label">Hal</label>
+                      </div>
+                      <div class="col-md-8">
+                        <textarea type="textarea" id="perihal" name="perihal" class="form-control"></textarea>
+                      </div>
+                    </div>
+
+                    <div class="row mb-5 d-flex align-items-center">
+                      <div class="col-md-4">
+                        <label class="required form-label">Tembusan</label>
+                      </div>
+                      <div class="col-md-8">
+                        <select class="form-select" id="tembusan" name="tembusan" data-control="select2" data-close-on-select="tru" data-placeholder="dikirimkan kepada" data-allow-clear="true" multiple="multiple">
+                          <option></option>
+                          <% users.forEach(user=> { %>
+                          <option value="<%= user.jabatan.sebutanJabatan %>">
+                            <%= user.username %> - <%= user.jabatan.sebutanJabatan %>
+                          </option>
+                          <% }) %>
+                        </select>
+                      </div>
                     </div>
                   </form>
                 </div>
@@ -209,6 +263,8 @@
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.7/dist/html2canvas.min.js"></script>
 <!-- <script src="/jspdf/dist/jspdf.umd.min.js"></script> -->
 
+<script src="/javascripts/flatpickr-id.js"></script>
+
 <script>
   $('.dropify').dropify({
     messages: {
@@ -217,6 +273,12 @@
       'remove': 'Remove',
       'error': 'Ooops, something wrong happended.'
     }
+  });
+
+  $("#tanggal").flatpickr({
+    enableTime: false,
+    dateFormat: "j F Y",
+    locale: "id"
   });
 
   const btnPreview = document.querySelector("#generate-pdf");
@@ -238,12 +300,20 @@
     event.preventDefault();
 
     const tahunIni = new Date().getFullYear();
-    const tanggal = new Date().toLocaleDateString('id-ID', {
+    const tanggalVal = $('#tanggal').val();
+    const tanggal = new Date(tanggalVal).toLocaleDateString('id-ID', {
       day: 'numeric',
       month: 'long',
-      year: 'numeric',
+      year: 'numeric'
     });
-    const pengirim = $('#pengirim').val();
+    console.log(tanggal);
+    console.log(tanggalVal);
+    // const tanggal = new Date().toLocaleDateString('id-ID', {
+    //   day: 'numeric',
+    //   month: 'long',
+    //   year: 'numeric',
+    // });
+    // const pengirim = $('#pengirim').val();
     const penerima = $('#penerima').val();
     const pemeriksa = $('#pemeriksa').val();
 
@@ -257,8 +327,12 @@
     const kodeKlasifikasi = $('#kodeKlasifikasi').val();
     const sifat = $('#sifat').val();
     const perihal = $('#perihal').val();
-    const lampiran = $("#jumlah-lampiran").val() + " " + $("#tipe-lampiran").val();
+    let lampiran = ($("#jumlah-lampiran").val()) ? $("#jumlah-lampiran").val() + " " + $("#tipe-lampiran").val() : "-";
     const isiSurat = tinymce.activeEditor.getContent();
+    const tembusan = $('#tembusan').val();
+
+    // console.log(isiSurat);
+    console.log("tembusan:", tembusan);
 
     const valueNoAgenda = `<%= typeof lastNoAgenda !== 'undefined' && lastNoAgenda !== null ? lastNoAgenda.noAgenda + 1 : 1 %>`;
     const noAgenda = valueNoAgenda.toString().padStart(3, '0');
@@ -326,16 +400,22 @@
     doc.text(`Hal`, 72, 300, );
 
     doc.text(`: Yth. ${penerima}`, 140, 200);
-    doc.text(`: ${pengirim}`, 140, 220);
+    doc.text(`: ${pemeriksa}`, 140, 220);
     doc.text(`: ${tanggal}`, 140, 240);
     doc.text(`: ${sifat}`, 140, 260);
     doc.text(`: ${lampiran}`, 140, 280);
     doc.text(`: ${perihal}`, 140, 300);
 
     //tembusan
-    doc.text("Tembusan :", 140, 700)
-    doc.text("1. .....", 140, 730)
-    doc.text("2. .....", 140, 750)
+    if (tembusan.length > 0) {
+      doc.text("Tembusan :", 140, 700)
+      let y = 730
+      let no = 1;
+      for (let i = 0; i < tembusan.length; i++) {
+        doc.text(`${no++}. ${tembusan[i]}`, 140, y)
+        y += 20;
+      }
+    }
 
     //tandatangan
     // const imgSign = new Image();
@@ -381,14 +461,18 @@
 
   function sendPDF() {
     const tahun = new Date().getFullYear();
-    const tanggal = new Date().toLocaleDateString('id-ID', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    });
-    const pengirim = $('#pengirim').val();
+    const tanggal = $('#tanggal').val();
+    // const tanggal = new Date(tanggalVal).toLocaleDateString('id-ID', {
+    //   day: 'numeric',
+    //   month: 'long',
+    //   year: 'numeric',
+    // });
+    const pengirim = `<%= jabatan.sebutanJabatan %>`;
     const penerima = $('#penerima').val();
     const pemeriksa = $('#pemeriksa').val();
+
+    const isiSurat = tinymce.activeEditor.getContent();
+    const tembusan = $('#tembusan').val();
 
     const selectElement = document.getElementById("pemeriksa");
     const selectedOption = selectElement.options[selectElement.selectedIndex];
@@ -401,7 +485,10 @@
     //
     const sifat = $('#sifat').val();
     const perihal = $('#perihal').val();
-    const lampiran = $("#jumlah-lampiran").val() + " " + $("#tipe-lampiran").val();
+    // let lampiran = ($("#jumlah-lampiran").val()) ? $("#jumlah-lampiran").val() + " " + $("#tipe-lampiran").val() : "-";
+    const jumlahLampiran = $("#jumlah-lampiran").val();
+    const jenisLampiran = $("#tipe-lampiran").val();
+    const lampiran = jumlahLampiran + " " + jenisLampiran;
     const kodeKlasifikasi = $('#kodeKlasifikasi').val();
 
     const valueNoAgenda = `<%= typeof lastNoAgenda !== 'undefined' && lastNoAgenda !== null ? lastNoAgenda.noAgenda + 1 : 1 %>`;
@@ -419,13 +506,17 @@
           noAgenda,
           tanggal,
           tahun,
-          dari: pengirim,
+          dari: pemeriksa,
           kepada: penerima,
           pemeriksa,
+          pengirim,
           perihal,
-          lampiran,
+          jumlahLampiran,
+          jenisLampiran,
           kodeKlasifikasi,
           sifat,
+          isiSurat,
+          tembusan,
           // keterangan,
           email,
           divisi,

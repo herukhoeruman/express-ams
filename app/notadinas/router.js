@@ -17,16 +17,21 @@ const {
   kirim,
   persetujuan,
   viewPersetujuan,
+  updateNotaDinas,
+  actionPersetujuan,
 } = require("./controller");
 
 const { isLogin } = require("../middleware/auth");
 router.use(isLogin);
 
 /* GET home page. */
-router.get("/", index);
+router.get("/", index); //masuk
 router.get("/terkirim", terkirim);
 router.get("/persetujuan", persetujuan);
 router.get("/persetujuan/:id", viewPersetujuan);
+router.put("/update/:id", updateNotaDinas);
+router.put("/persetujuan/:id", actionPersetujuan);
+
 router.get("/create", viewCreate);
 router.post("/create", actionCreate);
 router.get("/edit/:id", viewEdit);

@@ -20,10 +20,216 @@
 
     <div class="card shadow-sm mt-5">
       <div class="card-body">
-
-
         <div class="row">
-          <!-- <div class="col"></div> -->
+          <div class="col-md-6">
+
+            <div class="card card-bordered mb-8">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-4">
+                    <label class="required form-label"> Persetujuan</label>
+                  </div>
+                  <div class="col-md-4">
+                    <select name="flag" id="flag" class="form-select form-select-solid">
+                      <option value="">--- Pilih ---</option>
+                      <option value="2" <%= notaDinas.flag === 2 ? "selected" : ""  %>>Setuju</option>
+                      <option value="3" <%= notaDinas.flag === 3 ? "selected" : ""  %>>Tolak</option>
+                    </select>
+                  </div>
+                  <div class="col-md-4">
+                    <button type="button" class="btn btn-primary hover-scale me-3 load-indicator" id="generate-pdf" onclick="approve()">
+                      <span class="indicator-label"> Submit </span>
+                      <span class="indicator-progress">
+                        Please wait <span class="spinner-border spinner-border-sm align-middle"></span>
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-5 hover-scroll-x">
+              <div class="d-grid">
+                <ul class="nav nav-tabs flex-nowrap text-nowrap">
+                  <li class="nav-item">
+                    <a class="nav-link active btn btn-active-light btn-color-gray-600 btn-active-color-primary rounded-bottom-0" data-bs-toggle="tab" href="#kt_tab_pane_1">Kepala Surat</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link  btn btn-active-light btn-color-gray-600 btn-active-color-primary rounded-bottom-0" data-bs-toggle="tab" href="#kt_tab_pane_2">Isi Surat</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link  btn btn-active-light btn-color-gray-600 btn-active-color-primary rounded-bottom-0" data-bs-toggle="tab" href="#kt_tab_pane_3">Attachment</a>
+                  </li>
+                  <!-- <li class="nav-item">
+                    <a class="nav-link  btn btn-active-light btn-color-gray-600 btn-active-color-primary rounded-bottom-0" data-bs-toggle="tab" href="#kt_tab_pane_4">Penerima</a>
+                  </li> -->
+                </ul>
+              </div>
+            </div>
+
+            <div class="tab-content" id="myTabContent">
+              <div class="tab-pane fade show active" id="kt_tab_pane_1" role="tabpanel">
+                <form>
+                  <div class="row mb-5 d-flex align-items-center">
+                    <div class="col-md-4">
+                      <label class="required form-label">Penerima</label>
+                    </div>
+                    <div class="col-md-8">
+                      <select class="form-select" id="penerima" name="penerima" data-control="select2" data-placeholder="dikirimkan kepada" data-allow-clear="true">
+                        <% users.forEach(user=> { %>
+                        <option value="<%= user.jabatan.sebutanJabatan %>" <%= user.jabatan.sebutanJabatan === notaDinas.kepada ? "selected" : "" %>>
+                          <%= user.username %> - <%= user.jabatan.sebutanJabatan %>
+                        </option>
+
+                        <% }) %>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="row mb-5 d-flex align-items-center">
+                    <div class="col-md-4">
+                      <label class="required form-label">Pemeriksa</label>
+                    </div>
+                    <div class="col-md-8">
+                      <select class="form-select" id="pemeriksa" name="pemeriksa" data-control="select2" data-placeholder="diperiksa oleh" data-allow-clear="true">
+                        <option value=""></option>
+                        <% users.forEach(user=> { %>
+                        <option value="<%= notaDinas.pemeriksa %>" <%= user.jabatan.sebutanJabatan === notaDinas.pemeriksa ? 'selected' : '' %> data-email="<%= user.email %>" data-kode="<%= user.username %>" data-jabatan="<%= user.jabatan.sebutanJabatan %>" data-divisi="<%= user.jabatan.namaUnit %>">
+                          <%= user.username %> - <%= user.jabatan.sebutanJabatan %>
+                        </option>
+                        <% }) %>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="row mb-5 d-flex align-items-center">
+                    <div class="col-md-4">
+                      <label class="required form-label"> Tanggal </label>
+                    </div>
+                    <div class="col-md-8">
+                      <input class="form-control" name="tanggal" placeholder="pilih tanggal" id="tanggal" value="<%= notaDinas.tanggal %>" />
+                    </div>
+                  </div>
+
+                  <div class="row mb-5 d-flex align-items-center">
+                    <div class="col-md-4">
+                      <label class="required form-label">Kode Klasifikasi <%= notaDinas.kodeKlasifikasi  %></label>
+                    </div>
+                    <div class="col-md-8">
+                      <select class="form-select" id="kodeKlasifikasi" name="kodeKlasifikasi" data-control="select2" data-placeholder="pilih kode klasifikasi" data-allow-clear="true">
+                        <option value=""></option>
+                        <% klasifikasi.forEach(data=> { %>
+                        <% data.klasifikasi.forEach(index=> { %>
+                        <option value="<%= index.kode %>" <%= index.kode === notaDinas.kodeKlasifikasi ? "selected" : "" %>>
+                          <%= index.kode %> - <%= index.jenis %>
+                        </option>
+                        <% }) %>
+                        <% }) %>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="row mb-5 d-flex align-items-center">
+                    <div class="col-md-4">
+                      <label class="required form-label" for="sifat">Sifat</label>
+                    </div>
+                    <div class="col-md-8">
+                      <select class="form-select" name="sifat" id="sifat" data-control="select2" data-placeholder="Pilih sifat" data-allow-clear="true">
+                        <option></option>
+                        <option value="Segera" <%= notaDinas.sifat === "Segera" ? "selected" : "" %>>Segera</option>
+                        <option value="Amat Segera" <%= notaDinas.sifat === "Amat Segera" ? "selected" : "" %>>Amat Segera </option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="row mb-5 d-flex align-items-center">
+                    <div class="col-md-4">
+                      <label class="required form-label"> Lampiran</label>
+                    </div>
+                    <div class="col-md-8">
+                      <div class="row">
+                        <div class="col-sm-4">
+                          <input type="number" class="form-control" id="jumlah-lampiran" name="" value="<%= notaDinas.jumlahLampiran %>" placeholder="0">
+                        </div>
+                        <div class="col-sm-8">
+                          <select class=" form-control form-select" name="" id="tipe-lampiran" data-control="select2" data-placeholder="Lampiran" data-allow-clear="true">
+                            <option></option>
+                            <option value="Lembar" <%= notaDinas.jenisLampiran === "Lembar" ? "selected" : "" %>>Lembar</option>
+                            <option value="Berkas" <%= notaDinas.jenisLampiran === "Berkas" ? "selected" : "" %>>Berkas</option>
+                            <option value="Halaman" <%= notaDinas.jenisLampiran === "Halaman" ? "selected" : "" %>>Halaman</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row mb-5 d-flex align-items-center">
+                    <div class="col-md-4">
+                      <label class="required form-label">Hal</label>
+                    </div>
+                    <div class="col-md-8">
+                      <textarea type="textarea" id="perihal" name="perihal" class="form-control"><%= notaDinas.perihal %></textarea>
+                    </div>
+                  </div>
+
+                  <div class="row mb-5 d-flex align-items-center">
+                    <div class="col-md-4">
+                      <label class="required form-label">Tembusan</label>
+                    </div>
+                    <div class="col-md-8">
+                      <select class="form-select" id="tembusan" name="tembusan" data-control="select2" data-close-on-select="tru" data-placeholder="dikirimkan kepada" data-allow-clear="true" multiple="multiple">
+                        <option></option>
+                        <% users.forEach(user=> { %>
+                        <option value="<%= user.jabatan.sebutanJabatan %>" <%= notaDinas.tembusan.includes(user.jabatan.sebutanJabatan) ? "selected" : ""%>>
+                          <%= user.username %> - <%= user.jabatan.sebutanJabatan %>
+                        </option>
+                        <% }) %>
+                      </select>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="tab-pane fade" id="kt_tab_pane_2" role="tabpanel">
+                <form action="">
+                  <textarea id="my-expressjs-tinymce-app">
+                    <%= notaDinas.isiSurat %>
+                  </textarea>
+                  <div class="mt-4">
+                    <button type="button" class="btn btn-primary hover-scale me-3 load-indicator" id="generate-pdf" onclick="generatePDF()">
+                      <span class="indicator-label"> Preview </span>
+                      <span class="indicator-progress">
+                        Please wait... <span class="spinner-border spinner-border-sm align-middle"></span>
+                      </span>
+                    </button>
+                    <button type="button" id="btnKirim" class="btn btn-info hover-scale me-3 load-indicator" onclick="sendPDF()">
+                      <span class="indicator-label"> Update </span>
+                      <span class="indicator-progress">
+                        Please wait... <span class="spinner-border spinner-border-sm align-middle"></span>
+                      </span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+              <div class="tab-pane fade" id="kt_tab_pane_3" role="tabpanel">
+                <div class="form-group mb-5">
+                  <label class="form-label" for="files"> Upload Dokumen Surat/Fax </label>
+                  <input type="file" name="files" id="files" class="dropify" data-height="100" data-default-file="" />
+                  <div class="text-danger">
+                    <i>*Drop File atau klik disini untuk mengupload.</i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+          <div class="col-md-6 row-divider">
+            <iframe id="pdfViewer" src="/upload/<%= notaDinas.document %>" width="100%" height="850px"></iframe>
+          </div>
+        </div>
+
+
+        <!-- <div class="row">
           <div class="col-md-8">
             <div class="card card-bordered mb-5">
               <div class="card-body">
@@ -71,7 +277,7 @@
             </div>
           </div>
           <div class="col"></div>
-        </div>
+        </div> -->
 
       </div>
     </div>
@@ -86,74 +292,306 @@
 
 <%- include ../../partials/footer.ejs %>
 <%- include ../../partials/js.ejs %>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.0/jspdf.umd.min.js"></script>
+<script type="text/javascript" src="/dompurify/dist/purify.min.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script> -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.7/dist/html2canvas.min.js"></script>
+<!-- <script src="/jspdf/dist/jspdf.umd.min.js"></script> -->
+
+<script src="/javascripts/flatpickr-id.js"></script>
+
 <script>
-  $('.select2-multiple').select2();
+  $('.dropify').dropify({
+    messages: {
+      'default': 'Drag and drop a file here or click',
+      'replace': 'Drag and drop or click to replace',
+      'remove': 'Remove',
+      'error': 'Ooops, something wrong happended.'
+    }
+  });
 
+  $("#tanggal").flatpickr({
+    enableTime: false,
+    dateFormat: "j F Y",
+    locale: "id"
+  });
 
-  function refresh() {
-    location.reload();
+  const btnPreview = document.querySelector("#generate-pdf");
+  btnPreview.addEventListener("click", function() {
+    btnPreview.setAttribute("data-kt-indicator", "on");
+    setTimeout(function() {
+      btnPreview.removeAttribute("data-kt-indicator");
+    }, 3000);
+  });
+  const btnKirim = document.querySelector("#btnKirim");
+  btnKirim.addEventListener("click", function() {
+    btnKirim.setAttribute("data-kt-indicator", "on");
+    setTimeout(function() {
+      btnKirim.removeAttribute("data-kt-indicator");
+    }, 3000);
+  });
+
+  function generatePDF() {
+    event.preventDefault();
+
+    const tahunIni = new Date().getFullYear();
+    const tanggalVal = $('#tanggal').val();
+    const tanggal = new Date(tanggalVal).toLocaleDateString('id-ID', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+    console.log(tanggal);
+    console.log(tanggalVal);
+    // const tanggal = new Date().toLocaleDateString('id-ID', {
+    //   day: 'numeric',
+    //   month: 'long',
+    //   year: 'numeric',
+    // });
+    // const pengirim = $('#pengirim').val();
+    const penerima = $('#penerima').val();
+    const pemeriksa = $('#pemeriksa').val();
+
+    const selectElement = document.getElementById("pemeriksa");
+    const selectedOption = selectElement.options[selectElement.selectedIndex];
+    const kodeJabatan = selectedOption.getAttribute('data-kode'); // Mendapatkan nilai user.username
+    const jabatan = selectedOption.getAttribute('data-jabatan'); // Mendapatkan nilai user.Jabatan
+    const email = selectedOption.getAttribute('data-email');
+    console.log("pemeriksa:", jabatan, kodeJabatan, email);
+
+    const kodeKlasifikasi = $('#kodeKlasifikasi').val();
+    const sifat = $('#sifat').val();
+    const perihal = $('#perihal').val();
+    let lampiran = ($("#jumlah-lampiran").val()) ? $("#jumlah-lampiran").val() + " " + $("#tipe-lampiran").val() : "-";
+    const isiSurat = tinymce.activeEditor.getContent();
+    const tembusan = $('#tembusan').val();
+
+    // console.log(isiSurat);
+    console.log("tembusan:", tembusan);
+
+    // const valueNoAgenda = `<%# typeof lastNoAgenda !== 'undefined' && lastNoAgenda !== null ? lastNoAgenda.noAgenda + 1 : 1 %>`;
+    // const noAgenda = valueNoAgenda.toString().padStart(3, '0');
+    const valueNoAgenda = `<%= notaDinas.noAgenda %>`;
+    const noAgenda = valueNoAgenda.toString().padStart(3, '0');
+    const nomorNotaDinas = `${noAgenda}/${kodeKlasifikasi}/${kodeJabatan}/${tahunIni}`;
+
+    // Create new PDF document
+    window.jsPDF = window.jspdf.jsPDF;
+    const doc = new jsPDF('p', 'pt', 'a4');
+
+    //header logo
+    //logo
+    const img = new Image();
+    img.src = '/images/logo-500px.png';
+    doc.addImage(img, 'png', 60, 10, 113, 85);
+
+    const img2 = new Image();
+    img2.src = '/images/logo-kanan.png';
+    doc.addImage(img2, 'png', 320, 25, 200, 60);
+
+    //line config
+    const x = doc.internal.pageSize.getWidth() / 2;
+    const panjangGaris = 450;
+    const startX = x - (panjangGaris / 2);
+    const endX = x + (panjangGaris / 2);
+    //line header
+    doc.setLineWidth(1);
+    doc.line(startX, 100, endX, 100);
+    // line footer
+    doc.setLineWidth(1);
+    doc.line(startX, 770, endX, 770);
+
+    doc.setFontSize(8)
+    doc.setFont("Helvetica", "bold")
+    doc.text("PT. GERBANG SINERGI PRIMA", 72, 780)
+    doc.setFont("Helvetica", "")
+    doc.text("Jl. Cikutra No.219, Bandung - Jawa Barat", 72, 790)
+    doc.text("Tlp : 022-426 6778 / Fax : - ", 72, 800)
+    doc.text("Email : sekper@gsp.co.id", 72, 810)
+
+    //body
+    // garis
+    const lineLength = 90;
+    const startX2 = x - (lineLength / 2);
+    const endX2 = x + (lineLength / 2);
+
+    doc.setLineWidth(1);
+    doc.line(startX2, 127, endX2, 127);
+
+    doc.setFontSize(14);
+    doc.setFont("Helvetica", "bold")
+    doc.text(`NOTA DINAS`, x, 125, {
+      align: "center"
+    });
+    doc.setFontSize(12);
+    doc.setFont("Helvetica", "")
+    doc.text(`Nomor : ${nomorNotaDinas}`, x, 145, {
+      align: "center"
+    });
+    // kepala surat
+    doc.text(`Kepada`, 72, 200, );
+    doc.text(`Dari`, 72, 220, );
+    doc.text(`Tanggal`, 72, 240, );
+    doc.text(`Sifat`, 72, 260, );
+    doc.text(`Lampiran`, 72, 280, );
+    doc.text(`Hal`, 72, 300, );
+
+    doc.text(`: Yth. ${penerima}`, 140, 200);
+    doc.text(`: ${pemeriksa}`, 140, 220);
+    doc.text(`: ${tanggal}`, 140, 240);
+    doc.text(`: ${sifat}`, 140, 260);
+    doc.text(`: ${lampiran}`, 140, 280);
+    doc.text(`: ${perihal}`, 140, 300);
+
+    //tembusan
+    if (tembusan.length > 0) {
+      doc.text("Tembusan :", 140, 700)
+      let y = 730
+      let no = 1;
+      for (let i = 0; i < tembusan.length; i++) {
+        doc.text(`${no++}. ${tembusan[i]}`, 140, y)
+        y += 20;
+      }
+    }
+
+    //tandatangan
+    // const imgSign = new Image();
+    // imgSign.src = '/images/sign.png';
+    // doc.addImage(imgSign, 'png', 420, 620, 50, 50); // x, y, width, height
+    doc.text(`${jabatan}`, 440, 700, {
+      align: 'center',
+      maxWidth: 150
+    });
+
+    doc.html(isiSurat, {
+      callback: function(doc) {
+        const pdfViewer = document.getElementById("pdfViewer");
+        pdfViewer.src = doc.output("datauristring");
+
+        const out = doc.output();
+        const url = 'data:application/pdf;base64,' + btoa(out);
+
+        fetch('/notadinas/konsep', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              document: url,
+              nomor: nomorNotaDinas
+            })
+          })
+          .then(response => {
+            console.log(response);
+          })
+          .catch(error => {
+            console.error("error :" + error);
+          });
+      },
+      width: 370,
+      windowWidth: 380,
+      x: 140,
+      y: 350
+    });
   }
 
-  function submitForm() {
-    const notaDinasKode = document.getElementById('notaDinasKode').value;
-    const checkboxes = document.querySelectorAll('.disposisi:checked');
-    const disposisiValues = Array.from(checkboxes).map((checkbox) => checkbox.value);
-    const penerima = document.getElementById(`penerima_${notaDinasKode}`).value;
-    const tindakLanjut = document.getElementById(`tindakLanjut_${notaDinasKode}`).value;
+  function sendPDF() {
+    const tahun = new Date().getFullYear();
+    const tanggal = $('#tanggal').val();
+    const pengirim = `<%= jabatan.sebutanJabatan %>`;
+    const penerima = $('#penerima').val();
+    const pemeriksa = $('#pemeriksa').val();
+    const isiSurat = tinymce.activeEditor.getContent();
+    const tembusan = $('#tembusan').val();
+    const flag = $('#flag').val();
 
-    const data = {
-      notaDinasKode: notaDinasKode,
-      disposisi: disposisiValues,
-      penerima: penerima,
-      tindakLanjut: tindakLanjut
-    };
+    const selectElement = document.getElementById("pemeriksa");
+    const selectedOption = selectElement.options[selectElement.selectedIndex];
+    const kodeJabatan = selectedOption.getAttribute('data-kode'); // Mendapatkan nilai user.username
+    const email = selectedOption.getAttribute('data-email');
+    const divisi = selectedOption.getAttribute('data-divisi');
+    console.log("pemeriksa:", email);
 
-    fetch('/submit', {
-        method: 'POST',
+    //
+    const sifat = $('#sifat').val();
+    const perihal = $('#perihal').val();
+    const jumlahLampiran = $("#jumlah-lampiran").val();
+    const jenisLampiran = $("#tipe-lampiran").val();
+    const lampiran = jumlahLampiran + " " + jenisLampiran;
+    const kodeKlasifikasi = $('#kodeKlasifikasi').val();
+
+    const valueNoAgenda = `<%= notaDinas.noAgenda %>`;
+    const noAgenda = valueNoAgenda.toString().padStart(3, '0');
+    const noNotaDinas = `${noAgenda}/${kodeKlasifikasi}/${kodeJabatan}/${tahun}`;
+
+    fetch('/notadinas/update/<%= notaDinas._id %>', {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify({
+          noNotaDinas,
+          noAgenda,
+          tanggal,
+          // tahun,
+          // dari: pemeriksa,
+          kepada: penerima,
+          // pemeriksa,
+          // pengirim,
+          perihal,
+          jumlahLampiran,
+          jenisLampiran,
+          kodeKlasifikasi,
+          sifat,
+          isiSurat,
+          tembusan,
+          // keterangan,
+          email,
+          divisi,
+          // fileAttachment,
+          // flag: 1, //belum approve
+        })
       })
-      .then((response) => response.json())
-      .then((result) => {
-        // Handle response from server
-        console.log(result);
+      .then(response => {
+        console.log(response);
+        if (response.ok) {
+          console.log(response);
+          Swal.fire("Berhasil", "Nota dinas berhasil di update", "success");
+        } else {
+          Swal.fire("Perhatian", "Bad request", "error");
+          console.error(response);
+        }
       })
-      .catch((error) => {
-        console.error('Error:', error);
+      .catch(error => {
+        console.error('Terjadi kesalahan:', error);
       });
   }
 
+  function approve() {
+    const flag = $('#flag').val();
+    console.log(flag);
 
-  $("#kt_datatable_dom_positioning").DataTable({
-    "language": {
-      "lengthMenu": "Show _MENU_",
-    },
-    "dom": "<'row'<'col-sm-6'l><'col-sm-5' f><'col-sm-1'<'button-container'>>>" +
-      "<'table-responsive'tr>" +
-      "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-    "initComplete": function() {
-      $("div.button-container").append(`<button class="btn btn-sm btn-light-primary btn-icon mt-4" onclick="refresh()"><span class="svg-icon svg-icon-primary svg-icon-2x"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
-          <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-            <rect x="0" y="0" width="24" height="24"/>
-            <path d="M12,8 L8,8 C5.790861,8 4,9.790861 4,12 L4,13 C4,14.6568542 5.34314575,16 7,16 L7,18 C4.23857625,18 2,15.7614237 2,13 L2,12 C2,8.6862915 4.6862915,6 8,6 L12,6 L12,4.72799742 C12,4.62015048 12.0348702,4.51519416 12.0994077,4.42878885 C12.264656,4.2075478 12.5779675,4.16215674 12.7992086,4.32740507 L15.656242,6.46136716 C15.6951359,6.49041758 15.7295917,6.52497737 15.7585249,6.56395854 C15.9231063,6.78569617 15.876772,7.09886961 15.6550344,7.263451 L12.798001,9.3840407 C12.7118152,9.44801079 12.607332,9.48254921 12.5,9.48254921 C12.2238576,9.48254921 12,9.25869158 12,8.98254921 L12,8 Z" fill="currentColor"/>
-            <path d="M12.0583175,16 L16,16 C18.209139,16 20,14.209139 20,12 L20,11 C20,9.34314575 18.6568542,8 17,8 L17,6 C19.7614237,6 22,8.23857625 22,11 L22,12 C22,15.3137085 19.3137085,18 16,18 L12.0583175,18 L12.0583175,18.9825492 C12.0583175,19.2586916 11.8344599,19.4825492 11.5583175,19.4825492 C11.4509855,19.4825492 11.3465023,19.4480108 11.2603165,19.3840407 L8.40328311,17.263451 C8.18154548,17.0988696 8.13521119,16.7856962 8.29979258,16.5639585 C8.32872576,16.5249774 8.36318164,16.4904176 8.40207551,16.4613672 L11.2591089,14.3274051 C11.48035,14.1621567 11.7936615,14.2075478 11.9589099,14.4287888 C12.0234473,14.5151942 12.0583175,14.6201505 12.0583175,14.7279974 L12.0583175,16 Z" fill="currentColor" opacity="0.3"/>
-          </g>
-        </svg>
-      </span>
-    </button>`);
-    }
-    // dom: "<'row'" +
-    //   "<'col-sm-6 d-flex align-items-center justify-conten-start'l>" +
-    //   "<'col-sm-6 d-flex align-items-center justify-content-end'f>" +
-    //   ">" +
-
-    //   "<'table-responsive'tr>" +
-
-    //   "<'row'" +
-    //   "<'col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start'i>" +
-    //   "<'col-sm-12 col-md-7 d-flex align-items-center justify-content-center justify-content-md-end'p>" +
-    //   ">"
-  });
+    fetch('/notadinas/persetujuan/<%= notaDinas._id %>', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          flag,
+        })
+      })
+      .then(response => {
+        console.log(response);
+        if (response.ok) {
+          (flag == 2) ? Swal.fire("Berhasil", "Silahkan cek email untuk melakukan tandatangan  ", "success"): Swal.fire("Berhasil", "Persetujuan Nota Dinas Ditolak ", "success");
+        } else {
+          Swal.fire("Perhatian", "Bad request", "error");
+          console.error(response);
+        }
+      })
+      .catch(error => {
+        console.error('Terjadi kesalahan:', error);
+      });
+  }
 </script>

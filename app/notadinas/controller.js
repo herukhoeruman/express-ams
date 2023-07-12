@@ -25,14 +25,16 @@ module.exports = {
       const alert = { message: alertMessage, status: alertStatus };
 
       const username = req.session.user.username;
+      const jabatan = req.session.user.jabatan.sebutanJabatan;
       const notaDinas = await NotaDinas.find({
-        kepada: username,
+        kepada: jabatan,
+        flag: 2,
       });
       const disposisiMaster = await DisposisiMaster.find();
       const users = await Users.find();
       const historyDisposisi = await NotaDinasSent.find();
-
-      notaDinas.forEach(async (data) => {
+      // for of  async
+      for (const data of notaDinas) {
         const id = data.dataResponse.id;
         const fileName = data.document;
         const signed = await Callback.findOne({ documentId: id });
@@ -68,7 +70,7 @@ module.exports = {
             console.error("Error downloading file:", error);
           }
         }
-      });
+      }
 
       res.render("notadinas/index", {
         notaDinas,
@@ -89,8 +91,11 @@ module.exports = {
   terkirim: async (req, res) => {
     try {
       const username = req.session.user.username;
+      const jabatan = req.session.user.jabatan.sebutanJabatan;
+      console.log(jabatan);
       const notaDinasTerkirim = await NotaDinas.find({
-        dari: username,
+        pengirim: jabatan,
+        flag: 2,
       });
       res.render("notadinas/terkirim/index", {
         notaDinasTerkirim,
@@ -108,10 +113,50 @@ module.exports = {
     try {
       const username = req.session.user.username;
       const jabatan = req.session.user.jabatan.sebutanJabatan;
-      const notaDinas = await NotaDinas.find({
-        pemeriksa: jabatan,
-        flag: 1,
+      const notaDinas = await NotaDinas.find({ pemeriksa: jabatan }).sort({
+        createdAt: -1,
       });
+
+      const notaDinasApproved = await NotaDinas.find({ flag: 2 });
+
+      // for of  async
+      for (const data of notaDinasApproved) {
+        const id = data.dataResponse.id;
+        const fileName = data.document;
+        const signed = await Callback.findOne({ documentId: id });
+        const outputFilePath = path.resolve(
+          config.rootPath,
+          `public/upload/signed/${fileName}`
+        );
+
+        if (fs.existsSync(outputFilePath)) {
+          console.log("File already exists.");
+        } else {
+          try {
+            const response = await axios({
+              url: signed.downloadUrl,
+              method: "GET",
+              responseType: "stream",
+            });
+
+            response.data.pipe(fs.createWriteStream(outputFilePath));
+
+            await new Promise((resolve, reject) => {
+              response.data.on("end", () => {
+                console.log("File downloaded successfully.");
+                resolve();
+              });
+
+              response.data.on("error", (err) => {
+                console.error("Error downloading file:", err);
+                reject(err);
+              });
+            });
+          } catch (error) {
+            console.error("Error downloading file:", error);
+          }
+        }
+      }
       res.render("notadinas/persetujuan/index", {
         notaDinas,
         title: "Nota Dinas",
@@ -137,6 +182,7 @@ module.exports = {
       const historyDisposisi = await NotaDinasInbox.find({
         notaDinasKode: id,
       });
+      const klasifikasi = await Klasifikasi.find();
 
       res.render("notadinas/persetujuan/edit", {
         notaDinas,
@@ -144,11 +190,71 @@ module.exports = {
         disposisiMaster,
         users,
         historyDisposisi,
+        klasifikasi,
         title: "Nota Dinas",
         subtitle: "Persetujuan Nota Dinas",
         username: req.session.user.username,
         jabatan: req.session.user.jabatan,
       });
+    } catch (err) {
+      console.log(err);
+      res.redirect("/notadinas");
+    }
+  },
+
+  updateNotaDinas: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const {
+        noNotaDinas,
+        noAgenda,
+        tanggal,
+        tahun,
+        dari,
+        kepada,
+        pemeriksa,
+        pengirim,
+        perihal,
+        jumlahLampiran,
+        jenisLampiran,
+        kodeKlasifikasi,
+        sifat,
+        isiSurat,
+        tembusan,
+        // keterangan,
+        email,
+        divisi,
+        // fileAttachment,
+        flag,
+      } = req.body;
+
+      const updateNotaDinas = await NotaDinas.findOneAndUpdate(
+        { _id: id },
+        {
+          noNotaDinas,
+          noAgenda,
+          tanggal,
+          tahun,
+          dari,
+          kepada,
+          pemeriksa,
+          pengirim,
+          perihal,
+          jumlahLampiran,
+          jenisLampiran,
+          kodeKlasifikasi,
+          sifat,
+          isiSurat,
+          tembusan,
+          // keterangan,
+          email,
+          divisi,
+          // fileAttachment,
+          flag,
+        }
+      );
+      res.status(200).json({ updateNotaDinas });
+      // res.redirect("");
     } catch (err) {
       console.log(err);
       res.redirect("/notadinas");
@@ -402,7 +508,7 @@ module.exports = {
 
   savePdf: async (req, res) => {
     try {
-      const pdfBase64 = req.body.document;
+      const pdfBase64 = req.body.document; //base64
       const nomor = req.body.nomor;
       const nomorModifikasi = nomor.replace(/\//g, "_");
       const outputPath = path.resolve(
@@ -441,10 +547,14 @@ module.exports = {
         dari,
         kepada,
         pemeriksa,
+        pengirim,
         perihal,
-        lampiran,
+        jumlahLampiran,
+        jenisLampiran,
         kodeKlasifikasi,
         sifat,
+        isiSurat,
+        tembusan,
         keterangan,
         fileAttachment,
         email,
@@ -466,10 +576,14 @@ module.exports = {
         dari,
         kepada,
         pemeriksa,
+        pengirim,
         perihal,
-        lampiran,
+        jumlahLampiran,
+        jenisLampiran,
         kodeKlasifikasi,
         sifat,
+        isiSurat,
+        tembusan,
         keterangan,
         fileAttachment,
         email,
@@ -483,6 +597,93 @@ module.exports = {
     } catch (err) {
       console.log(err);
       res.status(400).json({ err });
+    }
+  },
+
+  actionPersetujuan: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { flag } = req.body;
+      const notaDinas = await NotaDinas.findById(id);
+      // const email = req.session.user.email;
+      const email = "heru@gsp.co.id";
+      // const signature = `[{"email":"${email}","detail":[{"p":1,"x":140,"y":218,"w":47,"h":23}]}]`; //v2
+      const signature = `[{"email":"${email}","detail":[{"p":1,"x":130,"y":220,"w":50,"h":24}]}]`; //final
+
+      const fileName = notaDinas.document;
+      const document = path.resolve(
+        config.rootPath,
+        `public/upload/${fileName}`
+      );
+
+      //hash
+      const clientId = "TkhRZ7XmPVEOTNtY3XWq7htqWoGpJntl";
+      const crn = "ams-gsp-nodejs";
+      const timestamp = new Date().toLocaleString();
+      const key = "RAHASIA";
+      const requestBody = {
+        document: fileName,
+        signature: JSON.parse(signature),
+        timestamp: timestamp,
+      };
+      const requestBodyString = JSON.stringify(requestBody);
+      const payload = requestBodyString + timestamp;
+      const hash = CryptoJS.HmacSHA256(payload, key).toString();
+
+      console.log("hash : " + hash);
+      console.log("payload : " + payload);
+      console.log("flag", flag);
+      console.log("flag", typeof flag);
+      // return;
+
+      //2 : approve
+      if (flag === "2") {
+        let data = new FormData();
+        data.append("document", fs.createReadStream(document));
+        data.append("signature", signature);
+        data.append("crn", crn);
+        data.append("ceksum", hash);
+        data.append("timestamp", timestamp);
+
+        axios
+          .post("https://plnsign.id/setposisi/index.php", data, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              apikey: "TkhRZ7XmPVEOTNtY3XWq7htqWoGpJntl",
+              // apikey: "amj6Oqx234ON0kxFoFGt8wQeIRIapIby",
+              ...data.getHeaders(),
+            },
+          })
+          .then(async (response) => {
+            //insert data response
+            const newResponse = await Response({
+              trxId: trxId,
+              json: JSON.stringify(response.data),
+              ttdOleh: req.session.user.username,
+              data: response.data.data,
+            });
+            await newResponse.save();
+            //update
+            const updateNotaDinas = await NotaDinas.findOneAndUpdate(
+              { _id: id },
+              { flag, dataResponse: response.data.data }
+            );
+            console.log(response.data);
+            res.status(200).json(updateNotaDinas);
+          })
+          .catch((error) => {
+            console.error(error);
+            res.status(400).json({ error });
+          });
+      } else {
+        const updateNotaDinas = await NotaDinas.findOneAndUpdate(
+          { _id: id },
+          { flag }
+        );
+        res.status(200).json({ updateNotaDinas });
+      }
+    } catch (err) {
+      console.log(err);
     }
   },
 

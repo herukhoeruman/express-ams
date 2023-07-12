@@ -57,7 +57,7 @@ module.exports = {
           res.redirect("/");
         }
       } else {
-        req.flash("alertTitle", "Username tidak ditemukan");
+        req.flash("alertTitle", "User tidak ditemukan");
         req.flash("alertText", "Silahkan masukan Username dengan benar!");
         req.flash("alertIcon", "error");
         res.redirect("/");
