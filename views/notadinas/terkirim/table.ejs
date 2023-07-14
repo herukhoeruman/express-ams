@@ -8,7 +8,8 @@
         <th class="">Kepada</th>
         <th class="">Hal</th>
         <th class="">Tanggal</th>
-        <th class="">Action</th>
+        <th class="">Status</th>
+        <th class=""></th>
       </tr>
     </thead>
     <tbody class="fw-semibold">
@@ -32,8 +33,19 @@
         <td>
           <%= notaDinasTerkirim[i].tanggal %>
         </td>
+        <td class="text-center">
+          <%# notaDinas[i].flag %>
+          <% if (notaDinasTerkirim[i].flag === 1) { %>
+          <span class="badge badge-info">Dalam proses</span>
+          <% } else if(notaDinasTerkirim[i].flag === 2) { %>
+          <span class="badge badge-success">Disetujui</span>
+          <% } else if(notaDinasTerkirim[i].flag === 3) { %>
+          <span class="badge badge-danger">Ditolak</span>
+          <% } %>
+        </td>
         <td>
-          <a href="/notadinas/edit/<%= notaDinasTerkirim[i]._id %>" class="btn btn-sm btn-light-info btn-icon mr-2" title="Edit">
+          <%# if (notaDinas[i].flag === 1) { %>
+          <!-- <a href="persetujuan/<%= notaDinasTerkirim[i]._id %>" class="btn btn-sm btn-light-primary btn-icon mr-2" title="Persetujuan">
             <span class="svg-icon svg-icon-primary svg-icon-2">
               <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
                 <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -43,9 +55,67 @@
                 </g>
               </svg>
             </span>
+          </a> -->
+          <%# } %>
+          <a data-id="<%= notaDinasTerkirim[i]._id %>" class="btn btn-sm btn-light-danger btn-icon mr-2" data-bs-toggle="modal" data-bs-target="#documentModal<%= notaDinasTerkirim[i]._id %>" title="Lihat Nota Dinas">
+            <span class="svg-icon svg-icon-info svg-icon-2">
+              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                  <polygon points="0 0 24 0 24 24 0 24" />
+                  <path d="M5.85714286,2 L13.7364114,2 C14.0910962,2 14.4343066,2.12568431 14.7051108,2.35473959 L19.4686994,6.3839416 C19.8056532,6.66894833 20,7.08787823 20,7.52920201 L20,20.0833333 C20,21.8738751 19.9795521,22 18.1428571,22 L5.85714286,22 C4.02044787,22 4,21.8738751 4,20.0833333 L4,3.91666667 C4,2.12612489 4.02044787,2 5.85714286,2 Z" fill="currentColor" fill-rule="nonzero" opacity="0.3" />
+                  <rect fill="currentColor" x="6" y="11" width="9" height="2" rx="1" />
+                  <rect fill="currentColor" x="6" y="15" width="5" height="2" rx="1" />
+                </g>
+              </svg>
+              <!--end::Svg Icon-->
+            </span>
           </a>
+          <!-- modal view document pdf -->
+          <div class="modal fade modal-lg" tabindex="-1" id="documentModal<%= notaDinasTerkirim[i]._id %>">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h3 class="modal-title">Nomor: <%= notaDinasTerkirim[i].noNotaDinas %> </h3>
+                  <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                    <span class="svg-icon svg-icon-1">
+                      <span class="svg-icon svg-icon-primary svg-icon-2x">
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                          <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                            <g transform="translate(12.000000, 12.000000) rotate(-45.000000) translate(-12.000000, -12.000000) translate(4.000000, 4.000000)" fill="currentColor">
+                              <rect x="0" y="7" width="16" height="2" rx="1" />
+                              <rect opacity="0.3" transform="translate(8.000000, 8.000000) rotate(-270.000000) translate(-8.000000, -8.000000) " x="0" y="7" width="16" height="2" rx="1" />
+                            </g>
+                          </g>
+                        </svg>
+                      </span>
+                    </span>
+                  </div>
+                </div>
+                <div class="modal-body">
+                  <p id="errorMessage<%= notaDinasTerkirim[i]._id %>" style="display: none;">Dokumen belum tersedia.</p>
+                  <% if (notaDinasTerkirim[i].flag ===  2) { %>
+                  <iframe src="/upload/signed/<%= notaDinasTerkirim[i].document %>" width="100%" height="1080" type="application/pdf"></iframe>
+                  <% } else { %>
+                  <iframe src="/upload/<%= notaDinasTerkirim[i].document %>" width="100%" height="1080" type="application/pdf"></iframe>
+                  <% } %>
 
-          <a data-id="<%= notaDinasTerkirim[i]._id %>" class="btn btn-sm btn-light-danger btn-icon mr-2" data-bs-toggle="modal" data-bs-target="#deletenotaDinasModal<%= notaDinasTerkirim[i]._id %>" title="Delete">
+                </div>
+              </div>
+            </div>
+
+            <!-- <a href="/notadinas/edit/<%# notaDinasTerkirim[i]._id %>" class="btn btn-sm btn-light-info btn-icon mr-2" title="Edit">
+            <span class="svg-icon svg-icon-primary svg-icon-2">
+              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                  <rect x="0" y="0" width="24" height="24" />
+                  <path d="M8,17.9148182 L8,5.96685884 C8,5.56391781 8.16211443,5.17792052 8.44982609,4.89581508 L10.965708,2.42895648 C11.5426798,1.86322723 12.4640974,1.85620921 13.0496196,2.41308426 L15.5337377,4.77566479 C15.8314604,5.0588212 16,5.45170806 16,5.86258077 L16,17.9148182 C16,18.7432453 15.3284271,19.4148182 14.5,19.4148182 L9.5,19.4148182 C8.67157288,19.4148182 8,18.7432453 8,17.9148182 Z" fill="currentColor" fill-rule="nonzero" transform="translate(12.000000, 10.707409) rotate(-135.000000) translate(-12.000000, -10.707409) " />
+                  <rect fill="currentColor" opacity="0.3" x="5" y="20" width="15" height="2" rx="1" />
+                </g>
+              </svg>
+            </span>
+          </a> -->
+
+            <!-- <a data-id="<%# notaDinasTerkirim[i]._id %>" class="btn btn-sm btn-light-danger btn-icon mr-2" data-bs-toggle="modal" data-bs-target="#deletenotaDinasModal<%= notaDinasTerkirim[i]._id %>" title="Delete">
             <span class="svg-icon svg-icon-primary svg-icon-2">
               <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
                 <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -55,73 +125,16 @@
                 </g>
               </svg>
             </span>
-          </a>
+          </a> -->
 
-          <!-- modal edit -->
-          <div class="modal fade" tabindex="-1" id="editnotaDinasModal<%= notaDinasTerkirim[i]._id %>">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h3 class="modal-title">Edit notaDinas</h3>
-                  <!--begin::Close-->
-                  <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
-                    <span class="svg-icon svg-icon-1">
-                      <span class="svg-icon svg-icon-primary svg-icon-2x">
-                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
-                          <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                            <g transform="translate(12.000000, 12.000000) rotate(-45.000000) translate(-12.000000, -12.000000) translate(4.000000, 4.000000)" fill="currentColor">
-                              <rect x="0" y="7" width="16" height="2" rx="1" />
-                              <rect opacity="0.3" transform="translate(8.000000, 8.000000) rotate(-270.000000) translate(-8.000000, -8.000000) " x="0" y="7" width="16" height="2" rx="1" />
-                            </g>
-                          </g>
-                        </svg>
-                      </span>
-                    </span>
-                  </div>
-                  <!--end::Close-->
-                </div>
-                <form action="/notaDinas/edit/<%= notaDinasTerkirim[i]._id %>?_method=PUT" method="POST">
-                  <div class="modal-body">
-                    <div class="form-group mb-5">
-                      <label class="required form-label" for="nameCoin"> Coin Name</label>
-                      <select class="form-select form-select-solid" name="coinName" id="coinName" data-control="select2" data-dropdown-parent="#createnotaDinasModal" data-placeholder="Select a Coin Name" data-allow-clear="true" required oninvalid="this.setCustomValidity('Data cannot be null')" oninput="setCustomValidity('')">
-                        <option>
-                          <%= notaDinasTerkirim[i].coinName %>
-                        </option>
-                        <option value="Diamonds">Diamonds</option>
-                        <option value="UC">UC</option>
-                        <option value="Gold">Gold</option>
-                        <option value="Genesis Crystals">Genesis Crystals</option>
-                        <option value="Points">Points</option>
-                        <option value="PB Cash">PB Cash</option>
-                      </select>
-                    </div>
-                    <div class="form-group mb-5">
-                      <label class="required form-label" for="coinQuantity"> Coin
-                        Quantity</label>
-                      <input type="number" id="coinQuantity" name="coinQuantity" value="<%= notaDinasTerkirim[i].coinQuantity %>" class="form-control" required oninvalid="this.setCustomValidity('Data cannot be null')" oninput="setCustomValidity('')" />
-                    </div>
-                    <div class="form-group">
-                      <label class="required form-label" for="price"> Price</label>
-                      <input type="number" id="price" name="price" class="form-control" value="<%= notaDinasTerkirim[i].price %>" required oninvalid="this.setCustomValidity('Data cannot be null')" oninput="setCustomValidity('')" />
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
 
-          <!-- modal delete -->
-          <div class="modal fade" tabindex="-1" id="deletenotaDinasModal<%= notaDinasTerkirim[i]._id %>">
+
+            <!-- modal delete -->
+            <!-- <div class="modal fade" tabindex="-1" id="deletenotaDinasModal<%= notaDinasTerkirim[i]._id %>">
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
                   <h3 class="modal-title">Are you sure?</h3>
-                  <!--begin::Close-->
                   <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
                     <span class="svg-icon svg-icon-1">
                       <span class="svg-icon svg-icon-primary svg-icon-2x">
@@ -136,7 +149,6 @@
                       </span>
                     </span>
                   </div>
-                  <!--end::Close-->
                 </div>
                 <form action="/notaDinas/delete/<%= notaDinasTerkirim[i]._id %>?_method=DELETE" method="POST">
                   <div class="modal-footer">
@@ -147,7 +159,7 @@
                 </form>
               </div>
             </div>
-          </div>
+          </div> -->
         </td>
       </tr>
       <% } %>

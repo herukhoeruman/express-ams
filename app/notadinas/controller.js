@@ -95,7 +95,7 @@ module.exports = {
       console.log(jabatan);
       const notaDinasTerkirim = await NotaDinas.find({
         pengirim: jabatan,
-        flag: 2,
+        // flag: 2,
       });
       res.render("notadinas/terkirim/index", {
         notaDinasTerkirim,
@@ -483,16 +483,27 @@ module.exports = {
 
   konsepNotaDinas: async (req, res) => {
     try {
-      const divisi = req.session.user.divisi;
-      const lastNoAgenda = await NotaDinas.findOne({ divisi: divisi })
-        .sort({ noAgenda: -1 })
-        .limit(1);
+      const divisi = req.session.user.jabatan.namaUnit;
       const users = await Users.find();
       const klasifikasi = await Klasifikasi.find();
+      const tahun = new Date().getFullYear();
+      const lastNoAgenda = await NotaDinas.findOne({ divisi: divisi }).sort({
+        noAgenda: -1,
+      });
 
-      // console.log(lastNoAgenda);
+      let noAgenda;
+      if (lastNoAgenda !== null) {
+        if (lastNoAgenda.tahun !== tahun) {
+          noAgenda = 1;
+        } else {
+          noAgenda = lastNoAgenda.noAgenda + 1;
+        }
+      } else {
+        noAgenda = 1;
+      }
+
       res.render("notadinas/konsep", {
-        lastNoAgenda,
+        noAgenda,
         users,
         klasifikasi,
         title: "Konsep Nota Dinas",

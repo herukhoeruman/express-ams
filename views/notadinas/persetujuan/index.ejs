@@ -54,7 +54,7 @@
                 <span class="badge badge-danger">Ditolak</span>
                 <% } %>
               </td>
-              <td style="width: 80px;">
+              <td>
                 <%# if (notaDinas[i].flag === 1) { %>
                 <a href="persetujuan/<%= notaDinas[i]._id %>" class="btn btn-sm btn-light-primary btn-icon mr-2" title="Persetujuan">
                   <span class="svg-icon svg-icon-primary svg-icon-2">
@@ -105,7 +105,12 @@
                       </div>
                       <div class="modal-body">
                         <p id="errorMessage<%= notaDinas[i]._id %>" style="display: none;">Dokumen belum tersedia.</p>
+                        <% if (notaDinas[i].flag ===  2) { %>
+                        <iframe src="/upload/signed/<%= notaDinas[i].document %>" width="100%" height="1080" type="application/pdf"></iframe>
+                        <% } else { %>
                         <iframe src="/upload/<%= notaDinas[i].document %>" width="100%" height="1080" type="application/pdf"></iframe>
+                        <% } %>
+
                       </div>
                     </div>
                   </div>
