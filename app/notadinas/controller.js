@@ -224,7 +224,6 @@ module.exports = {
         // keterangan,
         email,
         divisi,
-        attachment,
         flag,
       } = req.body;
 
@@ -611,7 +610,7 @@ module.exports = {
         dari,
         kepada,
         pemeriksa,
-        pengirim,
+        // pengirim,
         perihal,
         jumlahLampiran,
         jenisLampiran,
@@ -620,11 +619,10 @@ module.exports = {
         isiSurat,
         tembusan,
         keterangan,
-        fileAttachment,
         email,
         divisi,
-        flag,
       } = req.body;
+      const pengirim = req.session.user.jabatan.sebutanJabatan;
       const nomor = noNotaDinas.replace(/\//g, "_");
       const document = path.resolve(
         config.rootPath,

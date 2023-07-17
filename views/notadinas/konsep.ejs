@@ -459,7 +459,7 @@
   function sendPDF() {
     const tahun = new Date().getFullYear();
     const tanggal = $('#tanggal').val();
-    const pengirim = `<%= jabatan.sebutanJabatan %>`;
+    // const pengirim = `<%# jabatan.sebutanJabatan %>`;
     const penerima = $('#penerima').val();
     const pemeriksa = $('#pemeriksa').val();
 
@@ -498,7 +498,7 @@
     formData.append('dari', pemeriksa); // pemeriksa
     formData.append('kepada', penerima); // penerima
     formData.append('pemeriksa', pemeriksa);
-    formData.append('pengirim', pengirim);
+    // formData.append('pengirim', pengirim);
     formData.append('perihal', perihal);
     formData.append('jumlahLampiran', jumlahLampiran);
     formData.append('jenisLampiran', jenisLampiran);
