@@ -224,36 +224,89 @@ module.exports = {
         // keterangan,
         email,
         divisi,
-        // fileAttachment,
+        attachment,
         flag,
       } = req.body;
 
-      const updateNotaDinas = await NotaDinas.findOneAndUpdate(
-        { _id: id },
-        {
-          noNotaDinas,
-          noAgenda,
-          tanggal,
-          tahun,
-          dari,
-          kepada,
-          pemeriksa,
-          pengirim,
-          perihal,
-          jumlahLampiran,
-          jenisLampiran,
-          kodeKlasifikasi,
-          sifat,
-          isiSurat,
-          tembusan,
-          // keterangan,
-          email,
-          divisi,
-          // fileAttachment,
-          flag,
+      if (req.file) {
+        const filePath = req.file.path;
+        const attachmentFileName = req.file.originalname;
+        const targetPath = path.resolve(
+          config.rootPath,
+          `public/upload/attachment/${attachmentFileName}`
+        );
+        console.log(filePath);
+        console.log(targetPath);
+        console.log(attachmentFileName);
+
+        const src = fs.createReadStream(filePath);
+        const dest = fs.createWriteStream(targetPath);
+        src.pipe(dest);
+
+        src.on("end", async () => {
+          try {
+            const updateNotaDinas = await NotaDinas.findOneAndUpdate(
+              { _id: id },
+              {
+                noNotaDinas,
+                noAgenda,
+                tanggal,
+                tahun,
+                dari,
+                kepada,
+                pemeriksa,
+                pengirim,
+                perihal,
+                jumlahLampiran,
+                jenisLampiran,
+                kodeKlasifikasi,
+                sifat,
+                isiSurat,
+                tembusan,
+                // keterangan,
+                email,
+                divisi,
+                attachment: attachmentFileName,
+                flag,
+              }
+            );
+            res.status(200).json({ updateNotaDinas });
+          } catch (err) {
+            console.log(err);
+          }
+        });
+      } else {
+        try {
+          const updateNotaDinas = await NotaDinas.findOneAndUpdate(
+            { _id: id },
+            {
+              noNotaDinas,
+              noAgenda,
+              tanggal,
+              tahun,
+              dari,
+              kepada,
+              pemeriksa,
+              pengirim,
+              perihal,
+              jumlahLampiran,
+              jenisLampiran,
+              kodeKlasifikasi,
+              sifat,
+              isiSurat,
+              tembusan,
+              // keterangan,
+              email,
+              divisi,
+              flag,
+            }
+          );
+          res.status(200).json({ updateNotaDinas });
+        } catch (err) {
+          console.log(err);
         }
-      );
-      res.status(200).json({ updateNotaDinas });
+      }
+
       // res.redirect("");
     } catch (err) {
       console.log(err);
@@ -579,32 +632,82 @@ module.exports = {
       );
       const filename = document.split("\\").pop();
 
-      const newNotaDinas = await NotaDinas({
-        noNotaDinas,
-        noAgenda,
-        tanggal,
-        tahun,
-        dari,
-        kepada,
-        pemeriksa,
-        pengirim,
-        perihal,
-        jumlahLampiran,
-        jenisLampiran,
-        kodeKlasifikasi,
-        sifat,
-        isiSurat,
-        tembusan,
-        keterangan,
-        fileAttachment,
-        email,
-        divisi,
-        document: filename,
-        flag,
-      });
-      await newNotaDinas.save();
+      if (req.file) {
+        const filePath = req.file.path;
+        const attachmentFileName = req.file.originalname;
+        const targetPath = path.resolve(
+          config.rootPath,
+          `public/upload/attachment/${attachmentFileName}`
+        );
+        console.log(filePath);
+        console.log(targetPath);
+        console.log(attachmentFileName);
 
-      res.status(200).json({ newNotaDinas });
+        const src = fs.createReadStream(filePath);
+        const dest = fs.createWriteStream(targetPath);
+        src.pipe(dest);
+
+        src.on("end", async () => {
+          try {
+            const newNotaDinas = new NotaDinas({
+              noNotaDinas,
+              noAgenda,
+              tanggal,
+              tahun,
+              dari,
+              kepada,
+              pemeriksa,
+              pengirim,
+              perihal,
+              jumlahLampiran,
+              jenisLampiran,
+              kodeKlasifikasi,
+              sifat,
+              isiSurat,
+              tembusan,
+              keterangan,
+              attachment: attachmentFileName,
+              email,
+              divisi,
+              document: filename,
+              flag: 1,
+            });
+            const savedNotaDinas = await newNotaDinas.save();
+            res.status(200).json({ savedNotaDinas });
+          } catch (err) {
+            console.log(err);
+          }
+        });
+      } else {
+        try {
+          const newNotaDinas = new NotaDinas({
+            noNotaDinas,
+            noAgenda,
+            tanggal,
+            tahun,
+            dari,
+            kepada,
+            pemeriksa,
+            pengirim,
+            perihal,
+            jumlahLampiran,
+            jenisLampiran,
+            kodeKlasifikasi,
+            sifat,
+            isiSurat,
+            tembusan,
+            keterangan,
+            email,
+            divisi,
+            document: filename,
+            flag: 1,
+          });
+          const savedNotaDinas = await newNotaDinas.save();
+          res.status(200).json({ savedNotaDinas });
+        } catch (err) {
+          console.log(err);
+        }
+      }
     } catch (err) {
       console.log(err);
       res.status(400).json({ err });

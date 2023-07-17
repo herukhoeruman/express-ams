@@ -20,7 +20,7 @@ const notaDinasSchema = mongoose.Schema(
     email: String,
     divisi: String,
     document: String,
-    fileAttachment: String,
+    attachment: String,
     disposisi: String,
     keterangan: String,
     dataResponse: {

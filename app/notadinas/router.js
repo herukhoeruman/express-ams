@@ -29,7 +29,11 @@ router.get("/", index); //masuk
 router.get("/terkirim", terkirim);
 router.get("/persetujuan", persetujuan);
 router.get("/persetujuan/:id", viewPersetujuan);
-router.put("/update/:id", updateNotaDinas);
+router.put(
+  "/update/:id",
+  multer({ dest: os.tmpdir() }).single("file"),
+  updateNotaDinas
+);
 router.put("/persetujuan/:id", actionPersetujuan);
 
 router.get("/create", viewCreate);
@@ -42,8 +46,9 @@ router.put(
 );
 router.post("/notadinas-sent", insertNotaDinasSent);
 router.post("/notadinas-inbox", insertNotaDinasInbox);
+
 router.get("/konsep", konsepNotaDinas);
 router.post("/konsep", savePdf);
-router.post("/kirim", kirim);
+router.post("/kirim", multer({ dest: os.tmpdir() }).single("file"), kirim);
 
 module.exports = router;
