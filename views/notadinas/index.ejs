@@ -172,34 +172,32 @@
                             <div class="tab-pane fade" id="kt_tab_pane_2_<%= notaDinas[i]._id %>" role="tabpanel">
                               <% notaDinas[i].disposisi.forEach(disposisi => { %>
                               <div class="card card-bordered mb-2">
-                                <div class="card-body p-4">
-                                  <div class="mb-4">
-                                    <div class="row">
-                                      <div class="col-sm-4"><span class="badge badge-info"><%= disposisi.pengirim %></span></div>
-                                      <div class="col-sm-8 d-flex justify-content-end"><%= disposisi.tanggal%></div>
-                                    </div>
-                                    <div class="separator my-4"></div>
-                                    <div class="row">
-                                      <div class="col-sm-3">Penerima</div>
-                                      <div class="col-sm-1 d-flex justify-content-end">:</div>
-                                      <div class="col-sm-8"><%= disposisi.penerima %></div>
-                                    </div>
-                                    <div class="row">
-                                      <div class="col-sm-3">Keterangan</div>
-                                      <div class="col-sm-1 d-flex justify-content-end">:</div>
-                                      <div class="col-sm-8"><%= disposisi.tindakLanjut %></div>
-                                    </div>
-                                    <div class="row">
-                                      <div class="col-sm-3">Disposisi</div>
-                                      <div class="col-sm-1 d-flex justify-content-end">:</div>
-                                      <div class="col-sm-8">
-                                        <div class="d-flex flex-column">
-                                          <% disposisi.disposisi.forEach(ds => { %>
-                                          <li class="d-flex align-items-center">
-                                            <span class="bullet bullet-dot me-3"></span> <%= ds %>
-                                          </li>
-                                          <% }) %>
-                                        </div>
+                                <div class="card-body p-4 mb-4">
+                                  <div class="row">
+                                    <div class="col-sm-4"><span class="badge badge-info"><%= disposisi.pengirim %></span></div>
+                                    <div class="col-sm-8 d-flex justify-content-end"><%= disposisi.tanggal%></div>
+                                  </div>
+                                  <div class="separator my-4"></div>
+                                  <div class="row">
+                                    <div class="col-sm-3">Penerima</div>
+                                    <div class="col-sm-1 d-flex justify-content-end">:</div>
+                                    <div class="col-sm-8"><%= disposisi.penerima %></div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="col-sm-3">Keterangan</div>
+                                    <div class="col-sm-1 text-end">:</div>
+                                    <div class="col-sm-8 text-start"><%= disposisi.tindakLanjut %></div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="col-sm-3">Disposisi</div>
+                                    <div class="col-sm-1 d-flex justify-content-end">:</div>
+                                    <div class="col-sm-8">
+                                      <div class="d-flex flex-column">
+                                        <% disposisi.disposisi.forEach(ds => { %>
+                                        <li class="d-flex align-items-center">
+                                          <span class="bullet bullet-dot me-3"></span> <%= ds %>
+                                        </li>
+                                        <% }) %>
                                       </div>
                                     </div>
                                   </div>
