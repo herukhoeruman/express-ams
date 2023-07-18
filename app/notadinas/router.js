@@ -44,7 +44,7 @@ router.put(
   multer({ dest: os.tmpdir() }).single("files"),
   actionEdit
 );
-router.post("/notadinas-sent", insertNotaDinasSent);
+router.post("/disposisi/:id", insertNotaDinasSent);
 router.post("/notadinas-inbox", insertNotaDinasInbox);
 
 router.get("/konsep", konsepNotaDinas);

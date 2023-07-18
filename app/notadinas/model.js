@@ -11,7 +11,7 @@ const notaDinasSchema = mongoose.Schema(
     pemeriksa: String,
     pengirim: String,
     perihal: String,
-    jumlahLampiran: { type: Number, default: 0 },
+    jumlahLampiran: Number,
     jenisLampiran: String,
     kodeKlasifikasi: String,
     sifat: String,
@@ -21,7 +21,15 @@ const notaDinasSchema = mongoose.Schema(
     divisi: String,
     document: String,
     attachment: String,
-    disposisi: String,
+    disposisi: [
+      {
+        pengirim: String,
+        penerima: String,
+        disposisi: [String],
+        tindakLanjut: String,
+        tanggal: String,
+      },
+    ],
     keterangan: String,
     dataResponse: {
       id: String,

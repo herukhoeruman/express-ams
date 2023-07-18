@@ -34,43 +34,49 @@ module.exports = {
       const users = await Users.find();
       const historyDisposisi = await NotaDinasSent.find();
       // for of  async
-      for (const data of notaDinas) {
-        const id = data.dataResponse.id;
-        const fileName = data.document;
-        const signed = await Callback.findOne({ documentId: id });
-        const outputFilePath = path.resolve(
-          config.rootPath,
-          `public/upload/signed/${fileName}`
-        );
+      // for (const data of notaDinas) {
+      //   const id = data.dataResponse.id;
+      //   const fileName = data.document;
+      //   const signed = await Callback.findOne({ documentId: id });
+      //   const outputFilePath = path.resolve(
+      //     config.rootPath,
+      //     `public/upload/signed/${fileName}`
+      //   );
 
-        if (fs.existsSync(outputFilePath)) {
-          console.log("File already exists.");
-        } else {
-          try {
-            const response = await axios({
-              url: signed.downloadUrl,
-              method: "GET",
-              responseType: "stream",
-            });
+      //   if (fs.existsSync(outputFilePath)) {
+      //     console.log("File already exists.");
+      //   } else {
+      //     try {
+      //       const response = await axios({
+      //         url: signed.downloadUrl,
+      //         method: "GET",
+      //         responseType: "stream",
+      //       });
 
-            response.data.pipe(fs.createWriteStream(outputFilePath));
+      //       response.data.pipe(fs.createWriteStream(outputFilePath));
 
-            await new Promise((resolve, reject) => {
-              response.data.on("end", () => {
-                console.log("File downloaded successfully.");
-                resolve();
-              });
+      //       await new Promise((resolve, reject) => {
+      //         response.data.on("end", () => {
+      //           console.log("File downloaded successfully.");
+      //           resolve();
+      //         });
 
-              response.data.on("error", (err) => {
-                console.error("Error downloading file:", err);
-                reject(err);
-              });
-            });
-          } catch (error) {
-            console.error("Error downloading file:", error);
-          }
-        }
-      }
+      //         response.data.on("error", (err) => {
+      //           console.error("Error downloading file:", err);
+      //           reject(err);
+      //         });
+      //       });
+      //     } catch (error) {
+      //       console.error("Error downloading file:", error);
+      //     }
+      //   }
+      // }
+
+      notaDinas.forEach((nd) => {
+        nd.disposisi.forEach((disposisi) => {
+          console.log(disposisi);
+        });
+      });
 
       res.render("notadinas/index", {
         notaDinas,
@@ -487,19 +493,32 @@ module.exports = {
 
   insertNotaDinasSent: async (req, res) => {
     try {
-      const { notaDinasKode, sentKode, tindakLanjut, disposisi, penerima } =
-        req.body;
+      const id = req.params.id;
+      const { tindakLanjut, disposisi, penerima } = req.body;
 
-      const notaDinasSent = await NotaDinasSent({
-        pengirim: req.session.user.username,
-        penerima,
-        notaDinasKode,
-        // sentKode,
-        disposisi,
-        tindakLanjut,
-      });
-      await notaDinasSent.save();
-      res.status(200).json(notaDinasSent);
+      const newDate = new Date();
+      const options = {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      };
+      const date = newDate.toLocaleDateString("id-ID", options);
+      const disposisiData = {
+        pengirim: req.session.user.jabatan.sebutanJabatan,
+        penerima: penerima,
+        disposisi: disposisi,
+        tindakLanjut: tindakLanjut,
+        tanggal: date,
+      };
+
+      await NotaDinas.findOneAndUpdate(
+        { _id: id },
+        { $push: { disposisi: disposisiData } },
+        { new: true }
+      );
+
+      // res.status(200).json({ notaDinas });
       res.redirect("/notadinas");
     } catch (err) {
       console.log(err);

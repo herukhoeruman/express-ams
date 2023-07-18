@@ -26,7 +26,6 @@
               <th class="">Kepada</th>
               <th class="">Hal</th>
               <th class="">Tanggal</th>
-              <th class="">Dokumen</th>
               <th class=""></th>
             </tr>
           </thead>
@@ -39,7 +38,6 @@
               <td> <%= notaDinas[i].kepada %></td>
               <td> <%= notaDinas[i].perihal %></td>
               <td> <%= notaDinas[i].tanggal %></td>
-              <td> <%= notaDinas[i].document %></td>
               <td>
                 <a data-id="<%= notaDinas[i]._id %>" class="btn btn-sm btn-light-primary btn-icon mr-2" id="kt_drawer_chat_toggle_<%= notaDinas[i]._id %>" title="Disposisi">
                   <span class="svg-icon svg-icon-primary svg-icon-2">
@@ -96,7 +94,7 @@
                 </div>
 
                 <!-- forward drawer -->
-                <div id="kt_drawer_chat" class="bg-body" data-kt-drawer="true" data-kt-drawer-name="chat" data-kt-drawer-activate="true" data-kt-drawer-overlay="true" data-kt-drawer-width="{default:'300px', 'md': '500px'}" data-kt-drawer-direction="end" data-kt-drawer-toggle="#kt_drawer_chat_toggle_<%= notaDinas[i]._id %>" data-kt-drawer-close="#kt_drawer_chat_close_<%= notaDinas[i]._id %>">
+                <div id="kt_drawer_chat_<%= notaDinas[i]._id %>" class="bg-body" tabindex="-1" data-kt-drawer="true" data-kt-drawer-name="chat" data-kt-drawer-activate="true" data-kt-drawer-overlay="true" data-kt-drawer-width="{default:'300px', 'md': '500px'}" data-kt-drawer-direction="end" data-kt-drawer-toggle="#kt_drawer_chat_toggle_<%= notaDinas[i]._id %>" data-kt-drawer-close="#kt_drawer_chat_close_<%= notaDinas[i]._id %>">
                   <div class="card w-100 rounded-0 border-0" id="kt_drawer_chat_messenger">
                     <div class="card-header pe-5" id="kt_drawer_chat_messenger_header_<%= notaDinas[i]._id %>">
                       <div class="card-title">
@@ -135,7 +133,7 @@
                           </div>
                         </div>
 
-                        <form id="form<%= notaDinas[i]._id %>" action="/notadinas/notadinas-sent" method="post">
+                        <form id="form<%= notaDinas[i]._id %>" action="/notadinas/disposisi/<%= notaDinas[i]._id %>" method="post">
                           <div class="tab-content" id="myTabContent">
                             <div class="tab-pane fade show active" id="kt_tab_pane_1_<%= notaDinas[i]._id %>" role="tabpanel">
                               <div class="rounded border border-gray-300 mb-5">
@@ -152,52 +150,64 @@
                                   <% } %>
                                   <% } %>
                                 </div>
+
                                 <div class="form-group mb-5">
                                   <label class="required form-label" for=""> Kepada</label>
-                                  <select class="form-select" aria-label="Default select example" name="penerima" id="penerima_<%= notaDinas[i]._id %>">
-                                    <option selected>...</option>
+                                  <select class="form-select form-select-solid" id="penerima_<%= notaDinas[i]._id %>" name="penerima" data-control="select2" data-dropdown-parent="#kt_drawer_chat_<%= notaDinas[i]._id %>" data-placeholder="disposis kepada" data-allow-clear="true" required>
+                                    <option></option>
                                     <% users.forEach(user=> { %>
-                                    <option value="<%= user.username %>">
-                                      <%= user.username %> - <%= user.jabatan %>/<%= user.divisi %>
+                                    <option value="<%= user.jabatan.sebutanJabatan%>">
+                                      <%= user.username %> - <%= user.jabatan.sebutanJabatan %>
                                     </option>
                                     <% }) %>
                                   </select>
                                 </div>
+
                                 <div class="form-group mb-5">
                                   <label class="form-label"> Keterangan </label>
-                                  <textarea type="text" id="tindakLanjut_<%= notaDinas[i]._id %>" name="tindakLanjut" class="form-control"></textarea>
+                                  <textarea type="text" id="tindakLanjut_<%= notaDinas[i]._id %>" name="tindakLanjut" class="form-control" required></textarea>
                                 </div>
                               </div>
                             </div>
                             <div class="tab-pane fade" id="kt_tab_pane_2_<%= notaDinas[i]._id %>" role="tabpanel">
-                              <% if (historyDisposisi) { %>
-                              <% let no = 1 %>
-                              <% historyDisposisi.forEach( disposisi => { %>
-                              <div class="mb-4">
-                                <div class="row">
-                                  <div class="col-sm-4"><span class="badge badge-info"><%= disposisi.pengirim %></span></div>
-                                  <div class="col-sm-8 d-flex justify-content-end"><span class="badge badge-light-success"> <%= disposisi.createdAt.toISOString().slice(0, 10) %></span> </div>
-                                </div>
-                                <div class="row">
-                                  <div class="col-sm-3">Penerima</div>
-                                  <div class="col-sm-1 d-flex justify-content-end">:</div>
-                                  <div class="col-sm-8"><%= disposisi.penerima %></div>
-                                </div>
-                                <div class="row">
-                                  <div class="col-sm-3">Disposisi</div>
-                                  <div class="col-sm-1 d-flex justify-content-end">:</div>
-                                  <div class="col-sm-8"><%= disposisi.disposisi %></div>
-                                </div>
-                                <div class="row">
-                                  <div class="col-sm-3">Tindak lanjut</div>
-                                  <div class="col-sm-1 d-flex justify-content-end">:</div>
-                                  <div class="col-sm-8"><%= disposisi.tindakLanjut %></div>
+                              <% notaDinas[i].disposisi.forEach(disposisi => { %>
+                              <div class="card card-bordered mb-2">
+                                <div class="card-body p-4">
+                                  <div class="mb-4">
+                                    <div class="row">
+                                      <div class="col-sm-4"><span class="badge badge-info"><%= disposisi.pengirim %></span></div>
+                                      <div class="col-sm-8 d-flex justify-content-end"><%= disposisi.tanggal%></div>
+                                    </div>
+                                    <div class="separator my-4"></div>
+                                    <div class="row">
+                                      <div class="col-sm-3">Penerima</div>
+                                      <div class="col-sm-1 d-flex justify-content-end">:</div>
+                                      <div class="col-sm-8"><%= disposisi.penerima %></div>
+                                    </div>
+                                    <div class="row">
+                                      <div class="col-sm-3">Keterangan</div>
+                                      <div class="col-sm-1 d-flex justify-content-end">:</div>
+                                      <div class="col-sm-8"><%= disposisi.tindakLanjut %></div>
+                                    </div>
+                                    <div class="row">
+                                      <div class="col-sm-3">Disposisi</div>
+                                      <div class="col-sm-1 d-flex justify-content-end">:</div>
+                                      <div class="col-sm-8">
+                                        <div class="d-flex flex-column">
+                                          <% disposisi.disposisi.forEach(ds => { %>
+                                          <li class="d-flex align-items-center">
+                                            <span class="bullet bullet-dot me-3"></span> <%= ds %>
+                                          </li>
+                                          <% }) %>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
                                 </div>
                               </div>
-                              <hr>
 
                               <% }) %>
-                              <% } %>
+
                             </div>
                           </div>
                       </div>
