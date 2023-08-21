@@ -1,11 +1,10 @@
-
 <% if(alert.title !="" ) { %>
 <script>
-    Swal.fire({
-        title: '<%= alert.title %>',
-        text: '<%= alert.text %>',
-        icon: '<%= alert.icon %>',
-        confirmButtonText: 'OK'
-    });
+  Swal.fire({
+    title: '<%= alert.title %>',
+    text: '<%= alert.text %>',
+    icon: '<%= alert.icon %>',
+    confirmButtonText: 'OK'
+  });
 </script>
 <% } %>

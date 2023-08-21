@@ -17,7 +17,7 @@
 
     <div class="card shadow-sm mt-5">
       <div class="card-body">
-        <table id="kt_datatable_dom_positioning" class="table table-striped table-row-bordered gy-5 gs-7 border rounded">
+        <table id="kt_datatable_dom_positioning" class="table table-row-bordered gy-5 gs-7 border rounded">
           <thead>
             <tr class="fw-bold fs-6 text-gray-800 px-7">
               <th class="text-center">No.</th>
@@ -26,13 +26,15 @@
               <!-- <th class="text-center">Dari</th> -->
               <th class="text-center">Kepada</th>
               <th class="text-center">Hal</th>
-              <th class="text-center">Tanggal</th>
+              <th class="">Tanggal</th>
               <th class="text-center">Status</th>
               <th class="text-center"></th>
             </tr>
           </thead>
           <tbody class="fw-semibold">
             <% for(let i=0; i < notaDinas.length; i++) { %>
+
+            <%# if (notaDinas[i].flag === 1 || notaDinas[i].flag === 3 &&  notaDinas[i].pengirim === jabatan.sebutanJabatan  ) { %>
             <tr class="odd">
               <td> <%= i +1 %></td>
               <td> <%= notaDinas[i].noNotaDinas %></td>
@@ -44,16 +46,16 @@
               <td class="text-center">
                 <%# notaDinas[i].flag %>
                 <% if (notaDinas[i].flag === 1) { %>
-                <span class="badge badge-info">Dalam proses</span>
+                <span class="badge py-3 px-4 fs-7 badge-light-info">Dalam proses</span>
                 <% } else if(notaDinas[i].flag === 2) { %>
-                <span class="badge badge-success">Disetujui</span>
+                <span class="badge py-3 px-4 fs-7 badge-light-success">Disetujui</span>
                 <% } else if(notaDinas[i].flag === 3) { %>
-                <span class="badge badge-danger">Ditolak</span>
+                <span class="badge py-3 px-4 fs-7 badge-light-danger">Dibatalkan</span>
                 <% } %>
               </td>
               <td>
-                <%# if (notaDinas[i].flag === 1) { %>
-                <a href="persetujuan/<%= notaDinas[i]._id %>" class="btn btn-sm btn-light-primary btn-icon mr-2" title="Persetujuan">
+                <% if (notaDinas[i].flag === 1) { %>
+                <a href="/notadinas/persetujuan/<%= notaDinas[i]._id %>" class="btn btn-sm btn-light-primary btn-icon mr-2" title="Persetujuan">
                   <span class="svg-icon svg-icon-primary svg-icon-2">
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
                       <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -64,7 +66,7 @@
                     </svg>
                   </span>
                 </a>
-                <%# } %>
+                <% } %>
                 <a data-id="<%= notaDinas[i]._id %>" class="btn btn-sm btn-light-danger btn-icon mr-2" data-bs-toggle="modal" data-bs-target="#documentModal<%= notaDinas[i]._id %>" title="Lihat Nota Dinas">
                   <span class="svg-icon svg-icon-info svg-icon-2">
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
@@ -103,9 +105,9 @@
                       <div class="modal-body">
                         <p id="errorMessage<%= notaDinas[i]._id %>" style="display: none;">Dokumen belum tersedia.</p>
                         <% if (notaDinas[i].flag ===  2) { %>
-                        <iframe src="/upload/signed/<%= notaDinas[i].document %>" width="100%" height="1080" type="application/pdf"></iframe>
+                        <iframe src="/document/nota-dinas/<%= notaDinas[i].tahun %>/signed/<%= notaDinas[i].document %>" width="100%" height="1080" type="application/pdf"></iframe>
                         <% } else { %>
-                        <iframe src="/upload/<%= notaDinas[i].document %>" width="100%" height="1080" type="application/pdf"></iframe>
+                        <iframe src="/document/nota-dinas/<%= notaDinas[i].tahun %>/<%= notaDinas[i].document %>" width="100%" height="1080" type="application/pdf"></iframe>
                         <% } %>
 
                       </div>
@@ -114,6 +116,7 @@
                 </div>
               </td>
             </tr>
+            <%# } %>
             <% } %>
           </tbody>
         </table>

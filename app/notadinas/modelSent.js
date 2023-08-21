@@ -2,21 +2,10 @@ const mongoose = require("mongoose");
 
 const notaDinasSentShema = mongoose.Schema(
   {
-    kode: {
-      type: String,
-    },
     pengirim: {
       type: String,
     },
-    penerima: [
-      {
-        type: String,
-      },
-    ],
-    notaDinasKode: {
-      type: String,
-    },
-    sentKode: {
+    penerima: {
       type: String,
     },
     disposisi: [
@@ -30,8 +19,14 @@ const notaDinasSentShema = mongoose.Schema(
     tanggal: {
       type: String,
     },
-    kodeApp: {
-      type: String,
+    readStatus: {
+      type: Boolean,
+      default: false,
+    },
+    notaDinasId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "NotaDinas",
+      required: true,
     },
   },
   { timestamps: true }

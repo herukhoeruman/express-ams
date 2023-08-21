@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-// const autoIncrement = require("mongoose-auto-increment");
 
 let userSchema = mongoose.Schema(
   {
@@ -12,6 +11,7 @@ let userSchema = mongoose.Schema(
       require: [true, "password tidak boleh kosong"],
     },
     email: { type: String },
+    nomorTlp: { type: String },
     divisi: { type: String },
     role: { type: String },
     jabatan: {

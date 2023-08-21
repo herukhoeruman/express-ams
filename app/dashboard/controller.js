@@ -53,6 +53,7 @@ module.exports = {
         subtitle: "dashboard",
         username: req.session.user.username,
         jabatan: req.session.user.jabatan,
+        role: req.session.user.role,
       });
     } catch (err) {
       console.log(err);

@@ -136,7 +136,7 @@
 
                     <div class="row mb-5 d-flex align-items-center">
                       <div class="col-md-4">
-                        <label class="required form-label"> Lampiran</label>
+                        <label class="form-label"> Lampiran</label>
                       </div>
                       <div class="col-md-8">
                         <div class="row">
@@ -166,7 +166,7 @@
 
                     <div class="row mb-5 d-flex align-items-center">
                       <div class="col-md-4">
-                        <label class="required form-label">Tembusan</label>
+                        <label class="form-label">Tembusan</label>
                       </div>
                       <div class="col-md-8">
                         <select class="form-select" id="tembusan" name="tembusan" data-control="select2" data-close-on-select="tru" data-placeholder="dikirimkan kepada" data-allow-clear="true" multiple="multiple">
@@ -280,8 +280,9 @@
 
   $("#tanggal").flatpickr({
     enableTime: false,
-    dateFormat: "j F Y",
-    locale: "id"
+    // dateFormat: "j F Y",
+    locale: "id",
+    maxDate: "today",
   });
 
   const btnPreview = document.querySelector("#generate-pdf");
@@ -301,18 +302,20 @@
 
   function generatePDF() {
     event.preventDefault();
-
     const tahunIni = new Date().getFullYear();
     const tanggal = $('#tanggal').val();
-    // const tanggal = new Date(tanggalVal).toLocaleDateString('id-ID', {
-    //   day: 'numeric',
-    //   month: 'long',
-    //   year: 'numeric'
-    // });
-    console.log(tanggal);
     // const pengirim = $('#pengirim').val();
     const penerima = $('#penerima').val();
     const pemeriksa = $('#pemeriksa').val();
+
+    const date = new Date(tanggal);
+    const options = {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    };
+    const formattedDate = date.toLocaleDateString('id-ID', options);
+    console.log(formattedDate);
 
     const selectElement = document.getElementById("pemeriksa");
     const selectedOption = selectElement.options[selectElement.selectedIndex];
@@ -331,132 +334,289 @@
     console.log("tembusan:", tembusan);
 
     // const valueNoAgenda = `<%# typeof lastNoAgenda !== 'undefined' && lastNoAgenda !== null ? lastNoAgenda.noAgenda + 1 : 1 %>`;
-    const valueNoAgenda = `<%= noAgenda %>`;
-    const nomor = valueNoAgenda.toString().padStart(3, '0');
-    const nomorNotaDinas = `${nomor}/${kodeKlasifikasi}/${kodeJabatan}/${tahunIni}`;
+    // const valueNoAgenda = `<%= noAgenda %>`;
+    // const nomor = valueNoAgenda.toString().padStart(3, '0');
+    // const nomorNotaDinas = `${nomor}/${kodeKlasifikasi}/${kodeJabatan}/${tahunIni}`;
 
-    // Create new PDF document
-    window.jsPDF = window.jspdf.jsPDF;
-    const doc = new jsPDF('p', 'pt', 'a4');
+    // if (penerima == "") {
+    //   Swal.fire("Perhatian", "Penerima tidak boleh kosong", "error");
+    // } else if (pemeriksa == "") {
+    //   Swal.fire("Perhatian", "Pemeriksa tidak boleh kosong", "error");
+    // } else if (tanggal == "") {
+    //   Swal.fire("Perhatian", "Tanggal tidak boleh kosong", "error");
+    // } else if (kodeKlasifikasi == "") {
+    //   Swal.fire("Perhatian", "Kode klasifikasi tidak boleh kosong", "error");
+    // } else if (sifat == "") {
+    //   Swal.fire("Perhatian", "Sifat tidak boleh kosong", "error");
+    // } else if (perihal == "") {
+    //   Swal.fire("Perhatian", "Perihal tidak boleh kosong", "error");
+    // } else if (isiSurat == "") {
+    //   Swal.fire("Perhatian", "Isi surat tidak boleh kosong", "error");
+    // } else {
+    $.ajax({
+      url: '/notadinas/proses-konsep',
+      method: 'POST',
+      data: {
+        tanggal
 
-    //header logo
-    //logo
-    const img = new Image();
-    img.src = '/images/logo-500px.png';
-    doc.addImage(img, 'png', 60, 10, 113, 85);
-
-    const img2 = new Image();
-    img2.src = '/images/logo-kanan.png';
-    doc.addImage(img2, 'png', 320, 25, 200, 60);
-
-    //line config
-    const x = doc.internal.pageSize.getWidth() / 2;
-    const panjangGaris = 450;
-    const startX = x - (panjangGaris / 2);
-    const endX = x + (panjangGaris / 2);
-    //line header
-    doc.setLineWidth(1);
-    doc.line(startX, 100, endX, 100);
-    // line footer
-    doc.setLineWidth(1);
-    doc.line(startX, 770, endX, 770);
-
-    doc.setFontSize(8)
-    doc.setFont("Helvetica", "bold")
-    doc.text("PT. GERBANG SINERGI PRIMA", 72, 780)
-    doc.setFont("Helvetica", "")
-    doc.text("Jl. Cikutra No.219, Bandung - Jawa Barat", 72, 790)
-    doc.text("Tlp : 022-426 6778 / Fax : - ", 72, 800)
-    doc.text("Email : sekper@gsp.co.id", 72, 810)
-
-    //body
-    // garis
-    const lineLength = 90;
-    const startX2 = x - (lineLength / 2);
-    const endX2 = x + (lineLength / 2);
-
-    doc.setLineWidth(1);
-    doc.line(startX2, 127, endX2, 127);
-
-    doc.setFontSize(14);
-    doc.setFont("Helvetica", "bold")
-    doc.text(`NOTA DINAS`, x, 125, {
-      align: "center"
-    });
-    doc.setFontSize(12);
-    doc.setFont("Helvetica", "")
-    doc.text(`Nomor : ${nomorNotaDinas}`, x, 145, {
-      align: "center"
-    });
-    // kepala surat
-    doc.text(`Kepada`, 72, 200, );
-    doc.text(`Dari`, 72, 220, );
-    doc.text(`Tanggal`, 72, 240, );
-    doc.text(`Sifat`, 72, 260, );
-    doc.text(`Lampiran`, 72, 280, );
-    doc.text(`Hal`, 72, 300, );
-
-    doc.text(`: Yth. ${penerima}`, 140, 200);
-    doc.text(`: ${pemeriksa}`, 140, 220);
-    doc.text(`: ${tanggal}`, 140, 240);
-    doc.text(`: ${sifat}`, 140, 260);
-    doc.text(`: ${lampiran}`, 140, 280);
-    doc.text(`: ${perihal}`, 140, 300);
-
-    //tembusan
-    if (tembusan.length > 0) {
-      doc.text("Tembusan :", 140, 700)
-      let y = 730
-      let no = 1;
-      for (let i = 0; i < tembusan.length; i++) {
-        doc.text(`${no++}. ${tembusan[i]}`, 140, y)
-        y += 20;
-      }
-    }
-
-    //tandatangan
-    // const imgSign = new Image();
-    // imgSign.src = '/images/sign.png';
-    // doc.addImage(imgSign, 'png', 420, 620, 50, 50); // x, y, width, height
-    doc.text(`${jabatan}`, 440, 700, {
-      align: 'center',
-      maxWidth: 150
-    });
-
-    doc.html(isiSurat, {
-      callback: function(doc) {
-        const pdfViewer = document.getElementById("pdfViewer");
-        pdfViewer.src = doc.output("datauristring");
-
-        const out = doc.output();
-        const url = 'data:application/pdf;base64,' + btoa(out);
-
-        fetch('/notadinas/konsep', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              document: url,
-              nomor: nomorNotaDinas
-            })
-          })
-          .then(response => {
-            console.log(response);
-          })
-          .catch(error => {
-            console.error("error :" + error);
-          });
       },
-      // margin: [320, 320, 0, 140], //[top, right, bottom, left].
-      width: 370,
-      windowWidth: 380,
-      x: 140,
-      y: 350
-    });
+      success: function(response) {
+        console.log(response);
+        console.log(response.status);
+        if (response.status == "error") {
+          Swal.fire("Perhatian", `${response.message}`, "error");
+          return
+        }
+
+        const nomorNotaDinas = `${response.noAgenda}/${kodeKlasifikasi}/${kodeJabatan}/${tahunIni}`;
+
+        // Create new PDF document
+        window.jsPDF = window.jspdf.jsPDF;
+        const doc = new jsPDF('p', 'pt', 'a4');
+
+        //header logo
+        //logo
+        const img = new Image();
+        img.src = '/images/logo-500px.png';
+        doc.addImage(img, 'png', 60, 10, 113, 85);
+
+        const img2 = new Image();
+        img2.src = '/images/logo-kanan.png';
+        doc.addImage(img2, 'png', 320, 25, 200, 60);
+
+        //line config
+        const x = doc.internal.pageSize.getWidth() / 2;
+        const panjangGaris = 450;
+        const startX = x - (panjangGaris / 2);
+        const endX = x + (panjangGaris / 2);
+        //line header
+        doc.setLineWidth(1);
+        doc.line(startX, 100, endX, 100);
+        // line footer
+        doc.setLineWidth(1);
+        doc.line(startX, 770, endX, 770);
+
+        doc.setFontSize(8)
+        doc.setFont("Helvetica", "bold")
+        doc.text("PT. GERBANG SINERGI PRIMA", 72, 780)
+        doc.setFont("Helvetica", "")
+        doc.text("Jl. Cikutra No.219, Bandung - Jawa Barat", 72, 790)
+        doc.text("Tlp : 022-426 6788 / Fax : - ", 72, 800)
+        doc.text("Email : sekper@gsp.co.id", 72, 810)
+
+        //body
+        // garis
+        const lineLength = 90;
+        const startX2 = x - (lineLength / 2);
+        const endX2 = x + (lineLength / 2);
+
+        doc.setLineWidth(1);
+        doc.line(startX2, 127, endX2, 127);
+
+        doc.setFontSize(14);
+        doc.setFont("Helvetica", "bold")
+        doc.text(`NOTA DINAS`, x, 125, {
+          align: "center"
+        });
+        doc.setFontSize(12);
+        doc.setFont("Helvetica", "")
+        doc.text(`Nomor : ${nomorNotaDinas}`, x, 145, {
+          align: "center"
+        });
+        // kepala surat
+        doc.text(`Kepada`, 72, 200, );
+        doc.text(`Dari`, 72, 220, );
+        doc.text(`Tanggal`, 72, 240, );
+        doc.text(`Sifat`, 72, 260, );
+        doc.text(`Lampiran`, 72, 280, );
+        doc.text(`Hal`, 72, 300, );
+
+        doc.text(`: Yth. ${penerima}`, 140, 200);
+        doc.text(`: ${pemeriksa}`, 140, 220);
+        doc.text(`: ${formattedDate}`, 140, 240);
+        doc.text(`: ${sifat}`, 140, 260);
+        doc.text(`: ${lampiran}`, 140, 280);
+        doc.text(`: ${perihal}`, 140, 300);
+
+        //tembusan
+        if (tembusan.length > 0) {
+          doc.text("Tembusan :", 140, 700)
+          let y = 730
+          let no = 1;
+          for (let i = 0; i < tembusan.length; i++) {
+            doc.text(`${no++}. ${tembusan[i]}`, 140, y)
+            y += 20;
+          }
+        }
+
+        //tandatangan
+        doc.text(`${jabatan}`, 440, 700, {
+          align: 'center',
+          maxWidth: 150
+        });
+
+        doc.html(isiSurat, {
+          callback: function(doc) {
+            const pdfViewer = document.getElementById("pdfViewer");
+            pdfViewer.src = doc.output("datauristring");
+
+            const out = doc.output();
+            const url = 'data:application/pdf;base64,' + btoa(out);
+
+            fetch('/notadinas/konsep', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  document: url,
+                  nomor: nomorNotaDinas,
+                  tahun: tahunIni
+                })
+              })
+              .then(response => {
+                console.log(response);
+              })
+              .catch(error => {
+                console.error("error :" + error);
+              });
+          },
+          // margin: [320, 320, 0, 140], //[top, right, bottom, left].
+          width: 370,
+          windowWidth: 380,
+          x: 140,
+          y: 350
+        });
+
+      },
+      error: function(error) {
+        console.error('Terjadi kesalahan:', error);
+      }
+    })
+
+    // // Create new PDF document
+    // window.jsPDF = window.jspdf.jsPDF;
+    // const doc = new jsPDF('p', 'pt', 'a4');
+
+    // //header logo
+    // //logo
+    // const img = new Image();
+    // img.src = '/images/logo-500px.png';
+    // doc.addImage(img, 'png', 60, 10, 113, 85);
+
+    // const img2 = new Image();
+    // img2.src = '/images/logo-kanan.png';
+    // doc.addImage(img2, 'png', 320, 25, 200, 60);
+
+    // //line config
+    // const x = doc.internal.pageSize.getWidth() / 2;
+    // const panjangGaris = 450;
+    // const startX = x - (panjangGaris / 2);
+    // const endX = x + (panjangGaris / 2);
+    // //line header
+    // doc.setLineWidth(1);
+    // doc.line(startX, 100, endX, 100);
+    // // line footer
+    // doc.setLineWidth(1);
+    // doc.line(startX, 770, endX, 770);
+
+    // doc.setFontSize(8)
+    // doc.setFont("Helvetica", "bold")
+    // doc.text("PT. GERBANG SINERGI PRIMA", 72, 780)
+    // doc.setFont("Helvetica", "")
+    // doc.text("Jl. Cikutra No.219, Bandung - Jawa Barat", 72, 790)
+    // doc.text("Tlp : 022-426 6788 / Fax : - ", 72, 800)
+    // doc.text("Email : sekper@gsp.co.id", 72, 810)
+
+    // //body
+    // // garis
+    // const lineLength = 90;
+    // const startX2 = x - (lineLength / 2);
+    // const endX2 = x + (lineLength / 2);
+
+    // doc.setLineWidth(1);
+    // doc.line(startX2, 127, endX2, 127);
+
+    // doc.setFontSize(14);
+    // doc.setFont("Helvetica", "bold")
+    // doc.text(`NOTA DINAS`, x, 125, {
+    //   align: "center"
+    // });
+    // doc.setFontSize(12);
+    // doc.setFont("Helvetica", "")
+    // doc.text(`Nomor : ${nomorNotaDinas}`, x, 145, {
+    //   align: "center"
+    // });
+    // // kepala surat
+    // doc.text(`Kepada`, 72, 200, );
+    // doc.text(`Dari`, 72, 220, );
+    // doc.text(`Tanggal`, 72, 240, );
+    // doc.text(`Sifat`, 72, 260, );
+    // doc.text(`Lampiran`, 72, 280, );
+    // doc.text(`Hal`, 72, 300, );
+
+    // doc.text(`: Yth. ${penerima}`, 140, 200);
+    // doc.text(`: ${pemeriksa}`, 140, 220);
+    // doc.text(`: ${tanggal}`, 140, 240);
+    // doc.text(`: ${sifat}`, 140, 260);
+    // doc.text(`: ${lampiran}`, 140, 280);
+    // doc.text(`: ${perihal}`, 140, 300);
+
+    // //tembusan
+    // if (tembusan.length > 0) {
+    //   doc.text("Tembusan :", 140, 700)
+    //   let y = 730
+    //   let no = 1;
+    //   for (let i = 0; i < tembusan.length; i++) {
+    //     doc.text(`${no++}. ${tembusan[i]}`, 140, y)
+    //     y += 20;
+    //   }
+    // }
+
+    // //tandatangan
+    // doc.text(`${jabatan}`, 440, 700, {
+    //   align: 'center',
+    //   maxWidth: 150
+    // });
+
+    // doc.html(isiSurat, {
+    //   callback: function(doc) {
+    //     const pdfViewer = document.getElementById("pdfViewer");
+    //     pdfViewer.src = doc.output("datauristring");
+
+    //     const out = doc.output();
+    //     const url = 'data:application/pdf;base64,' + btoa(out);
+
+    //     fetch('/notadinas/konsep', {
+    //         method: 'POST',
+    //         headers: {
+    //           'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify({
+    //           document: url,
+    //           nomor: nomorNotaDinas,
+    //           tahun: tahunIni
+    //         })
+    //       })
+    //       .then(response => {
+    //         console.log(response);
+    //       })
+    //       .catch(error => {
+    //         console.error("error :" + error);
+    //       });
+    //   },
+    //   // margin: [320, 320, 0, 140], //[top, right, bottom, left].
+    //   width: 370,
+    //   windowWidth: 380,
+    //   x: 140,
+    //   y: 350
+    // });
+    // }
+
   }
 
   function sendPDF() {
+
     const tahun = new Date().getFullYear();
     const tanggal = $('#tanggal').val();
     // const pengirim = `<%# jabatan.sebutanJabatan %>`;
@@ -480,54 +640,145 @@
     const lampiran = jumlahLampiran + " " + jenisLampiran;
     const kodeKlasifikasi = $('#kodeKlasifikasi').val();
 
-    const noAgenda = `<%= noAgenda %>`;
-    const nomor = noAgenda.toString().padStart(3, '0');
-    const noNotaDinas = `${nomor}/${kodeKlasifikasi}/${kodeJabatan}/${tahun}`;
+    // const noAgenda = `<%= noAgenda %>`;
+    // const nomor = noAgenda.toString().padStart(3, '0');
+    // const noNotaDinas = `${nomor}/${kodeKlasifikasi}/${kodeJabatan}/${tahun}`;
+    // const nomor = noAgenda.toString().padStart(3, '0');
+    // const noNotaDinas = `${noAgenda}/${kodeKlasifikasi}/${kodeJabatan}/${tahun}`;
 
-    console.log(noNotaDinas);
+    // console.log(noNotaDinas);
 
-    const formData = new FormData();
-    const attachment = document.querySelector('#attachment');
-    for (let i = 0; i < attachment.files.length; i++) {
-      formData.append('file', attachment.files[i]);
-    }
-    formData.append('noNotaDinas', noNotaDinas);
-    formData.append('noAgenda', noAgenda);
-    formData.append('tanggal', tanggal);
-    formData.append('tahun', tahun);
-    formData.append('dari', pemeriksa); // pemeriksa
-    formData.append('kepada', penerima); // penerima
-    formData.append('pemeriksa', pemeriksa);
-    // formData.append('pengirim', pengirim);
-    formData.append('perihal', perihal);
-    formData.append('jumlahLampiran', jumlahLampiran);
-    formData.append('jenisLampiran', jenisLampiran);
-    formData.append('kodeKlasifikasi', kodeKlasifikasi);
-    formData.append('sifat', sifat);
-    formData.append('isiSurat', isiSurat);
-    formData.append('tembusan', tembusan);
-    formData.append('email', email);
-    formData.append('divisi', divisi);
-    // formData.append('flag', flag);
+    $.ajax({
+      url: '/notadinas/proses-konsep',
+      method: 'POST',
+      data: {
+        tanggal
 
+      },
+      success: function(response) {
 
-    fetch('/notadinas/kirim', {
-        method: 'POST',
-        body: formData
-      })
-      .then(response => {
-        console.log(response);
-        if (response.ok) {
-          console.log(response);
-          Swal.fire("Berhasil", "Nota dinas berhasil dikirim", "success");
-        } else {
-          Swal.fire("Perhatian", "Bad request", "error");
-          console.error(response);
+        const noNotaDinas = `${response.noAgenda}/${kodeKlasifikasi}/${kodeJabatan}/${tahun}`;
+
+        const formData = new FormData();
+        const attachment = document.querySelector('#attachment');
+        for (let i = 0; i < attachment.files.length; i++) {
+          formData.append('file', attachment.files[i]);
         }
-      })
-      .catch(error => {
-        console.error('Terjadi kesalahan:', error);
-      });
+
+        const split = response.noAgenda.split('-'); // Pisahkan nomor dan sisipan
+
+        formData.append('noNotaDinas', noNotaDinas);
+        formData.append('noAgenda', split[0]);
+        formData.append('tanggal', tanggal);
+        formData.append('tahun', tahun);
+        formData.append('dari', pemeriksa); // pemeriksa
+        formData.append('kepada', penerima); // penerima
+        formData.append('pemeriksa', pemeriksa);
+        // formData.append('pengirim', pengirim);
+        formData.append('perihal', perihal);
+        formData.append('jumlahLampiran', jumlahLampiran);
+        formData.append('jenisLampiran', jenisLampiran);
+        formData.append('kodeKlasifikasi', kodeKlasifikasi);
+        formData.append('sifat', sifat);
+        formData.append('isiSurat', isiSurat);
+        formData.append('tembusan', tembusan);
+        formData.append('email', email);
+        formData.append('divisi', divisi);
+        // formData.append('flag', flag);
+
+        if (penerima == "") {
+          Swal.fire("Perhatian", "Penerima tidak boleh kosong", "error");
+        } else if (pemeriksa == "") {
+          Swal.fire("Perhatian", "Pemeriksa tidak boleh kosong", "error");
+        } else if (tanggal == "") {
+          Swal.fire("Perhatian", "Tanggal tidak boleh kosong", "error");
+        } else if (kodeKlasifikasi == "") {
+          Swal.fire("Perhatian", "Kode klasifikasi tidak boleh kosong", "error");
+        } else if (sifat == "") {
+          Swal.fire("Perhatian", "Sifat tidak boleh kosong", "error");
+        } else if (perihal == "") {
+          Swal.fire("Perhatian", "Perihal tidak boleh kosong", "error");
+        } else if (isiSurat == "") {
+          Swal.fire("Perhatian", "Isi surat tidak boleh kosong", "error");
+        } else {
+          fetch('/notadinas/kirim', {
+              method: 'POST',
+              body: formData
+            })
+            .then(response => {
+              console.log(response);
+              if (response.ok) {
+                console.log(response);
+                Swal.fire("Berhasil", "Nota dinas berhasil dikirim", "success");
+              } else {
+                Swal.fire("Perhatian", "Bad request", "error");
+                console.error(response);
+              }
+            })
+            .catch(error => {
+              console.error('Terjadi kesalahan:', error);
+            });
+        }
+      }
+    }, )
+
+    // const formData = new FormData();
+    // const attachment = document.querySelector('#attachment');
+    // for (let i = 0; i < attachment.files.length; i++) {
+    //   formData.append('file', attachment.files[i]);
+    // }
+    // formData.append('noNotaDinas', noNotaDinas);
+    // formData.append('noAgenda', noAgenda);
+    // formData.append('tanggal', tanggal);
+    // formData.append('tahun', tahun);
+    // formData.append('dari', pemeriksa); // pemeriksa
+    // formData.append('kepada', penerima); // penerima
+    // formData.append('pemeriksa', pemeriksa);
+    // // formData.append('pengirim', pengirim);
+    // formData.append('perihal', perihal);
+    // formData.append('jumlahLampiran', jumlahLampiran);
+    // formData.append('jenisLampiran', jenisLampiran);
+    // formData.append('kodeKlasifikasi', kodeKlasifikasi);
+    // formData.append('sifat', sifat);
+    // formData.append('isiSurat', isiSurat);
+    // formData.append('tembusan', tembusan);
+    // formData.append('email', email);
+    // formData.append('divisi', divisi);
+    // // formData.append('flag', flag);
+
+    // if (penerima == "") {
+    //   Swal.fire("Perhatian", "Penerima tidak boleh kosong", "error");
+    // } else if (pemeriksa == "") {
+    //   Swal.fire("Perhatian", "Pemeriksa tidak boleh kosong", "error");
+    // } else if (tanggal == "") {
+    //   Swal.fire("Perhatian", "Tanggal tidak boleh kosong", "error");
+    // } else if (kodeKlasifikasi == "") {
+    //   Swal.fire("Perhatian", "Kode klasifikasi tidak boleh kosong", "error");
+    // } else if (sifat == "") {
+    //   Swal.fire("Perhatian", "Sifat tidak boleh kosong", "error");
+    // } else if (perihal == "") {
+    //   Swal.fire("Perhatian", "Perihal tidak boleh kosong", "error");
+    // } else if (isiSurat == "") {
+    //   Swal.fire("Perhatian", "Isi surat tidak boleh kosong", "error");
+    // } else {
+    //   fetch('/notadinas/kirim', {
+    //       method: 'POST',
+    //       body: formData
+    //     })
+    //     .then(response => {
+    //       console.log(response);
+    //       if (response.ok) {
+    //         console.log(response);
+    //         Swal.fire("Berhasil", "Nota dinas berhasil dikirim", "success");
+    //       } else {
+    //         Swal.fire("Perhatian", "Bad request", "error");
+    //         console.error(response);
+    //       }
+    //     })
+    //     .catch(error => {
+    //       console.error('Terjadi kesalahan:', error);
+    //     });
+    // }
   }
 
   $(document).ready(function() {
@@ -560,7 +811,7 @@
     doc.text("PT. GERBANG SINERGI PRIMA", 72, 780)
     doc.setFont("Helvetica", "")
     doc.text("Jl. Cikutra No.219, Bandung - Jawa Barat", 72, 790)
-    doc.text("Tlp : 022-426 6778 / Fax : - ", 72, 800)
+    doc.text("Tlp : 022-426 6788 / Fax : - ", 72, 800)
     doc.text("Email : sekper@gsp.co.id", 72, 810)
 
     //body

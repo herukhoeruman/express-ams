@@ -1,7 +1,7 @@
 <%- include ../partials/header.ejs %>
 <%- include ../partials/navbar.ejs %>
 <%- include ../partials/sidebar.ejs %>
-<div id="kt_app_toolbar" class="py-3 py-lg-6">
+<div id="kt_app_toolbar" class="py-3 py-lg-3">
   <div id="kt_app_toolbar_container" class="app-container">
     <%# include ../partials/message.ejs %>
     <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
@@ -17,29 +17,80 @@
 
     <div class="card shadow-sm mt-5">
       <div class="card-body">
-        <table id="kt_datatable_dom_positioning" class="table table-striped table-row-bordered gy-5 gs-7 border rounded">
+        <table id="kt_datatable_dom_positioning" class="table table-row-bordered gy-5 gs-7 border rounded">
+          <div class="row flex justify-content-end">
+            <div class="col-md-2">
+              <select id="filterCombo" class="form-select form-select mb-4">
+                <option value="">Semua</option>
+                <option value="false">Belum dibaca</option>
+                <option value="true">Sudah dibaca</option>
+              </select>
+            </div>
+            <div class="col-2">
+              <input type="text" class="form-control form-control" id="searchInput" placeholder="Pencarian...">
+            </div>
+          </div>
           <thead>
             <tr class="fw-bold fs-6 text-gray-800 px-7">
-              <th class="">No.</th>
-              <th class="">No Nota Dinas</th>
-              <th class="">Dari</th>
-              <th class="">Kepada</th>
-              <th class="">Hal</th>
-              <th class="">Tanggal</th>
-              <th class=""></th>
+              <th>No.</th>
+              <th hidden></th>
+              <th>No Nota Dinas</th>
+              <th>Dari</th>
+              <th>Kepada</th>
+              <th>Hal</th>
+              <th>Tanggal</th>
+              <th></th>
             </tr>
           </thead>
           <tbody class="fw-semibold">
             <% for(let i=0; i < notaDinas.length; i++) { %>
-            <tr class="odd">
+            <tr class="<%= !notaDinas[i].readStatus  && 'bg-secondary' %>">
               <td> <%= i +1 %></td>
-              <td> <%= notaDinas[i].noNotaDinas %></td>
-              <td> <%= notaDinas[i].dari %></td>
-              <td> <%= notaDinas[i].kepada %></td>
-              <td> <%= notaDinas[i].perihal %></td>
-              <td> <%= notaDinas[i].tanggal %></td>
+              <td hidden> <%= notaDinas[i].readStatus %></td>
               <td>
-                <a data-id="<%= notaDinas[i]._id %>" class="btn btn-sm btn-light-primary btn-icon mr-2" id="kt_drawer_chat_toggle_<%= notaDinas[i]._id %>" title="Disposisi">
+                <a href="/notadinas/detail/<%= notaDinas[i].notaDinasId._id  %>"> <%= notaDinas[i].notaDinasId.noNotaDinas %> </a>
+              </td>
+              <td> <%= notaDinas[i].pengirim %></td>
+              <td> <%= notaDinas[i].penerima %></td>
+              <td> <%= notaDinas[i].notaDinasId.perihal %></td>
+              <td> <%= notaDinas[i].notaDinasId.tanggal %></td>
+              <td>
+                <div class="menu menu-rounded menu-column menu-gray-600 menu-state-bg fw-semibold" data-kt-menu="true">
+                  <div class="menu-item" data-kt-menu-trigger="hover" data-kt-menu-placement="right-start">
+                    <a href="#" class="menu-link">
+                      <span class="svg-icon svg-icon-primary svg-icon-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                          <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                            <polygon points="0 0 24 0 24 24 0 24" />
+                            <path d="M5.29288961,6.70710318 C4.90236532,6.31657888 4.90236532,5.68341391 5.29288961,5.29288961 C5.68341391,4.90236532 6.31657888,4.90236532 6.70710318,5.29288961 L12.7071032,11.2928896 C13.0856821,11.6714686 13.0989277,12.281055 12.7371505,12.675721 L7.23715054,18.675721 C6.86395813,19.08284 6.23139076,19.1103429 5.82427177,18.7371505 C5.41715278,18.3639581 5.38964985,17.7313908 5.76284226,17.3242718 L10.6158586,12.0300721 L5.29288961,6.70710318 Z" fill="currentColor" fill-rule="nonzero" transform="translate(8.999997, 11.999999) scale(-1, 1) translate(-8.999997, -11.999999) " />
+                            <path d="M10.7071009,15.7071068 C10.3165766,16.0976311 9.68341162,16.0976311 9.29288733,15.7071068 C8.90236304,15.3165825 8.90236304,14.6834175 9.29288733,14.2928932 L15.2928873,8.29289322 C15.6714663,7.91431428 16.2810527,7.90106866 16.6757187,8.26284586 L22.6757187,13.7628459 C23.0828377,14.1360383 23.1103407,14.7686056 22.7371482,15.1757246 C22.3639558,15.5828436 21.7313885,15.6103465 21.3242695,15.2371541 L16.0300699,10.3841378 L10.7071009,15.7071068 Z" fill="currentColor" fill-rule="nonzero" opacity="0.3" transform="translate(15.999997, 11.999999) scale(-1, 1) rotate(-270.000000) translate(-15.999997, -11.999999) " />
+                          </g>
+                        </svg>
+                      </span>
+                    </a>
+
+                    <div class="menu-sub menu-sub-dropdown p-3 w-150px">
+                      <div class="menu-item">
+                        <a href="#" class="menu-link px-1 py-3" id="kt_drawer_chat_toggle_<%= notaDinas[i]._id %>">
+                          <span class="menu-bullet me-0">
+                            <span class="bullet bullet-dot"></span>
+                          </span>
+                          <span class="menu-title">Disposisi</span>
+                        </a>
+                      </div>
+
+                      <div class="menu-item">
+                        <a href="#" class="menu-link px-1 py-3" data-bs-toggle="modal" data-bs-target="#documentModal<%= notaDinas[i]._id %>">
+                          <span class="menu-bullet me-0">
+                            <span class="bullet bullet-dot"></span>
+                          </span>
+                          <span class="menu-title">Nota Dinas</span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- <a data-id="<%= notaDinas[i]._id %>" class="btn btn-sm btn-light-primary btn-icon mr-2" id="kt_drawer_chat_toggle_<%= notaDinas[i]._id %>" title="Disposisi">
                   <span class="svg-icon svg-icon-primary svg-icon-2">
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
                       <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -60,16 +111,15 @@
                         <rect fill="currentColor" x="6" y="15" width="5" height="2" rx="1" />
                       </g>
                     </svg>
-                    <!--end::Svg Icon-->
                   </span>
-                </a>
+                </a> -->
 
                 <!-- modal view document pdf -->
                 <div class="modal fade modal-lg" tabindex="-1" id="documentModal<%= notaDinas[i]._id %>">
                   <div class="modal-dialog">
                     <div class="modal-content">
                       <div class="modal-header">
-                        <h3 class="modal-title">Nota Dinas <%= notaDinas[i].noNotaDinas %> </h3>
+                        <h3 class="modal-title"><%= notaDinas[i].notaDinasId.noNotaDinas %> </h3>
                         <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
                           <span class="svg-icon svg-icon-1">
                             <span class="svg-icon svg-icon-primary svg-icon-2x">
@@ -86,8 +136,8 @@
                         </div>
                       </div>
                       <div class="modal-body">
-                        <p id="errorMessage<%= notaDinas[i]._id %>" style="display: none;">Dokumen belum tersedia.</p>
-                        <iframe src="/upload/signed/<%= notaDinas[i].document %>" width="100%" height="1080" type="application/pdf"></iframe>
+                        <p id="errorMessage<%= notaDinas[i].notaDinasId._id %>" style="display: none;">Dokumen belum tersedia.</p>
+                        <iframe src="/document/nota-dinas/<%= notaDinas[i].notaDinasId.tahun %>/signed/<%= notaDinas[i].notaDinasId.document %>" width="100%" height="1080" type="application/pdf"></iframe>
                       </div>
                     </div>
                   </div>
@@ -101,7 +151,7 @@
                         <div class="d-flex justify-content-center flex-column me-3">
                           <a href="#" class="fs-4 fw-bold text-gray-900 text-hover-primary me-1 mb-2 lh-1">Disposisi </a>
                           <div class="mb-0 lh-1">
-                            <span class="fs-7 fw-semibold text-muted">No. <%= notaDinas[i].noNotaDinas %></span>
+                            <span class="fs-7 fw-semibold text-muted">No. <%= notaDinas[i].notaDinasId.noNotaDinas %></span>
                           </div>
                         </div>
                       </div>
@@ -133,7 +183,7 @@
                           </div>
                         </div>
 
-                        <form id="form<%= notaDinas[i]._id %>" action="/notadinas/disposisi/<%= notaDinas[i]._id %>" method="post">
+                        <form id="form<%= notaDinas[i]._id %>" action="/notadinas/disposisi/<%= notaDinas[i].notaDinasId._id %>" method="post">
                           <div class="tab-content" id="myTabContent">
                             <div class="tab-pane fade show active" id="kt_tab_pane_1_<%= notaDinas[i]._id %>" role="tabpanel">
                               <div class="rounded border border-gray-300 mb-5">
@@ -170,7 +220,7 @@
                               </div>
                             </div>
                             <div class="tab-pane fade" id="kt_tab_pane_2_<%= notaDinas[i]._id %>" role="tabpanel">
-                              <% notaDinas[i].disposisi.forEach(disposisi => { %>
+                              <% notaDinas[i].notaDinasId.disposisi.forEach(disposisi => { %>
                               <div class="card card-bordered mb-2">
                                 <div class="card-body p-4 mb-4">
                                   <div class="row">
@@ -245,66 +295,65 @@
     location.reload();
   }
 
-  function submitForm() {
-    const notaDinasKode = document.getElementById('notaDinasKode').value;
-    const checkboxes = document.querySelectorAll('.disposisi:checked');
-    const disposisiValues = Array.from(checkboxes).map((checkbox) => checkbox.value);
-    const penerima = document.getElementById(`penerima_${notaDinasKode}`).value;
-    const tindakLanjut = document.getElementById(`tindakLanjut_${notaDinasKode}`).value;
+  $(document).ready(function() {
+    var table = $('#kt_datatable_dom_positioning').DataTable();
 
-    const data = {
-      notaDinasKode: notaDinasKode,
-      disposisi: disposisiValues,
-      penerima: penerima,
-      tindakLanjut: tindakLanjut
-    };
+    // Fungsi untuk menangani perubahan combo box dan menerapkan filtrasi
+    $('#filterCombo').on('change', function() {
+      var selectedValue = $(this).val();
 
-    fetch('/submit', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      })
-      .then((response) => response.json())
-      .then((result) => {
-        // Handle response from server
-        console.log(result);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
-  }
+      // Hapus filtrasi sebelumnya jika ada
+      table.search('').draw();
 
+      if (selectedValue) {
+        // Terapkan filtrasi berdasarkan pilihan combo box
+        table.columns(1).search(selectedValue).draw();
+      } else {
+        // Jika "Semua" dipilih, tampilkan semua data
+        table.columns(1).search('').draw();
+      }
+    });
 
-  $("#kt_datatable_dom_positioning").DataTable({
-    "language": {
-      "lengthMenu": "Show _MENU_",
-    },
-    "dom": "<'row'<'col-sm-6'l><'col-sm-5' f><'col-sm-1'<'button-container'>>>" +
-      "<'table-responsive'tr>" +
-      "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
-    "initComplete": function() {
-      $("div.button-container").append(`<button class="btn btn-sm btn-light-primary btn-icon mt-4" onclick="refresh()"><span class="svg-icon svg-icon-primary svg-icon-2x"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
-          <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-            <rect x="0" y="0" width="24" height="24"/>
-            <path d="M12,8 L8,8 C5.790861,8 4,9.790861 4,12 L4,13 C4,14.6568542 5.34314575,16 7,16 L7,18 C4.23857625,18 2,15.7614237 2,13 L2,12 C2,8.6862915 4.6862915,6 8,6 L12,6 L12,4.72799742 C12,4.62015048 12.0348702,4.51519416 12.0994077,4.42878885 C12.264656,4.2075478 12.5779675,4.16215674 12.7992086,4.32740507 L15.656242,6.46136716 C15.6951359,6.49041758 15.7295917,6.52497737 15.7585249,6.56395854 C15.9231063,6.78569617 15.876772,7.09886961 15.6550344,7.263451 L12.798001,9.3840407 C12.7118152,9.44801079 12.607332,9.48254921 12.5,9.48254921 C12.2238576,9.48254921 12,9.25869158 12,8.98254921 L12,8 Z" fill="currentColor"/>
-            <path d="M12.0583175,16 L16,16 C18.209139,16 20,14.209139 20,12 L20,11 C20,9.34314575 18.6568542,8 17,8 L17,6 C19.7614237,6 22,8.23857625 22,11 L22,12 C22,15.3137085 19.3137085,18 16,18 L12.0583175,18 L12.0583175,18.9825492 C12.0583175,19.2586916 11.8344599,19.4825492 11.5583175,19.4825492 C11.4509855,19.4825492 11.3465023,19.4480108 11.2603165,19.3840407 L8.40328311,17.263451 C8.18154548,17.0988696 8.13521119,16.7856962 8.29979258,16.5639585 C8.32872576,16.5249774 8.36318164,16.4904176 8.40207551,16.4613672 L11.2591089,14.3274051 C11.48035,14.1621567 11.7936615,14.2075478 11.9589099,14.4287888 C12.0234473,14.5151942 12.0583175,14.6201505 12.0583175,14.7279974 L12.0583175,16 Z" fill="currentColor" opacity="0.3"/>
-          </g>
-        </svg>
-      </span>
-    </button>`);
-    }
-    // dom: "<'row'" +
-    //   "<'col-sm-6 d-flex align-items-center justify-conten-start'l>" +
-    //   "<'col-sm-6 d-flex align-items-center justify-content-end'f>" +
-    //   ">" +
+    // Fungsi untuk menangani input pencarian teks
+    $('#searchInput').on('keyup', function() {
+      var searchText = $(this).val();
 
-    //   "<'table-responsive'tr>" +
-
-    //   "<'row'" +
-    //   "<'col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start'i>" +
-    //   "<'col-sm-12 col-md-7 d-flex align-items-center justify-content-center justify-content-md-end'p>" +
-    //   ">"
+      // Terapkan pencarian teks pada semua kolom
+      table.search(searchText).draw();
+    });
   });
+
+
+
+  // $("#kt_datatable_dom_positioning").DataTable({
+  //   
+  //   "language": {
+  //     "lengthMenu": "Show _MENU_",
+  //   },
+  //   "dom": "<'row'<'col-sm-6'l><'col-sm-5' f><'col-sm-1'<'button-container'>>>" +
+  //     "<'table-responsive'tr>" +
+  //     "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+  //   "initComplete": function() {
+  //     $("div.button-container").append(`<button class="btn btn-sm btn-light-primary btn-icon mt-4" onclick="refresh()"><span class="svg-icon svg-icon-primary svg-icon-2x"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+  //         <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+  //           <rect x="0" y="0" width="24" height="24"/>
+  //           <path d="M12,8 L8,8 C5.790861,8 4,9.790861 4,12 L4,13 C4,14.6568542 5.34314575,16 7,16 L7,18 C4.23857625,18 2,15.7614237 2,13 L2,12 C2,8.6862915 4.6862915,6 8,6 L12,6 L12,4.72799742 C12,4.62015048 12.0348702,4.51519416 12.0994077,4.42878885 C12.264656,4.2075478 12.5779675,4.16215674 12.7992086,4.32740507 L15.656242,6.46136716 C15.6951359,6.49041758 15.7295917,6.52497737 15.7585249,6.56395854 C15.9231063,6.78569617 15.876772,7.09886961 15.6550344,7.263451 L12.798001,9.3840407 C12.7118152,9.44801079 12.607332,9.48254921 12.5,9.48254921 C12.2238576,9.48254921 12,9.25869158 12,8.98254921 L12,8 Z" fill="currentColor"/>
+  //           <path d="M12.0583175,16 L16,16 C18.209139,16 20,14.209139 20,12 L20,11 C20,9.34314575 18.6568542,8 17,8 L17,6 C19.7614237,6 22,8.23857625 22,11 L22,12 C22,15.3137085 19.3137085,18 16,18 L12.0583175,18 L12.0583175,18.9825492 C12.0583175,19.2586916 11.8344599,19.4825492 11.5583175,19.4825492 C11.4509855,19.4825492 11.3465023,19.4480108 11.2603165,19.3840407 L8.40328311,17.263451 C8.18154548,17.0988696 8.13521119,16.7856962 8.29979258,16.5639585 C8.32872576,16.5249774 8.36318164,16.4904176 8.40207551,16.4613672 L11.2591089,14.3274051 C11.48035,14.1621567 11.7936615,14.2075478 11.9589099,14.4287888 C12.0234473,14.5151942 12.0583175,14.6201505 12.0583175,14.7279974 L12.0583175,16 Z" fill="currentColor" opacity="0.3"/>
+  //         </g>
+  //       </svg>
+  //     </span>
+  //   </button>`);
+  //   }
+  //   // dom: "<'row'" +
+  //   //   "<'col-sm-6 d-flex align-items-center justify-conten-start'l>" +
+  //   //   "<'col-sm-6 d-flex align-items-center justify-content-end'f>" +
+  //   //   ">" +
+
+  //   //   "<'table-responsive'tr>" +
+
+  //   //   "<'row'" +
+  //   //   "<'col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start'i>" +
+  //   //   "<'col-sm-12 col-md-7 d-flex align-items-center justify-content-center justify-content-md-end'p>" +
+  //   //   ">"
+  // });
 </script>

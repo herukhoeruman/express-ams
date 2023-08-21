@@ -26,16 +26,44 @@ var server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
+//todo: fix error
+let serverRunning = false;
+
+/**
+ * Function to start the server
+ */
+function startServer() {
+  if (!serverRunning) {
+    server.listen(port);
+    server.on("error", onError);
+    server.on("listening", onListening);
+    console.log("connection success: terhubung dengan  mongodb");
+    serverRunning = true;
+  }
+}
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
 db.on("error", (err) => {
   console.log("connection error: tidak terhubung dengan mongodb");
 });
 
 db.on("open", () => {
-  server.listen(port);
-  server.on("error", onError);
-  server.on("listening", onListening);
-  console.log("connection success: terhubung dengan  mongodb");
+  startServer(); // Start the server only when the connection is established
 });
+
+// db.on("error", (err) => {
+//   console.log("connection error: tidak terhubung dengan mongodb");
+// });
+
+// db.on("open", () => {
+//   server.listen(port);
+//   server.on("error", onError);
+//   server.on("listening", onListening);
+//   console.log("connection success: terhubung dengan  mongodb");
+// });
 
 /**
  * Normalize a port into a number, string, or false.

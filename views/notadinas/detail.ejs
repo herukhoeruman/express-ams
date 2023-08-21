@@ -1,0 +1,129 @@
+<%- include ../partials/header.ejs %>
+<%- include ../partials/navbar.ejs %>
+<%- include ../partials/sidebar.ejs %>
+
+<div id="kt_app_toolbar" class="py-3 py-lg-3">
+  <div id="kt_app_toolbar_container" class="app-container">
+    <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
+      <h1 class="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">
+        Nota Dinas Detail
+      </h1>
+      <ol class="breadcrumb text-muted fs-7 fw-semibold pt-1">
+        <li class="breadcrumb-item"><a href="/" class="">Home</a></li>
+        <li class="breadcrumb-item"><a href="/notadinas" class="">Nota Dinas</a></li>
+        <li class="breadcrumb-item text-muted">Detail</li>
+      </ol>
+    </div>
+
+    <div class="card shadow-sm mt-5">
+      <div class="card-body">
+        <div class="row p-1">
+          <div class="col-2"> Nomor Nota Dinas </div>
+          <div class="col-4">:
+            <a class="btn-icon pe-auto" href="" data-bs-toggle="modal" data-bs-target="#modal">
+              <%= notaDinas.noNotaDinas  %>
+            </a>
+          </div>
+        </div>
+        <div class="row p-1">
+          <div class="col-2"> Digital Signature </div>
+          <div class="col-4">:
+            <a class="btn-icon pe-auto" href="" data-bs-toggle="modal" data-bs-target="#modalSigned">
+              <%= notaDinas.noNotaDinas  %> - Signed
+            </a>
+          </div>
+        </div>
+        <div class="row p-1">
+          <div class="col-2"> Tanggal</div>
+          <div class="col-4">: <%= notaDinas.tanggal  %> </div>
+        </div>
+        <div class="row p-1">
+          <div class="col-2">Dari</div>
+          <div class="col-4">: <%= notaDinas.dari  %></div>
+        </div>
+        <div class="row p-1">
+          <div class="col-2">Kepada</div>
+          <div class="col-4">: <%= notaDinas.kepada %></div>
+        </div>
+        <div class="row p-1">
+          <div class="col-2">Tembusan</div>
+          <div class="col-4">: <%= notaDinas.tembusan %></div>
+        </div>
+        <div class="row p-1">
+          <div class="col-2">Hal</div>
+          <div class="col-4">: <%= notaDinas.perihal %></div>
+        </div>
+        <div class="row p-1">
+          <div class="col-2">Lampiran</div>
+          <div class="col-4">: <%= notaDinas.lampiran %></div>
+        </div>
+        <div class="row p-1">
+          <div class="col-2">Kode Klasifikasi</div>
+          <div class="col-4">: <%= notaDinas.kodeKlasifikasi %></div>
+        </div>
+        <div class="row p-1">
+          <div class="col-2">Sifat</div>
+          <div class="col-4">: <%= notaDinas.sifat  %></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal view document pdf -->
+<div class="modal fade modal-lg" tabindex="-1" id="modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Nota Dinas <%= notaDinas.noNotaDinas %> </h3>
+        <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+          <span class="svg-icon svg-icon-1">
+            <span class="svg-icon svg-icon-primary svg-icon-2x">
+              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                  <g transform="translate(12.000000, 12.000000) rotate(-45.000000) translate(-12.000000, -12.000000) translate(4.000000, 4.000000)" fill="currentColor">
+                    <rect x="0" y="7" width="16" height="2" rx="1" />
+                    <rect opacity="0.3" transform="translate(8.000000, 8.000000) rotate(-270.000000) translate(-8.000000, -8.000000) " x="0" y="7" width="16" height="2" rx="1" />
+                  </g>
+                </g>
+              </svg>
+            </span>
+          </span>
+        </div>
+      </div>
+      <div class="modal-body">
+        <iframe src="/document/nota-dinas/<%= notaDinas.tahun %>/<%= notaDinas.document %>" width="100%" height="1080" type="application/pdf"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal view document pdf -->
+<div class="modal fade modal-lg" tabindex="-1" id="modalSigned">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Nota Dinas <%= notaDinas.noNotaDinas %> </h3>
+        <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+          <span class="svg-icon svg-icon-1">
+            <span class="svg-icon svg-icon-primary svg-icon-2x">
+              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                  <g transform="translate(12.000000, 12.000000) rotate(-45.000000) translate(-12.000000, -12.000000) translate(4.000000, 4.000000)" fill="currentColor">
+                    <rect x="0" y="7" width="16" height="2" rx="1" />
+                    <rect opacity="0.3" transform="translate(8.000000, 8.000000) rotate(-270.000000) translate(-8.000000, -8.000000) " x="0" y="7" width="16" height="2" rx="1" />
+                  </g>
+                </g>
+              </svg>
+            </span>
+          </span>
+        </div>
+      </div>
+      <div class="modal-body">
+        <iframe src="/document/nota-dinas/<%= notaDinas.tahun %>/signed/<%= notaDinas.document %>" width="100%" height="1080" type="application/pdf"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include ../partials/footer.ejs %>
+<%- include ../partials/js.ejs %>

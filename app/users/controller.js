@@ -14,7 +14,7 @@ module.exports = {
       };
 
       if (req.session.user === null || req.session.user === undefined) {
-        res.render("users/login", {
+        res.render("auth/login", {
           alert,
           title: "Login",
           username: "username",
@@ -27,6 +27,7 @@ module.exports = {
           username: req.session.user.username,
           jabatan: req.session.user.jabatan,
           email: req.session.user.email,
+          role: req.session.user.role,
         });
       }
     } catch (err) {
@@ -48,6 +49,7 @@ module.exports = {
             jabatan: check.jabatan,
             divisi: check.divisi,
             email: check.email,
+            role: check.role,
           };
           res.redirect("/dashboard");
         } else {

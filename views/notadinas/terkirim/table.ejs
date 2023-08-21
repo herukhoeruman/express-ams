@@ -19,27 +19,27 @@
           <%= i +1 %>
         </td>
         <td>
-          <%= notaDinasTerkirim[i].noNotaDinas %>
+          <%= notaDinasTerkirim[i].notaDinasId.noNotaDinas %>
         </td>
         <td>
-          <%= notaDinasTerkirim[i].dari %>
+          <%= notaDinasTerkirim[i].pengirim %>
         </td>
         <td>
-          <%= notaDinasTerkirim[i].kepada %>
+          <%= notaDinasTerkirim[i].penerima %>
         </td>
         <td>
-          <%= notaDinasTerkirim[i].perihal %>
+          <%= notaDinasTerkirim[i].notaDinasId.perihal %>
         </td>
         <td>
-          <%= notaDinasTerkirim[i].tanggal %>
+          <%= notaDinasTerkirim[i].notaDinasId.tanggal %>
         </td>
         <td class="text-center">
           <%# notaDinas[i].flag %>
-          <% if (notaDinasTerkirim[i].flag === 1) { %>
+          <% if (notaDinasTerkirim[i].notaDinasId.flag === 1) { %>
           <span class="badge badge-info">Dalam proses</span>
-          <% } else if(notaDinasTerkirim[i].flag === 2) { %>
+          <% } else if(notaDinasTerkirim[i].notaDinasId.flag === 2) { %>
           <span class="badge badge-success">Disetujui</span>
-          <% } else if(notaDinasTerkirim[i].flag === 3) { %>
+          <% } else if(notaDinasTerkirim[i].notaDinasId.flag === 3) { %>
           <span class="badge badge-danger">Ditolak</span>
           <% } %>
         </td>
@@ -75,7 +75,7 @@
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h3 class="modal-title">Nomor: <%= notaDinasTerkirim[i].noNotaDinas %> </h3>
+                  <h3 class="modal-title">Nomor: <%= notaDinasTerkirim[i].notaDinasId.noNotaDinas %> </h3>
                   <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
                     <span class="svg-icon svg-icon-1">
                       <span class="svg-icon svg-icon-primary svg-icon-2x">
@@ -92,11 +92,10 @@
                   </div>
                 </div>
                 <div class="modal-body">
-                  <p id="errorMessage<%= notaDinasTerkirim[i]._id %>" style="display: none;">Dokumen belum tersedia.</p>
-                  <% if (notaDinasTerkirim[i].flag ===  2) { %>
-                  <iframe src="/upload/signed/<%= notaDinasTerkirim[i].document %>" width="100%" height="1080" type="application/pdf"></iframe>
+                  <% if (notaDinasTerkirim[i].notaDinasId.flag ===  2) { %>
+                  <iframe src="/document/nota-dinas/<%= notaDinasTerkirim[i].notaDinasId.tahun %>/signed/<%= notaDinasTerkirim[i].notaDinasId.document %>" width="100%" height="1080" type="application/pdf"></iframe>
                   <% } else { %>
-                  <iframe src="/upload/<%= notaDinasTerkirim[i].document %>" width="100%" height="1080" type="application/pdf"></iframe>
+                  <iframe src="/document/nota-dinas/<%= notaDinasTerkirim[i].notaDinasId.tahun %>/<%= notaDinasTerkirim[i].notaDinasId.document %>" width="100%" height="1080" type="application/pdf"></iframe>
                   <% } %>
 
                 </div>

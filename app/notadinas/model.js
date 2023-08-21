@@ -4,7 +4,9 @@ const notaDinasSchema = mongoose.Schema(
   {
     noNotaDinas: String,
     noAgenda: Number,
+    noAgendaSisipan: Number,
     tanggal: String,
+    date: Date,
     tahun: Number,
     dari: String,
     kepada: String,

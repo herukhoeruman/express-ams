@@ -2,6 +2,7 @@ const path = require("path");
 const fs = require("fs");
 const config = require("../../config");
 const axios = require("axios");
+const nodemailer = require("nodemailer");
 const FormData = require("form-data");
 const CryptoJS = require("crypto-js");
 const { v4: uuidv4 } = require("uuid");
@@ -17,6 +18,16 @@ const Request = require("../../app/notadinas/modelRequest");
 const Callback = require("../../app/callback/model");
 const Klasifikasi = require("../../app/notadinas/modelKlasifikasi");
 
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: "heru@gsp.co.id",
+    pass: "kmxhzrrripuntgte",
+  },
+});
+
 module.exports = {
   index: async (req, res) => {
     try {
@@ -26,71 +37,69 @@ module.exports = {
 
       const username = req.session.user.username;
       const jabatan = req.session.user.jabatan.sebutanJabatan;
-      const notaDinas = await NotaDinas.find({
-        kepada: jabatan,
-        flag: 2,
-      });
+      // const notaDinas = await NotaDinas.find({
+      //   $or: [{ kepada: jabatan }, { "disposisi.penerima": jabatan }],
+      //   flag: 2,
+      // });
+
+      // const notaDinas = await Notif.find().populate("notaDinasId");
+      const notaDinas = await NotaDinasInbox.find({
+        penerima: jabatan,
+      }).populate("notaDinasId");
+
+      console.log(notaDinas);
+      // return;
+
       const disposisiMaster = await DisposisiMaster.find();
       const users = await Users.find();
-      const historyDisposisi = await NotaDinasSent.find();
-      // for of  async
-      // for (const data of notaDinas) {
-      //   const id = data.dataResponse.id;
-      //   const fileName = data.document;
-      //   const signed = await Callback.findOne({ documentId: id });
-      //   const outputFilePath = path.resolve(
-      //     config.rootPath,
-      //     `public/upload/signed/${fileName}`
-      //   );
-
-      //   if (fs.existsSync(outputFilePath)) {
-      //     console.log("File already exists.");
-      //   } else {
-      //     try {
-      //       const response = await axios({
-      //         url: signed.downloadUrl,
-      //         method: "GET",
-      //         responseType: "stream",
-      //       });
-
-      //       response.data.pipe(fs.createWriteStream(outputFilePath));
-
-      //       await new Promise((resolve, reject) => {
-      //         response.data.on("end", () => {
-      //           console.log("File downloaded successfully.");
-      //           resolve();
-      //         });
-
-      //         response.data.on("error", (err) => {
-      //           console.error("Error downloading file:", err);
-      //           reject(err);
-      //         });
-      //       });
-      //     } catch (error) {
-      //       console.error("Error downloading file:", error);
-      //     }
-      //   }
-      // }
-
-      notaDinas.forEach((nd) => {
-        nd.disposisi.forEach((disposisi) => {
-          console.log(disposisi);
-        });
-      });
 
       res.render("notadinas/index", {
+        // count,
         notaDinas,
         alert,
         disposisiMaster,
-        historyDisposisi,
         users,
         title: "Nota Dinas",
         subtitle: "Nota Dinas Masuk",
         username,
         jabatan: req.session.user.jabatan,
+        role: req.session.user.role,
       });
     } catch (err) {
       console.log(err);
+    }
+  },
+
+  detail: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const jabatan = req.session.user.jabatan.sebutanJabatan;
+      const notaDinas = await NotaDinas.findOne({ _id: id });
+      const notaDinasInbox = await NotaDinasInbox.findOne({
+        notaDinasId: id,
+        penerima: jabatan,
+      });
+
+      // return log(notaDinasInbox);
+
+      // if (notaDinas.kepada === jabatan) {
+      await NotaDinasInbox.findOneAndUpdate(
+        { penerima: jabatan, notaDinasId: id },
+        { $set: { readStatus: true } }
+      );
+      // }
+
+      res.render("notadinas/detail", {
+        notaDinas,
+        title: "Nota Dinas",
+        subtitle: "Detail Nota Dinas",
+        username: req.session.user.username,
+        jabatan: req.session.user.jabatan,
+        role: req.session.user.role,
+      });
+    } catch (err) {
+      console.log(err);
+      res.redirect("/notadinas");
     }
   },
 
@@ -99,16 +108,21 @@ module.exports = {
       const username = req.session.user.username;
       const jabatan = req.session.user.jabatan.sebutanJabatan;
       console.log(jabatan);
-      const notaDinasTerkirim = await NotaDinas.find({
+      // const notaDinasTerkirim = await NotaDinas.find({
+      //   pengirim: jabatan,
+      //   // flag: 2,
+      // });
+
+      const notaDinasTerkirim = await NotaDinasSent.find({
         pengirim: jabatan,
-        // flag: 2,
-      });
+      }).populate("notaDinasId");
       res.render("notadinas/terkirim/index", {
         notaDinasTerkirim,
         title: "Nota Dinas",
         subtitle: "Nota Dinas Terkirim",
         username,
         jabatan: req.session.user.jabatan,
+        role: req.session.user.role,
       });
     } catch (err) {
       console.log(err);
@@ -129,11 +143,26 @@ module.exports = {
       for (const data of notaDinasApproved) {
         const id = data.dataResponse.id;
         const fileName = data.document;
+        const tahun = data.tahun;
         const signed = await Callback.findOne({ documentId: id });
-        const outputFilePath = path.resolve(
+
+        // const outputFilePath = path.resolve(
+        //   config.rootPath,
+        //   `public/upload/signed/${fileName}`
+        // );
+        const folderPath = path.resolve(
           config.rootPath,
-          `public/upload/signed/${fileName}`
+          `public/document/nota-dinas/${tahun}/signed/`
         );
+        const outputFilePath = path.resolve(folderPath, `${fileName}`);
+
+        fs.mkdir(folderPath, { recursive: true }, (err) => {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log("Directory created successfully!");
+          }
+        });
 
         if (fs.existsSync(outputFilePath)) {
           console.log("File already exists.");
@@ -169,6 +198,7 @@ module.exports = {
         subtitle: "Persetujuan Nota Dinas",
         username,
         jabatan: req.session.user.jabatan,
+        role: req.session.user.role,
       });
     } catch (err) {
       console.log(err);
@@ -201,6 +231,7 @@ module.exports = {
         subtitle: "Persetujuan Nota Dinas",
         username: req.session.user.username,
         jabatan: req.session.user.jabatan,
+        role: req.session.user.role,
       });
     } catch (err) {
       console.log(err);
@@ -495,6 +526,7 @@ module.exports = {
     try {
       const id = req.params.id;
       const { tindakLanjut, disposisi, penerima } = req.body;
+      const pengirim = req.session.user.jabatan.sebutanJabatan;
 
       const newDate = new Date();
       const options = {
@@ -503,13 +535,13 @@ module.exports = {
         month: "long",
         day: "numeric",
       };
-      const date = newDate.toLocaleDateString("id-ID", options);
+      const tanggal = newDate.toLocaleDateString("id-ID", options);
       const disposisiData = {
-        pengirim: req.session.user.jabatan.sebutanJabatan,
-        penerima: penerima,
-        disposisi: disposisi,
-        tindakLanjut: tindakLanjut,
-        tanggal: date,
+        pengirim,
+        penerima,
+        disposisi,
+        tindakLanjut,
+        tanggal,
       };
 
       await NotaDinas.findOneAndUpdate(
@@ -518,7 +550,55 @@ module.exports = {
         { new: true }
       );
 
-      // res.status(200).json({ notaDinas });
+      const newSent = new NotaDinasSent({
+        pengirim,
+        penerima,
+        disposisi,
+        tindakLanjut,
+        tanggal,
+        notaDinasId: id,
+      });
+      await newSent.save();
+
+      const newInbox = new NotaDinasInbox({
+        pengirim,
+        penerima,
+        disposisi,
+        tindakLanjut,
+        readStatus: false,
+        notaDinasId: id,
+      });
+      await newInbox.save();
+
+      // notif email
+      const emailTemplatePath = path.resolve(
+        config.rootPath,
+        `public/html/nota-dinas-disposisi.html`
+      );
+      // fs.promises
+      //   .readFile(emailTemplatePath, "utf-8")
+      //   .then((emailTemplate) => {
+      //     const html = emailTemplate
+      //       .replace("{{pengirim}}", pengirim)
+      //       .replace("{{penerima}}", penerima)
+      //       .replace("{{tanggal}}", tanggal)
+      //       .replace("{{tindakLanjut}}", tindakLanjut)
+      //       .replace("{{disposisi}}", disposisi);
+
+      //     return transporter.sendMail({
+      //       from: "heru@gsp.co.id",
+      //       to: email,
+      //       subject: "Nota Dinas Disposisi",
+      //       text: "Hello world?",
+      //       html: html,
+      //     });
+      //   })
+      //   .then((info) => {
+      //     console.log("[EMAIL_SENT] : %s", info.messageId);
+      //   })
+      //   .catch((error) => {
+      //     console.error("[EMAIL_ERROR]:", error);
+      //   });
       res.redirect("/notadinas");
     } catch (err) {
       console.log(err);
@@ -567,6 +647,8 @@ module.exports = {
         if (lastNoAgenda.tahun !== tahun) {
           noAgenda = 1;
         } else {
+          //todo: cek new date < date dari view
+          //todo: ajax dari view kemudian response
           noAgenda = lastNoAgenda.noAgenda + 1;
         }
       } else {
@@ -581,6 +663,7 @@ module.exports = {
         subtitle: "Konsep Nota Dinas",
         username: req.session.user.username,
         jabatan: req.session.user.jabatan,
+        role: req.session.user.role,
         divisi,
       });
     } catch (err) {
@@ -588,30 +671,128 @@ module.exports = {
     }
   },
 
+  prosesKonsep: async (req, res) => {
+    try {
+      const { tanggal } = req.body;
+      const setDate = new Date(tanggal);
+      const nowDate = new Date();
+      const tahun = new Date().getFullYear();
+      nowDate.setUTCHours(0);
+      nowDate.setUTCMinutes(0);
+      nowDate.setUTCSeconds(0);
+      nowDate.setUTCMilliseconds(0);
+
+      let noAgenda;
+
+      const lastNoAgenda = await NotaDinas.findOne({
+        divisi: req.session.user.jabatan.namaUnit,
+      }).sort({
+        noAgenda: -1,
+      });
+
+      if (lastNoAgenda !== null) {
+        if (lastNoAgenda.tahun !== tahun) {
+          const noReset = lastNoAgenda.noAgenda + 1;
+          noAgenda = noReset.toString().padStart(3, "0");
+          res.status(200).json({ noAgenda });
+        } else {
+          if (setDate < nowDate) {
+            const notaDinas = await NotaDinas.findOne({
+              divisi: req.session.user.jabatan.namaUnit,
+              date: { $lte: setDate },
+            }).sort({
+              noAgenda: -1,
+              noAgendaSisipan: -1,
+
+              // date: -1,
+              // createdAt: -1,
+            });
+
+            if (!notaDinas) {
+              return res.status(200).json({
+                status: "error",
+                message: "Tidak bisa melakukan backdate",
+              });
+            }
+
+            console.log("[NO_AGENDA_SISIPAN]", notaDinas.noAgendaSisipan);
+            console.log("[NO_AGENDA]", notaDinas.noAgenda);
+
+            if (notaDinas.noAgendaSisipan > 0) {
+              const noSisipan = notaDinas.noAgendaSisipan + 1;
+              if (noSisipan >= 10) {
+                console.log("[sisipan > 10]");
+                const sisipan = notaDinas.noAgenda + "-" + noSisipan;
+                noAgenda = sisipan.toString().padStart(6, "0");
+              } else {
+                console.log("[sisipan < 10]");
+
+                const sisipan = notaDinas.noAgenda + "-0" + noSisipan;
+                noAgenda = sisipan.toString().padStart(6, "0");
+              }
+            } else {
+              const sisipan = notaDinas.noAgenda + "-01";
+              noAgenda = sisipan.toString().padStart(6, "0");
+            }
+
+            res.status(200).json({ noAgenda });
+          } else {
+            const noBaru = lastNoAgenda.noAgenda + 1;
+            noAgenda = noBaru.toString().padStart(3, "0");
+            res.status(200).json({ noAgenda });
+            console.log(noAgenda);
+          }
+        }
+      } else {
+        const noAwal = 1;
+        noAgenda = noAwal.toString().padStart(3, "0");
+        res.status(200).json({ noAgenda });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
   savePdf: async (req, res) => {
     try {
       const pdfBase64 = req.body.document; //base64
       const nomor = req.body.nomor;
-      const nomorModifikasi = nomor.replace(/\//g, "_");
-      const outputPath = path.resolve(
+      const tahun = req.body.tahun;
+      const nomorNotaDinas = nomor.replace(/\//g, "_");
+
+      const folderPath = path.resolve(
         config.rootPath,
-        `public/upload/NOTA_DINAS_${nomorModifikasi}.pdf`
+        `public/document/nota-dinas/${tahun}`
       );
+      const outputPath = path.resolve(
+        folderPath,
+        `NOTA_DINAS_${nomorNotaDinas}.pdf`
+      );
+      // const outputPath = path.resolve(config.rootPath, `public/upload/NOTA_DINAS_${nomorModifikasi}.pdf`);
 
-      const dataPdf = pdfBase64.replace(/^data:application\/pdf;base64,/, "");
-      const buffer = Buffer.from(dataPdf, "base64");
-
-      fs.writeFile(outputPath, buffer, (err) => {
+      fs.mkdir(folderPath, { recursive: true }, (err) => {
         if (err) {
-          console.error(err);
-          res
-            .status(500)
-            .json({ status: "error", message: "file failed to save" });
+          console.log(err);
         } else {
-          // console.log("File PDF berhasil disimpan:", outputPath);
-          res
-            .status(200)
-            .json({ status: "ok", message: "file saved successfully" });
+          const dataPdf = pdfBase64.replace(
+            /^data:application\/pdf;base64,/,
+            ""
+          );
+          const buffer = Buffer.from(dataPdf, "base64");
+
+          fs.writeFile(outputPath, buffer, (err) => {
+            if (err) {
+              console.error(err);
+              res
+                .status(500)
+                .json({ status: "error", message: "file failed to save" });
+            } else {
+              // console.log("File PDF berhasil disimpan:", outputPath);
+              res
+                .status(200)
+                .json({ status: "ok", message: "file saved successfully" });
+            }
+          });
         }
       });
     } catch (error) {
@@ -642,16 +823,24 @@ module.exports = {
         divisi,
       } = req.body;
       const pengirim = req.session.user.jabatan.sebutanJabatan;
+      const setDate = new Date(tanggal);
+      setDate.setUTCHours(0);
+      setDate.setUTCMinutes(0);
+      setDate.setUTCSeconds(0);
+      setDate.setUTCMilliseconds(0);
       const nomor = noNotaDinas.replace(/\//g, "_");
+
       const document = path.resolve(
         config.rootPath,
-        `public/upload/NOTA_DINAS_${nomor}.pdf`
+        `public/document/nota-dinas/NOTA_DINAS_${nomor}.pdf`
       );
       const filename = document.split("\\").pop();
 
+      //!
+      let attachmentFileName = null;
       if (req.file) {
         const filePath = req.file.path;
-        const attachmentFileName = req.file.originalname;
+        attachmentFileName = req.file.originalname;
         const targetPath = path.resolve(
           config.rootPath,
           `public/upload/attachment/${attachmentFileName}`
@@ -663,68 +852,110 @@ module.exports = {
         const src = fs.createReadStream(filePath);
         const dest = fs.createWriteStream(targetPath);
         src.pipe(dest);
-
-        src.on("end", async () => {
-          try {
-            const newNotaDinas = new NotaDinas({
-              noNotaDinas,
-              noAgenda,
-              tanggal,
-              tahun,
-              dari,
-              kepada,
-              pemeriksa,
-              pengirim,
-              perihal,
-              jumlahLampiran,
-              jenisLampiran,
-              kodeKlasifikasi,
-              sifat,
-              isiSurat,
-              tembusan,
-              keterangan,
-              attachment: attachmentFileName,
-              email,
-              divisi,
-              document: filename,
-              flag: 1,
-            });
-            const savedNotaDinas = await newNotaDinas.save();
-            res.status(200).json({ savedNotaDinas });
-          } catch (err) {
-            console.log(err);
-          }
-        });
-      } else {
-        try {
-          const newNotaDinas = new NotaDinas({
-            noNotaDinas,
-            noAgenda,
-            tanggal,
-            tahun,
-            dari,
-            kepada,
-            pemeriksa,
-            pengirim,
-            perihal,
-            jumlahLampiran,
-            jenisLampiran,
-            kodeKlasifikasi,
-            sifat,
-            isiSurat,
-            tembusan,
-            keterangan,
-            email,
-            divisi,
-            document: filename,
-            flag: 1,
-          });
-          const savedNotaDinas = await newNotaDinas.save();
-          res.status(200).json({ savedNotaDinas });
-        } catch (err) {
-          console.log(err);
-        }
       }
+
+      const x = noNotaDinas.split("/");
+      let setNoAgendaSisipan;
+      if (x[0].length === 3) {
+        setNoAgendaSisipan = 0;
+      } else {
+        const y = x[0].split("-");
+        setNoAgendaSisipan = y[1];
+      }
+
+      console.log(setNoAgendaSisipan);
+
+      // return;
+
+      const newNotaDinas = new NotaDinas({
+        noNotaDinas,
+        noAgenda,
+        noAgendaSisipan: setNoAgendaSisipan,
+        tanggal,
+        date: setDate,
+        tahun,
+        dari,
+        kepada,
+        pemeriksa,
+        pengirim,
+        perihal,
+        jumlahLampiran,
+        jenisLampiran,
+        kodeKlasifikasi,
+        sifat,
+        isiSurat,
+        tembusan,
+        keterangan,
+        attachment: attachmentFileName,
+        email,
+        divisi,
+        document: filename,
+        flag: 1,
+      });
+      const savedNotaDinas = await newNotaDinas.save();
+      res.status(200).json({ savedNotaDinas });
+
+      //   src.on("end", async () => {
+      //     try {
+      //       const newNotaDinas = new NotaDinas({
+      //         noNotaDinas,
+      //         noAgenda,
+      //         tanggal,
+      //         tahun,
+      //         dari,
+      //         kepada,
+      //         pemeriksa,
+      //         pengirim,
+      //         perihal,
+      //         jumlahLampiran,
+      //         jenisLampiran,
+      //         kodeKlasifikasi,
+      //         sifat,
+      //         isiSurat,
+      //         tembusan,
+      //         keterangan,
+      //         attachment: attachmentFileName,
+      //         email,
+      //         divisi,
+      //         document: filename,
+      //         flag: 1,
+      //       });
+      //       const savedNotaDinas = await newNotaDinas.save();
+      //       res.status(200).json({ savedNotaDinas });
+      //     } catch (err) {
+      //       console.log(err);
+      //     }
+      //   });
+      // } else {
+      //   try {
+      //     const newNotaDinas = new NotaDinas({
+      //       noNotaDinas,
+      //       noAgenda,
+      //       tanggal,
+      //       tahun,
+      //       dari,
+      //       kepada,
+      //       pemeriksa,
+      //       pengirim,
+      //       perihal,
+      //       jumlahLampiran,
+      //       jenisLampiran,
+      //       kodeKlasifikasi,
+      //       sifat,
+      //       isiSurat,
+      //       tembusan,
+      //       keterangan,
+      //       email,
+      //       divisi,
+      //       document: filename,
+      //       flag: 1,
+      //     });
+      //     const savedNotaDinas = await newNotaDinas.save();
+      //     res.status(200).json({ savedNotaDinas });
+      //   } catch (err) {
+      //     console.log(err);
+      //   }
+      // }
     } catch (err) {
       console.log(err);
       res.status(400).json({ err });
@@ -736,15 +967,18 @@ module.exports = {
       const { id } = req.params;
       const { flag } = req.body;
       const notaDinas = await NotaDinas.findById(id);
-      // const email = req.session.user.email;
-      const email = "heru@gsp.co.id";
-      // const signature = `[{"email":"${email}","detail":[{"p":1,"x":140,"y":218,"w":47,"h":23}]}]`; //v2
+      const user = await Users.findOne({
+        "jabatan.sebutanJabatan": notaDinas.kepada,
+      });
+
+      const email = req.session.user.email;
+      // const email = "heru@gsp.co.id";
       const signature = `[{"email":"${email}","detail":[{"p":1,"x":130,"y":220,"w":50,"h":24}]}]`; //final
 
       const fileName = notaDinas.document;
       const document = path.resolve(
         config.rootPath,
-        `public/upload/${fileName}`
+        `public/document/nota-dinas/${notaDinas.tahun}/${fileName}`
       );
 
       //hash
@@ -764,8 +998,13 @@ module.exports = {
       console.log("hash : " + hash);
       console.log("payload : " + payload);
       console.log("flag", flag);
-      console.log("flag", typeof flag);
-      // return;
+
+      console.log(user.email);
+
+      const emailTemplatePath = path.resolve(
+        config.rootPath,
+        `public/html/nota-dinas-masuk.html`
+      );
 
       //2 : approve
       if (flag === "2") {
@@ -781,12 +1020,15 @@ module.exports = {
             headers: {
               "Content-Type": "multipart/form-data",
               apikey: "TkhRZ7XmPVEOTNtY3XWq7htqWoGpJntl",
-              // apikey: "amj6Oqx234ON0kxFoFGt8wQeIRIapIby",
               ...data.getHeaders(),
             },
           })
           .then(async (response) => {
-            //insert data response
+            console.log("[RESPONSE]", response.data);
+            if (response.data.status === "ERROR") {
+              return res.status(400).json({ error: response.data.message });
+            }
+
             const newResponse = await Response({
               trxId: trxId,
               json: JSON.stringify(response.data),
@@ -794,16 +1036,61 @@ module.exports = {
               data: response.data.data,
             });
             await newResponse.save();
-            //update
+
             const updateNotaDinas = await NotaDinas.findOneAndUpdate(
               { _id: id },
               { flag, dataResponse: response.data.data }
             );
-            console.log(response.data);
+
+            const newSent = new NotaDinasSent({
+              pengirim: notaDinas.dari,
+              penerima: notaDinas.kepada,
+              readStatus: false,
+              notaDinasId: id,
+            });
+            await newSent.save();
+
+            const newInbox = new NotaDinasInbox({
+              pengirim: notaDinas.dari,
+              penerima: notaDinas.kepada,
+              readStatus: false,
+              notaDinasId: id,
+            });
+            await newInbox.save();
+
             res.status(200).json(updateNotaDinas);
+
+            // notif email
+            fs.promises
+              .readFile(emailTemplatePath, "utf-8")
+              .then((emailTemplate) => {
+                const html = emailTemplate
+                  .replace("{{nomor}}", notaDinas.noNotaDinas)
+                  .replace("{{kepada}}", notaDinas.kepada)
+                  .replace("{{dari}}", notaDinas.dari)
+                  .replace("{{tanggal}}", notaDinas.tanggal)
+                  .replace("{{sifat}}", notaDinas.sifat)
+                  .replace("{{lampiran}}", notaDinas.jumlahLampiran)
+                  .replace("{{hal}}", notaDinas.perihal)
+                  .replace("{{isiSurat}}", notaDinas.isiSurat);
+
+                return transporter.sendMail({
+                  from: "heru@gsp.co.id",
+                  to: user.email,
+                  subject: "Nota Dinas Masuk",
+                  text: "Hello world?",
+                  html: html,
+                });
+              })
+              .then((info) => {
+                console.log("[EMAIL_SENT] : %s", info.messageId);
+              })
+              .catch((error) => {
+                console.error("[EMAIL_ERROR]:", error);
+              });
           })
           .catch((error) => {
-            console.error(error);
+            console.error("[ERROR_RESPONSE]", error);
             res.status(400).json({ error });
           });
       } else {

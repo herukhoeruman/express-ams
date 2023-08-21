@@ -12,6 +12,7 @@ const dashboardRouter = require("./app/dashboard/router");
 const usersRouter = require("./app/users/router");
 const notaDinasRouter = require("./app/notadinas/router");
 const callbackRouter = require("./app/callback/router");
+const adminRouter = require("./app/admin/router");
 
 const app = express();
 
@@ -57,6 +58,8 @@ app.use("/", usersRouter);
 app.use("/dashboard", dashboardRouter);
 app.use("/notadinas", notaDinasRouter);
 app.use("/callback", callbackRouter);
+
+app.use("/users", adminRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

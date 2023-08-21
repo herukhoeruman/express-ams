@@ -4,6 +4,7 @@ const multer = require("multer");
 const os = require("os");
 const {
   index,
+  detail,
   terkirim,
   viewCreate,
   actionCreate,
@@ -13,19 +14,22 @@ const {
   insertNotaDinasInbox,
   konsepNotaDinas,
   savePdf,
-  setSign,
   kirim,
   persetujuan,
   viewPersetujuan,
   updateNotaDinas,
   actionPersetujuan,
+  prosesKonsep,
 } = require("./controller");
 
 const { isLogin } = require("../middleware/auth");
 router.use(isLogin);
+const { countMiddleware } = require("../middleware/notadinas");
+router.use(countMiddleware);
 
 /* GET home page. */
 router.get("/", index); //masuk
+router.get("/detail/:id", detail); //detail
 router.get("/terkirim", terkirim);
 router.get("/persetujuan", persetujuan);
 router.get("/persetujuan/:id", viewPersetujuan);
@@ -48,6 +52,7 @@ router.post("/disposisi/:id", insertNotaDinasSent);
 router.post("/notadinas-inbox", insertNotaDinasInbox);
 
 router.get("/konsep", konsepNotaDinas);
+router.post("/proses-konsep", prosesKonsep);
 router.post("/konsep", savePdf);
 router.post("/kirim", multer({ dest: os.tmpdir() }).single("file"), kirim);
 
