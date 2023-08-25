@@ -10,6 +10,7 @@ let userSchema = mongoose.Schema(
       type: String,
       require: [true, "password tidak boleh kosong"],
     },
+    namaLengkap: { type: String },
     email: { type: String },
     nomorTlp: { type: String },
     divisi: { type: String },

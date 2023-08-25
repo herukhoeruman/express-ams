@@ -5,9 +5,11 @@ const notaDinasSentShema = mongoose.Schema(
     pengirim: {
       type: String,
     },
-    penerima: {
-      type: String,
-    },
+    penerima: [
+      {
+        type: String,
+      },
+    ],
     disposisi: [
       {
         type: String,

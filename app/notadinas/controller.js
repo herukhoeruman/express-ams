@@ -7,6 +7,7 @@ const FormData = require("form-data");
 const CryptoJS = require("crypto-js");
 const { v4: uuidv4 } = require("uuid");
 const trxId = uuidv4();
+const QRCode = require("qrcode");
 
 const NotaDinas = require("../../app/notadinas/model");
 const DisposisiMaster = require("../../app/notadinas/modelDisposisi");
@@ -47,7 +48,7 @@ module.exports = {
         penerima: jabatan,
       }).populate("notaDinasId");
 
-      console.log(notaDinas);
+      // console.log(notaDinas);
       // return;
 
       const disposisiMaster = await DisposisiMaster.find();
@@ -61,6 +62,7 @@ module.exports = {
         users,
         title: "Nota Dinas",
         subtitle: "Nota Dinas Masuk",
+        namaLengkap: req.session.user.namaLengkap,
         username,
         jabatan: req.session.user.jabatan,
         role: req.session.user.role,
@@ -93,6 +95,7 @@ module.exports = {
         notaDinas,
         title: "Nota Dinas",
         subtitle: "Detail Nota Dinas",
+        namaLengkap: req.session.user.namaLengkap,
         username: req.session.user.username,
         jabatan: req.session.user.jabatan,
         role: req.session.user.role,
@@ -120,6 +123,7 @@ module.exports = {
         notaDinasTerkirim,
         title: "Nota Dinas",
         subtitle: "Nota Dinas Terkirim",
+        namaLengkap: req.session.user.namaLengkap,
         username,
         jabatan: req.session.user.jabatan,
         role: req.session.user.role,
@@ -139,63 +143,64 @@ module.exports = {
 
       const notaDinasApproved = await NotaDinas.find({ flag: 2 });
 
-      // for of  async
-      for (const data of notaDinasApproved) {
-        const id = data.dataResponse.id;
-        const fileName = data.document;
-        const tahun = data.tahun;
-        const signed = await Callback.findOne({ documentId: id });
+      // // for of  async
+      // for (const data of notaDinasApproved) {
+      //   const id = data.dataResponse.id;
+      //   const fileName = data.document;
+      //   const tahun = data.tahun;
+      //   const signed = await Callback.findOne({ documentId: id });
 
-        // const outputFilePath = path.resolve(
-        //   config.rootPath,
-        //   `public/upload/signed/${fileName}`
-        // );
-        const folderPath = path.resolve(
-          config.rootPath,
-          `public/document/nota-dinas/${tahun}/signed/`
-        );
-        const outputFilePath = path.resolve(folderPath, `${fileName}`);
+      //   // const outputFilePath = path.resolve(
+      //   //   config.rootPath,
+      //   //   `public/upload/signed/${fileName}`
+      //   // );
+      //   const folderPath = path.resolve(
+      //     config.rootPath,
+      //     `public/document/nota-dinas/${tahun}/signed/`
+      //   );
+      //   const outputFilePath = path.resolve(folderPath, `${fileName}`);
 
-        fs.mkdir(folderPath, { recursive: true }, (err) => {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log("Directory created successfully!");
-          }
-        });
+      //   fs.mkdir(folderPath, { recursive: true }, (err) => {
+      //     if (err) {
+      //       console.log(err);
+      //     } else {
+      //       console.log("Directory created successfully!");
+      //     }
+      //   });
 
-        if (fs.existsSync(outputFilePath)) {
-          console.log("File already exists.");
-        } else {
-          try {
-            const response = await axios({
-              url: signed.downloadUrl,
-              method: "GET",
-              responseType: "stream",
-            });
+      //   if (fs.existsSync(outputFilePath)) {
+      //     console.log("File already exists.");
+      //   } else {
+      //     try {
+      //       const response = await axios({
+      //         url: signed.downloadUrl,
+      //         method: "GET",
+      //         responseType: "stream",
+      //       });
 
-            response.data.pipe(fs.createWriteStream(outputFilePath));
+      //       response.data.pipe(fs.createWriteStream(outputFilePath));
 
-            await new Promise((resolve, reject) => {
-              response.data.on("end", () => {
-                console.log("File downloaded successfully.");
-                resolve();
-              });
+      //       await new Promise((resolve, reject) => {
+      //         response.data.on("end", () => {
+      //           console.log("File downloaded successfully.");
+      //           resolve();
+      //         });
 
-              response.data.on("error", (err) => {
-                console.error("Error downloading file:", err);
-                reject(err);
-              });
-            });
-          } catch (error) {
-            console.error("Error downloading file:", error);
-          }
-        }
-      }
+      //         response.data.on("error", (err) => {
+      //           console.error("Error downloading file:", err);
+      //           reject(err);
+      //         });
+      //       });
+      //     } catch (error) {
+      //       console.error("Error downloading file:", error);
+      //     }
+      //   }
+      // }
       res.render("notadinas/persetujuan/index", {
         notaDinas,
         title: "Nota Dinas",
         subtitle: "Persetujuan Nota Dinas",
+        namaLengkap: req.session.user.namaLengkap,
         username,
         jabatan: req.session.user.jabatan,
         role: req.session.user.role,
@@ -229,6 +234,7 @@ module.exports = {
         klasifikasi,
         title: "Nota Dinas",
         subtitle: "Persetujuan Nota Dinas",
+        namaLengkap: req.session.user.namaLengkap,
         username: req.session.user.username,
         jabatan: req.session.user.jabatan,
         role: req.session.user.role,
@@ -524,9 +530,13 @@ module.exports = {
 
   insertNotaDinasSent: async (req, res) => {
     try {
-      const id = req.params.id;
+      const { id } = req.params;
       const { tindakLanjut, disposisi, penerima } = req.body;
       const pengirim = req.session.user.jabatan.sebutanJabatan;
+
+      const user = await Users.findOne({
+        "jabatan.sebutanJabatan": penerima,
+      });
 
       const newDate = new Date();
       const options = {
@@ -571,34 +581,36 @@ module.exports = {
       await newInbox.save();
 
       // notif email
-      const emailTemplatePath = path.resolve(
-        config.rootPath,
-        `public/html/nota-dinas-disposisi.html`
-      );
-      // fs.promises
-      //   .readFile(emailTemplatePath, "utf-8")
-      //   .then((emailTemplate) => {
-      //     const html = emailTemplate
-      //       .replace("{{pengirim}}", pengirim)
-      //       .replace("{{penerima}}", penerima)
-      //       .replace("{{tanggal}}", tanggal)
-      //       .replace("{{tindakLanjut}}", tindakLanjut)
-      //       .replace("{{disposisi}}", disposisi);
+      try {
+        const emailTemplatePath = path.resolve(
+          config.rootPath,
+          `public/html/nota-dinas-disposisi.html`
+        );
+        const emailTemplate = await fs.promises.readFile(
+          emailTemplatePath,
+          "utf-8"
+        );
 
-      //     return transporter.sendMail({
-      //       from: "heru@gsp.co.id",
-      //       to: email,
-      //       subject: "Nota Dinas Disposisi",
-      //       text: "Hello world?",
-      //       html: html,
-      //     });
-      //   })
-      //   .then((info) => {
-      //     console.log("[EMAIL_SENT] : %s", info.messageId);
-      //   })
-      //   .catch((error) => {
-      //     console.error("[EMAIL_ERROR]:", error);
-      //   });
+        const html = emailTemplate
+          .replace("{{pengirim}}", pengirim)
+          .replace("{{penerima}}", penerima)
+          .replace("{{tanggal}}", tanggal)
+          .replace("{{tindakLanjut}}", tindakLanjut)
+          .replace("{{disposisi}}", disposisi)
+          .replace("{{id}}", id);
+
+        const info = await transporter.sendMail({
+          from: "heru@gsp.co.id",
+          to: user.email,
+          subject: "Nota Dinas Masuk",
+          text: "Hello world?",
+          html: html,
+        });
+
+        console.log("[EMAIL_SENT] : %s", info.messageId);
+      } catch (error) {
+        console.log("[EMAIL_ERROR]", error);
+      }
       res.redirect("/notadinas");
     } catch (err) {
       console.log(err);
@@ -647,8 +659,6 @@ module.exports = {
         if (lastNoAgenda.tahun !== tahun) {
           noAgenda = 1;
         } else {
-          //todo: cek new date < date dari view
-          //todo: ajax dari view kemudian response
           noAgenda = lastNoAgenda.noAgenda + 1;
         }
       } else {
@@ -661,6 +671,7 @@ module.exports = {
         klasifikasi,
         title: "Konsep Nota Dinas",
         subtitle: "Konsep Nota Dinas",
+        namaLengkap: req.session.user.namaLengkap,
         username: req.session.user.username,
         jabatan: req.session.user.jabatan,
         role: req.session.user.role,
@@ -830,6 +841,10 @@ module.exports = {
       setDate.setUTCMilliseconds(0);
       const nomor = noNotaDinas.replace(/\//g, "_");
 
+      console.log("[TEMBUSAN]", tembusan);
+      console.log("[TEMBUSAN]", typeof tembusan);
+      // return;
+
       const document = path.resolve(
         config.rootPath,
         `public/document/nota-dinas/NOTA_DINAS_${nomor}.pdf`
@@ -962,7 +977,164 @@ module.exports = {
     }
   },
 
+  prosesPersetujuan: async (req, res) => {
+    try {
+      const { nomor, dari, nama } = req.body;
+
+      //nama
+      const text = `
+      Nomor : ${nomor}
+      Nama : ${req.session.user.namaLengkap}
+      Jabatan : ${dari}
+      `;
+
+      QRCode.toDataURL(text, (err, url) => {
+        res.status(200).json({ status: "ok", url: url });
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
   actionPersetujuan: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { flag, url } = req.body;
+
+      const notaDinas = await NotaDinas.findById(id);
+      const user = await Users.findOne({
+        "jabatan.sebutanJabatan": notaDinas.kepada,
+      });
+
+      if (flag == "2") {
+        const tembusanArray = notaDinas.tembusan; // Ambil array tembusan dari notaDinas
+        const savePromises = []; // Untuk menyimpan promise-promise penyimpanan
+
+        for (const tembusan of tembusanArray) {
+          const newSent = new NotaDinasSent({
+            pengirim: notaDinas.dari,
+            penerima: tembusan,
+            readStatus: false,
+            notaDinasId: id,
+          });
+
+          const sentPromise = newSent.save();
+          savePromises.push(sentPromise); // Tambahkan promise ke dalam array
+
+          const newInbox = new NotaDinasInbox({
+            pengirim: notaDinas.dari,
+            penerima: tembusan,
+            readStatus: false,
+            notaDinasId: id,
+          });
+
+          const inboxPromise = newInbox.save();
+          savePromises.push(inboxPromise); // Tambahkan promise ke dalam array
+        }
+
+        await Promise.all(savePromises); // Tunggu hingga semua promise selesai
+        // return;
+
+        const folderPath = path.resolve(
+          config.rootPath,
+          `public/document/nota-dinas/${notaDinas.tahun}/signed/`
+        );
+        const outputPath = path.resolve(folderPath, `${notaDinas.document}`);
+        fs.mkdir(folderPath, { recursive: true }, (err) => {
+          if (err) {
+            console.log("[MKDIR_ERROR]", err);
+          } else {
+            const dataPdf = url.replace(/^data:application\/pdf;base64,/, "");
+
+            const buffer = Buffer.from(dataPdf, "base64");
+            fs.writeFile(outputPath, buffer, (err) => {
+              if (err) {
+                return console.log("[SAVE_PDF_ERROR]", err);
+              } else {
+                return console.log("[SAVE_PDF_SUCCESS]", outputPath);
+              }
+            });
+          }
+        });
+
+        const updateNotaDinas = await NotaDinas.findOneAndUpdate(
+          { _id: id },
+          { $set: { flag } }
+        );
+
+        const newSent = new NotaDinasSent({
+          pengirim: notaDinas.dari,
+          penerima: notaDinas.kepada,
+          readStatus: false,
+          notaDinasId: id,
+        });
+        await newSent.save();
+
+        const newInbox = new NotaDinasInbox({
+          pengirim: notaDinas.dari,
+          penerima: notaDinas.kepada,
+          readStatus: false,
+          notaDinasId: id,
+        });
+        await newInbox.save();
+
+        try {
+          const emailTemplatePath = path.resolve(
+            config.rootPath,
+            `public/html/nota-dinas-masuk.html`
+          );
+
+          const emailTemplate = await fs.promises.readFile(
+            emailTemplatePath,
+            "utf-8"
+          );
+
+          const html = emailTemplate
+            .replace("{{nomor}}", notaDinas.noNotaDinas)
+            .replace("{{kepada}}", notaDinas.kepada)
+            .replace("{{dari}}", notaDinas.dari)
+            .replace("{{tanggal}}", notaDinas.tanggal)
+            .replace("{{sifat}}", notaDinas.sifat)
+            .replace("{{lampiran}}", notaDinas.jumlahLampiran)
+            .replace("{{hal}}", notaDinas.perihal)
+            .replace("{{isiSurat}}", notaDinas.isiSurat)
+            .replace("{{id}}", id);
+
+          const info = await transporter.sendMail({
+            from: "heru@gsp.co.id",
+            to: user.email,
+            subject: "Nota Dinas Masuk",
+            text: "Hello world?",
+            html: html,
+          });
+
+          console.log("[EMAIL_SENT] : %s", info.messageId);
+        } catch (error) {
+          console.error("[EMAIL_ERROR]:", error);
+        }
+
+        res.status(200).json({
+          status: "ok",
+          message: "Nota Dinas telah disetujui",
+          data: updateNotaDinas,
+        });
+      } else {
+        const updateNotaDinas = await NotaDinas.findOneAndUpdate(
+          { _id: id },
+          { $set: { flag } }
+        );
+        res.status(200).json({
+          status: "ok",
+          message: "Nota Dinas telah dibatalkan",
+          data: updateNotaDinas,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  actionPersetujuanUntukSuratKeluar: async (req, res) => {
     try {
       const { id } = req.params;
       const { flag } = req.body;
@@ -973,6 +1145,7 @@ module.exports = {
 
       const email = req.session.user.email;
       // const email = "heru@gsp.co.id";
+
       const signature = `[{"email":"${email}","detail":[{"p":1,"x":130,"y":220,"w":50,"h":24}]}]`; //final
 
       const fileName = notaDinas.document;

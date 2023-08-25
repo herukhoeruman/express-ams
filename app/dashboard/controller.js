@@ -51,6 +51,7 @@ module.exports = {
       res.render("dashboard/index", {
         title: "Dashboard",
         subtitle: "dashboard",
+        namaLengkap: req.session.user.namaLengkap,
         username: req.session.user.username,
         jabatan: req.session.user.jabatan,
         role: req.session.user.role,

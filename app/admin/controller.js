@@ -25,6 +25,7 @@ module.exports = {
         users,
         title: "Data Users",
         subtitle: "Nota Dinas Masuk",
+        namaLengkap: req.session.user.namaLengkap,
         username: req.session.user.username,
         jabatan: req.session.user.jabatan,
         role: req.session.user.role,
@@ -54,7 +55,7 @@ module.exports = {
       };
 
       const characters =
-        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
 
       // Generate random password
       let password = "";

@@ -20,6 +20,7 @@ const {
   updateNotaDinas,
   actionPersetujuan,
   prosesKonsep,
+  prosesPersetujuan,
 } = require("./controller");
 
 const { isLogin } = require("../middleware/auth");
@@ -38,18 +39,20 @@ router.put(
   multer({ dest: os.tmpdir() }).single("file"),
   updateNotaDinas
 );
+
+router.post("/proses-persetujuan/:id", prosesPersetujuan);
 router.put("/persetujuan/:id", actionPersetujuan);
 
-router.get("/create", viewCreate);
-router.post("/create", actionCreate);
-router.get("/edit/:id", viewEdit);
-router.put(
-  "/edit/:id",
-  multer({ dest: os.tmpdir() }).single("files"),
-  actionEdit
-);
+// router.get("/create", viewCreate);
+// router.post("/create", actionCreate);
+// router.get("/edit/:id", viewEdit);
+// router.put(
+//   "/edit/:id",
+//   multer({ dest: os.tmpdir() }).single("files"),
+//   actionEdit
+// );
+// router.post("/notadinas-inbox", insertNotaDinasInbox);
 router.post("/disposisi/:id", insertNotaDinasSent);
-router.post("/notadinas-inbox", insertNotaDinasInbox);
 
 router.get("/konsep", konsepNotaDinas);
 router.post("/proses-konsep", prosesKonsep);

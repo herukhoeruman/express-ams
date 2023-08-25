@@ -25,6 +25,7 @@ module.exports = {
           title: "Dashboard",
           subtitle: "",
           count: 0,
+          namaLengkap: req.session.user.namaLengkap,
           username: req.session.user.username,
           jabatan: req.session.user.jabatan,
           email: req.session.user.email,
@@ -46,6 +47,7 @@ module.exports = {
         if (checkPassword) {
           req.session.user = {
             id: check._id,
+            namaLengkap: check.namaLengkap,
             username: check.username,
             jabatan: check.jabatan,
             divisi: check.divisi,

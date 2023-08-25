@@ -44,7 +44,7 @@
 
               <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="kt_tab_pane_1" role="tabpanel">
-                  <form>
+                  <form id="myForm">
                     <div class="row mb-5 d-flex align-items-center">
                       <div class="col-md-4">
                         <label class="required form-label">Penerima</label>
@@ -169,7 +169,7 @@
                         <label class="form-label">Tembusan</label>
                       </div>
                       <div class="col-md-8">
-                        <select class="form-select" id="tembusan" name="tembusan" data-control="select2" data-close-on-select="tru" data-placeholder="dikirimkan kepada" data-allow-clear="true" multiple="multiple">
+                        <select class="form-select" id="tembusan" name="tembusan[]" data-control="select2" data-close-on-select="tru" data-placeholder="dikirimkan kepada" data-allow-clear="true" multiple="multiple">
                           <option></option>
                           <% users.forEach(user=> { %>
                           <option value="<%= user.jabatan.sebutanJabatan %>">
@@ -358,7 +358,6 @@
         method: 'POST',
         data: {
           tanggal
-
         },
         success: function(response) {
           console.log(response);
@@ -493,9 +492,7 @@
           console.error('Terjadi kesalahan:', error);
         }
       })
-
-    }
-
+    } // end else
   }
 
   function sendPDF() {
@@ -548,6 +545,11 @@
           formData.append('file', attachment.files[i]);
         }
 
+        var selectedTembusan = $('#myForm select[name="tembusan[]"]').val();
+        for (var i = 0; i < selectedTembusan.length; i++) {
+          formData.append('tembusan[]', selectedTembusan[i]);
+        }
+
         const split = response.noAgenda.split('-'); // Pisahkan nomor dan sisipan
 
         formData.append('noNotaDinas', noNotaDinas);
@@ -564,7 +566,7 @@
         formData.append('kodeKlasifikasi', kodeKlasifikasi);
         formData.append('sifat', sifat);
         formData.append('isiSurat', isiSurat);
-        formData.append('tembusan', tembusan);
+        // formData.append('tembusan', tembusan);
         formData.append('email', email);
         formData.append('divisi', divisi);
         // formData.append('flag', flag);

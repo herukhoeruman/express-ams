@@ -50,8 +50,8 @@ app.use(
   express.static(path.join(__dirname, "node_modules", "dompurify"))
 );
 // app.use(
-//   "/jspdf",
-//   express.static(path.join(__dirname, "node_modules", "jspdf"))
+//   "/qrcode",
+//   express.static(path.join(__dirname, "node_modules", "qrcode"))
 // );
 
 app.use("/", usersRouter);

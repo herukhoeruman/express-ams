@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const notaDinasInboxSchema = mongoose.Schema(
   {
     pengirim: { type: String },
-    penerima: { type: String },
+    penerima: [{ type: String }],
     disposisi: [
       {
         type: String,
