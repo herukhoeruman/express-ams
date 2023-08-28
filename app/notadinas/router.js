@@ -6,12 +6,7 @@ const {
   index,
   detail,
   terkirim,
-  viewCreate,
-  actionCreate,
-  viewEdit,
-  actionEdit,
   insertNotaDinasSent,
-  insertNotaDinasInbox,
   konsepNotaDinas,
   savePdf,
   kirim,
@@ -21,6 +16,10 @@ const {
   actionPersetujuan,
   prosesKonsep,
   prosesPersetujuan,
+  actionSimpanDraft,
+  viewEditDraft,
+  viewDraft,
+  actionEditDraft,
 } = require("./controller");
 
 const { isLogin } = require("../middleware/auth");
@@ -42,21 +41,20 @@ router.put(
 
 router.post("/proses-persetujuan/:id", prosesPersetujuan);
 router.put("/persetujuan/:id", actionPersetujuan);
-
-// router.get("/create", viewCreate);
-// router.post("/create", actionCreate);
-// router.get("/edit/:id", viewEdit);
-// router.put(
-//   "/edit/:id",
-//   multer({ dest: os.tmpdir() }).single("files"),
-//   actionEdit
-// );
-// router.post("/notadinas-inbox", insertNotaDinasInbox);
 router.post("/disposisi/:id", insertNotaDinasSent);
 
 router.get("/konsep", konsepNotaDinas);
 router.post("/proses-konsep", prosesKonsep);
 router.post("/konsep", savePdf);
 router.post("/kirim", multer({ dest: os.tmpdir() }).single("file"), kirim);
+
+router.post(
+  "/draft",
+  multer({ dest: os.tmpdir() }).single("file"),
+  actionSimpanDraft
+);
+router.get("/draft", viewDraft);
+router.get("/draft/:id", viewEditDraft);
+router.put("/draft/:id", actionEditDraft);
 
 module.exports = router;

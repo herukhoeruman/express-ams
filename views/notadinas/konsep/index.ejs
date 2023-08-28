@@ -1,0 +1,166 @@
+<%- include ../../partials/header.ejs %>
+<%- include ../../partials/navbar.ejs %>
+<%- include ../../partials/sidebar.ejs %>
+<div id="kt_app_toolbar" class="py-3 py-lg-3">
+  <div id="kt_app_toolbar_container" class="app-container">
+    <%# include ../../partials/message.ejs %>
+    <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
+      <h1 class="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">
+        Nota Dinas Masuk
+      </h1>
+      <ol class="breadcrumb text-muted fs-7 fw-semibold pt-1">
+        <li class="breadcrumb-item"><a href="/" class="">Home</a></li>
+        <li class="breadcrumb-item"><a href="/notadinas" class="">Nota Dinas</a></li>
+        <li class="breadcrumb-item text-muted">Masuk</li>
+      </ol>
+    </div>
+
+    <div class="card shadow-sm mt-5">
+      <div class="card-body">
+        <table id="kt_datatable_dom_positioning" class="table table-row-bordered gy-5 gs-7 border rounded">
+          <div class="row flex justify-content-end">
+            <div class="col-md-2">
+              <select id="filterCombo" class="form-select form-select mb-4">
+                <option value="">Semua</option>
+                <option value="false">Belum dibaca</option>
+                <option value="true">Sudah dibaca</option>
+              </select>
+            </div>
+            <div class="col-2">
+              <input type="text" class="form-control form-control" id="searchInput" placeholder="Pencarian...">
+            </div>
+          </div>
+          <thead>
+            <tr class="fw-bold fs-6 text-gray-800 px-7">
+              <th>No.</th>
+              <th hidden></th>
+              <th>No Nota Dinas</th>
+              <th>Dari</th>
+              <th>Kepada</th>
+              <th>Hal</th>
+              <th>Tanggal</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody class="fw-semibold">
+            <% for(let i=0; i < notaDinas.length; i++) { %>
+            <tr class="<%= !notaDinas[i].readStatus  && 'bg-secondary' %>">
+              <td> <%= i +1 %></td>
+              <td hidden> <%= notaDinas[i].readStatus %></td>
+              <td>
+                <a href="/notadinas/detail/<%= notaDinas[i]._id  %>"> <%= notaDinas[i].noNotaDinas %> </a>
+              </td>
+              <td> <%= notaDinas[i].pengirim %></td>
+              <td> <%= notaDinas[i].dari %></td>
+              <td> <%= notaDinas[i].perihal %></td>
+              <td> <%= notaDinas[i].tanggal %></td>
+              <td>
+                <a class="btn btn-sm btn-light-primary btn-icon mr-2" href="/notadinas/draft/<%= notaDinas[i]._id %>" title="Kirim">
+                  <span class="svg-icon svg-icon-primary svg-icon-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                      <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <rect x="0" y="0" width="24" height="24" />
+                        <path d="M8.29606274,4.13760526 L1.15599693,10.6152626 C0.849219196,10.8935795 0.826147139,11.3678924 1.10446404,11.6746702 C1.11907213,11.6907721 1.13437346,11.7062312 1.15032466,11.7210037 L8.29039047,18.333467 C8.59429669,18.6149166 9.06882135,18.596712 9.35027096,18.2928057 C9.47866909,18.1541628 9.55000007,17.9721616 9.55000007,17.7831961 L9.55000007,4.69307548 C9.55000007,4.27886191 9.21421363,3.94307548 8.80000007,3.94307548 C8.61368984,3.94307548 8.43404911,4.01242035 8.29606274,4.13760526 Z" fill="currentColor" fill-rule="nonzero" opacity="0.3" />
+                        <path d="M23.2951173,17.7910156 C23.2951173,16.9707031 23.4708985,13.7333984 20.9171876,11.1650391 C19.1984376,9.43652344 16.6261719,9.13671875 13.5500001,9 L13.5500001,4.69307548 C13.5500001,4.27886191 13.2142136,3.94307548 12.8000001,3.94307548 C12.6136898,3.94307548 12.4340491,4.01242035 12.2960627,4.13760526 L5.15599693,10.6152626 C4.8492192,10.8935795 4.82614714,11.3678924 5.10446404,11.6746702 C5.11907213,11.6907721 5.13437346,11.7062312 5.15032466,11.7210037 L12.2903905,18.333467 C12.5942967,18.6149166 13.0688214,18.596712 13.350271,18.2928057 C13.4786691,18.1541628 13.5500001,17.9721616 13.5500001,17.7831961 L13.5500001,13.5 C15.5031251,13.5537109 16.8943705,13.6779456 18.1583985,14.0800781 C19.9784273,14.6590944 21.3849749,16.3018455 22.3780412,19.0083314 L22.3780249,19.0083374 C22.4863904,19.3036749 22.7675498,19.5 23.0821406,19.5 L23.3000001,19.5 C23.3000001,19.0068359 23.2951173,18.2255859 23.2951173,17.7910156 Z" fill="currentColor" fill-rule="nonzero" />
+                      </g>
+                    </svg>
+                  </span>
+                </a>
+                <a data-id="<%= notaDinas[i]._id %>" class="btn btn-sm btn-light-danger btn-icon mr-2" data-bs-toggle="modal" data-bs-target="#documentModal<%= notaDinas[i]._id %>" title="Lihat Nota Dinas">
+                  <span class="svg-icon svg-icon-info svg-icon-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                      <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                        <polygon points="0 0 24 0 24 24 0 24" />
+                        <path d="M5.85714286,2 L13.7364114,2 C14.0910962,2 14.4343066,2.12568431 14.7051108,2.35473959 L19.4686994,6.3839416 C19.8056532,6.66894833 20,7.08787823 20,7.52920201 L20,20.0833333 C20,21.8738751 19.9795521,22 18.1428571,22 L5.85714286,22 C4.02044787,22 4,21.8738751 4,20.0833333 L4,3.91666667 C4,2.12612489 4.02044787,2 5.85714286,2 Z" fill="currentColor" fill-rule="nonzero" opacity="0.3" />
+                        <rect fill="currentColor" x="6" y="11" width="9" height="2" rx="1" />
+                        <rect fill="currentColor" x="6" y="15" width="5" height="2" rx="1" />
+                      </g>
+                    </svg>
+                  </span>
+                </a>
+
+                <!-- modal view document pdf -->
+                <div class="modal fade modal-lg" tabindex="-1" id="documentModal<%= notaDinas[i]._id %>">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h3 class="modal-title"><%= notaDinas[i].noNotaDinas %> </h3>
+                        <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                          <span class="svg-icon svg-icon-1">
+                            <span class="svg-icon svg-icon-primary svg-icon-2x">
+                              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                  <g transform="translate(12.000000, 12.000000) rotate(-45.000000) translate(-12.000000, -12.000000) translate(4.000000, 4.000000)" fill="currentColor">
+                                    <rect x="0" y="7" width="16" height="2" rx="1" />
+                                    <rect opacity="0.3" transform="translate(8.000000, 8.000000) rotate(-270.000000) translate(-8.000000, -8.000000) " x="0" y="7" width="16" height="2" rx="1" />
+                                  </g>
+                                </g>
+                              </svg>
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+                      <div class="modal-body">
+                        <p id="errorMessage<%= notaDinas[i]._id %>" style="display: none;">Dokumen belum tersedia.</p>
+                        <iframe src="/document/nota-dinas/<%= notaDinas[i].tahun %>/<%= notaDinas[i].document %>" width="100%" height="1080" type="application/pdf"></iframe>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+              </td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<%# include ../../partials/modals.ejs %>
+
+<%- include ../../partials/footer.ejs %>
+<%- include ../../partials/js.ejs %>
+<script>
+  $('.select2-multiple').select2();
+
+
+  function refresh() {
+    location.reload();
+  }
+
+  $(document).ready(function() {
+    var table = $('#kt_datatable_dom_positioning').DataTable();
+
+    // Fungsi untuk menangani perubahan combo box dan menerapkan filtrasi
+    $('#filterCombo').on('change', function() {
+      var selectedValue = $(this).val();
+
+      // Hapus filtrasi sebelumnya jika ada
+      table.search('').draw();
+
+      if (selectedValue) {
+        // Terapkan filtrasi berdasarkan pilihan combo box
+        table.columns(1).search(selectedValue).draw();
+      } else {
+        // Jika "Semua" dipilih, tampilkan semua data
+        table.columns(1).search('').draw();
+      }
+    });
+
+    // Fungsi untuk menangani input pencarian teks
+    $('#searchInput').on('keyup', function() {
+      var searchText = $(this).val();
+
+      // Terapkan pencarian teks pada semua kolom
+      table.search(searchText).draw();
+    });
+  });
+</script>

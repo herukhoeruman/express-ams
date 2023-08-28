@@ -13,10 +13,25 @@ const notaDinasSchema = mongoose.Schema(
     pemeriksa: String,
     pengirim: String,
     perihal: String,
-    jumlahLampiran: Number,
-    jenisLampiran: String,
+    jumlahLampiran: {
+      type: Number,
+      default: 0,
+    },
+    jenisLampiran: {
+      type: String,
+      default: " ",
+    },
     kodeKlasifikasi: String,
-    sifat: String,
+    sifatPenyampaian: {
+      type: String,
+      enum: ["biasa", "segera"],
+      default: "biasa",
+    },
+    sifatPengamanan: {
+      type: String,
+      enum: ["biasa", "rahasia"],
+      default: "biasa",
+    },
     isiSurat: String,
     tembusan: [String],
     email: String,
@@ -44,7 +59,7 @@ const notaDinasSchema = mongoose.Schema(
         },
       ],
     },
-    flag: Number,
+    flag: Number, // 1: dikirim, 2: ditandatangani 3: ditolak 4: konsep
   },
   { timestamps: true }
 );

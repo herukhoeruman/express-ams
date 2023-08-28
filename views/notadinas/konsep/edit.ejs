@@ -110,19 +110,6 @@
                         </div>
                       </div>
 
-                      <!-- <div class="row mb-5 d-flex align-items-center">
-                        <div class="col-md-4">
-                          <label class="required form-label" for="sifat">Sifat</label>
-                        </div>
-                        <div class="col-md-8">
-                          <select class="form-select" name="sifat" id="sifat" data-control="select2" data-placeholder="Pilih sifat" data-allow-clear="true" disabled>
-                            <option></option>
-                            <option value="Segera" <%= notaDinas.sifat === "Segera" ? "selected" : "" %>>Segera</option>
-                            <option value="Amat Segera" <%= notaDinas.sifat === "Amat Segera" ? "selected" : "" %>>Amat Segera </option>
-                          </select>
-                        </div>
-                      </div> -->
-
                       <div class="row mb-5 d-flex align-items-center">
                         <div class="col-md-4">
                           <label class="required form-label" for="sifat">Sifat Penyampaian</label>
@@ -224,8 +211,14 @@
                       Please wait... <span class="spinner-border spinner-border-sm align-middle"></span>
                     </span>
                   </button>
-                  <button type="button" id="btnKirim" class="btn btn-info hover-scale me-3 load-indicator" onclick="sendPDF()">
+                  <button type="button" id="btnUpdate" class="btn btn-primary hover-scale me-3 load-indicator" onclick="update()">
                     <span class="indicator-label"> Update </span>
+                    <span class="indicator-progress">
+                      Please wait... <span class="spinner-border spinner-border-sm align-middle"></span>
+                    </span>
+                  </button>
+                  <button type="button" id="btnKirim" class="btn btn-info hover-scale me-3 load-indicator" onclick="send()">
+                    <span class="indicator-label"> Kirim </span>
                     <span class="indicator-progress">
                       Please wait... <span class="spinner-border spinner-border-sm align-middle"></span>
                     </span>
@@ -236,47 +229,6 @@
             </div>
           </div>
         </div>
-
-        <!-- approval -->
-        <div class="card shadow-sm mb-10">
-          <div class="card-header">
-            <span class="card-title">Persetujuan Pemeriksa</span>
-          </div>
-          <div class="card-body">
-            <div class="row">
-              <div class="col-8 mb-8">
-                <div class="d-flex align-items-center rounded py-5 px-5 bg-light-primary ">
-                  <i class="las la-info-circle fs-3x text-primary me-5"></i>
-                  <div class="text-gray-700 fw-bold fs-6">
-                    Silahkan pilih keputusan persetujuan Nota Dinas
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-2">
-                <label class="required form-label">Keputusan</label>
-              </div>
-              <div class="col-sm-4">
-                <select class="form-select form-select-solid" name="flag" id="flag" data-control="select2" data-placeholder="Pilih" data-allow-clear="true">
-                  <option value="">--- Pilih ---</option>
-                  <option value="2" <%= notaDinas.flag === 2 ? "selected" : ""  %>>Setuju</option>
-                  <option value="3" <%= notaDinas.flag === 3 ? "selected" : ""  %>>Batal</option>
-                </select>
-              </div>
-              <div class="col-sm-4">
-                <button type="button" id="btnSubmit" class="btn btn-primary hover-scale me-3 px-10 load-indicator" onclick="approve()">
-                  <span class="indicator-label"> Kirim </span>
-                  <span class="indicator-progress">
-                    Please wait... <span class="spinner-border spinner-border-sm align-middle"></span>
-                  </span>
-                </button>
-
-              </div>
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
   </div>
@@ -319,19 +271,19 @@
       btnPreview.removeAttribute("data-kt-indicator");
     }, 3000);
   });
+  const btnUpdate = document.querySelector("#btnUpdate");
+  btnUpdate.addEventListener("click", function() {
+    btnUpdate.setAttribute("data-kt-indicator", "on");
+    setTimeout(function() {
+      btnUpdate.removeAttribute("data-kt-indicator");
+    }, 3000);
+  });
   const btnKirim = document.querySelector("#btnKirim");
   btnKirim.addEventListener("click", function() {
     btnKirim.setAttribute("data-kt-indicator", "on");
     setTimeout(function() {
       btnKirim.removeAttribute("data-kt-indicator");
     }, 3000);
-  });
-  const btnSubmit = document.querySelector("#btnSubmit");
-  btnSubmit.addEventListener("click", function() {
-    btnSubmit.setAttribute("data-kt-indicator", "on");
-    setTimeout(function() {
-      btnSubmit.removeAttribute("data-kt-indicator");
-    }, 8000);
   });
 
   function generatePDF() {
@@ -513,7 +465,7 @@
     } // end else
   }
 
-  function sendPDF() { //update
+  function update() { //update
     const tahun = new Date().getFullYear();
     const tanggal = $('#tanggal').val();
     const pengirim = `<%= jabatan.sebutanJabatan %>`;
@@ -610,6 +562,32 @@
           console.error('Terjadi kesalahan:', error);
         });
     }
+  }
+
+
+  function send() {
+    $.ajax({
+      url: `/notadinas/draft/<%= notaDinas._id %>`,
+      method: "PUT",
+      data: {
+        flag: 0
+      },
+      success: function(response) {
+        Swal.fire({
+          title: "Berhasil",
+          text: "Nota dinas berhasil dikirim",
+          icon: "success"
+        }).then((result) => {
+          if (result.isConfirmed) {
+            location.reload(); // Menggunakan fungsi location.reload() untuk merefresh halaman
+          }
+        });
+      },
+      error: function(error) {
+        Swal.fire("Perhatian", "Terjadi kesalahan", "error");
+        console.log(error);
+      }
+    })
   }
 
   function approve() {

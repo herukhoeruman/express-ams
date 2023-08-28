@@ -77,22 +77,6 @@
                       </div>
                     </div>
 
-                    <!-- <div class="row mb-5 d-flex align-items-center">
-                      <div class="col-md-4">
-                        <label class="required form-label"> Pengirim</label>
-                      </div>
-                      <div class="col-md-8">
-                        <select class="form-select" id="pengirim" name="pengirim" data-control="select2" data-placeholder="dikirim oleh" data-allow-clear="true">
-                          <option value=""></option>
-                          <% users.forEach(user=> { %>
-                          <option value="<%= user.jabatan.sebutanJabatan %>">
-                            <%= user.username %> - <%= user.jabatan.sebutanJabatan %>
-                          </option>
-                          <% }) %>
-                        </select>
-                      </div>
-                    </div> -->
-
                     <div class="row mb-5 d-flex align-items-center">
                       <div class="col-md-4">
                         <label class="required form-label"> Tanggal </label>
@@ -122,14 +106,26 @@
 
                     <div class="row mb-5 d-flex align-items-center">
                       <div class="col-md-4">
-                        <label class="required form-label" for="sifat">Sifat</label>
+                        <label class="required form-label" for="sifat">Sifat Penyampaian</label>
                       </div>
                       <div class="col-md-8">
-                        <select class="form-select" name="sifat" id="sifat" data-control="select2" data-placeholder="Pilih sifat" data-allow-clear="true">
+                        <select class="form-select" name="sifatPenyampaian" id="sifatPenyampaian" data-control="select2" data-placeholder="pilih sifat penyampaian" data-allow-clear="true">
                           <option></option>
-                          <option value="Segera">Segera</option>
-                          <option value="Amat Segera">Amat Segera
-                          </option>
+                          <option value="biasa">Biasa</option>
+                          <option value="segera">Segera</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="row mb-5 d-flex align-items-center">
+                      <div class="col-md-4">
+                        <label class="required form-label" for="sifat">Sifat Pengamanan</label>
+                      </div>
+                      <div class="col-md-8">
+                        <select class="form-select" name="sifatPengamanan" id="sifatPengamanan" data-control="select2" data-placeholder="pilih sifat pengamanan" data-allow-clear="true">
+                          <option></option>
+                          <option value="biasa">Biasa</option>
+                          <option value="rahasia">Rahasia</option>
                         </select>
                       </div>
                     </div>
@@ -146,9 +142,9 @@
                           <div class="col-sm-8">
                             <select class=" form-control form-select" name="" id="tipe-lampiran" data-control="select2" data-placeholder="Lampiran" data-allow-clear="true">
                               <option></option>
-                              <option value="Lembar">Lembar</option>
                               <option value="Berkas">Berkas</option>
                               <option value="Halaman">Halaman</option>
+                              <option value="Lembar">Lembar</option>
                             </select>
                           </div>
                         </div>
@@ -237,12 +233,19 @@
                     Please wait... <span class="spinner-border spinner-border-sm align-middle"></span>
                   </span>
                 </button>
+                <button type="button" class="btn btn-primary hover-scale me-3 load-indicator" id="btnSimpan" onclick="simpanDraft()">
+                  <span class="indicator-label"> Simpan </span>
+                  <span class="indicator-progress">
+                    Please wait... <span class="spinner-border spinner-border-sm align-middle"></span>
+                  </span>
+                </button>
                 <button type="button" id="btnKirim" class="btn btn-info hover-scale me-3 load-indicator" onclick="sendPDF()">
                   <span class="indicator-label"> Kirim </span>
                   <span class="indicator-progress">
                     Please wait... <span class="spinner-border spinner-border-sm align-middle"></span>
                   </span>
                 </button>
+
               </div>
               <iframe id="pdfViewer" width="100%" height="850px"></iframe>
             </div>
@@ -299,6 +302,13 @@
       btnKirim.removeAttribute("data-kt-indicator");
     }, 3000);
   });
+  const btnSimpan = document.querySelector("#btnSimpan");
+  btnSimpan.addEventListener("click", function() {
+    btnSimpan.setAttribute("data-kt-indicator", "on");
+    setTimeout(function() {
+      btnSimpan.removeAttribute("data-kt-indicator");
+    }, 3000);
+  });
 
   function generatePDF() {
     event.preventDefault();
@@ -325,7 +335,12 @@
     console.log("pemeriksa:", jabatan, kodeJabatan, email);
 
     const kodeKlasifikasi = $('#kodeKlasifikasi').val();
-    const sifat = $('#sifat').val();
+    const sifatPenyampaian = $('#sifatPenyampaian').val();
+    const sifatPengamanan = $('#sifatPengamanan').val();
+
+    const sifat = (sifatPenyampaian == "biasa") ? "-" : "Segera";
+    const setSifatPengamanan = (sifatPengamanan == "rahasia") ? "-R" : "";
+
     const perihal = $('#perihal').val();
     let lampiran = ($("#jumlah-lampiran").val()) ? $("#jumlah-lampiran").val() + " " + $("#tipe-lampiran").val() : "-";
     const isiSurat = tinymce.activeEditor.getContent();
@@ -346,8 +361,10 @@
       Swal.fire("Perhatian", "Tanggal tidak boleh kosong", "error");
     } else if (kodeKlasifikasi == "") {
       Swal.fire("Perhatian", "Kode klasifikasi tidak boleh kosong", "error");
-    } else if (sifat == "") {
-      Swal.fire("Perhatian", "Sifat tidak boleh kosong", "error");
+    } else if (sifatPenyampaian == "") {
+      Swal.fire("Perhatian", "Sifat Penyampaian tidak boleh kosong", "error");
+    } else if (sifatPengamanan == "") {
+      Swal.fire("Perhatian", "Sifat Pengamanan tidak boleh kosong", "error");
     } else if (perihal == "") {
       Swal.fire("Perhatian", "Perihal tidak boleh kosong", "error");
     } else if (isiSurat == "") {
@@ -367,7 +384,7 @@
             return
           }
 
-          const nomorNotaDinas = `${response.noAgenda}/${kodeKlasifikasi}/${kodeJabatan}/${tahunIni}`;
+          const nomorNotaDinas = `${response.noAgenda}/${kodeKlasifikasi}/${kodeJabatan}/${tahunIni}${setSifatPengamanan}`;
 
           // Create new PDF document
           window.jsPDF = window.jspdf.jsPDF;
@@ -480,7 +497,6 @@
                   console.error("error :" + error);
                 });
             },
-            // margin: [320, 320, 0, 140], //[top, right, bottom, left].
             width: 370,
             windowWidth: 380,
             x: 140,
@@ -513,7 +529,11 @@
     const divisi = selectedOption.getAttribute('data-divisi');
     console.log("pemeriksa:", email);
     //
-    const sifat = $('#sifat').val();
+    const sifatPenyampaian = $('#sifatPenyampaian').val();
+    const sifatPengamanan = $('#sifatPengamanan').val();
+    const sifat = (sifatPenyampaian == "biasa") ? "-" : "Segera";
+    const setSifatPengamanan = (sifatPengamanan == "rahasia") ? "-R" : "";
+
     const perihal = $('#perihal').val();
     const jumlahLampiran = $("#jumlah-lampiran").val();
     const jenisLampiran = $("#tipe-lampiran").val();
@@ -537,7 +557,7 @@
       },
       success: function(response) {
 
-        const noNotaDinas = `${response.noAgenda}/${kodeKlasifikasi}/${kodeJabatan}/${tahun}`;
+        const noNotaDinas = `${response.noAgenda}/${kodeKlasifikasi}/${kodeJabatan}/${tahun}${setSifatPengamanan}`;
 
         const formData = new FormData();
         const attachment = document.querySelector('#attachment');
@@ -564,12 +584,11 @@
         formData.append('jumlahLampiran', jumlahLampiran);
         formData.append('jenisLampiran', jenisLampiran);
         formData.append('kodeKlasifikasi', kodeKlasifikasi);
-        formData.append('sifat', sifat);
+        formData.append('sifatPenyampaian', sifatPenyampaian);
+        formData.append('sifatPengamanan', sifatPengamanan);
         formData.append('isiSurat', isiSurat);
-        // formData.append('tembusan', tembusan);
         formData.append('email', email);
         formData.append('divisi', divisi);
-        // formData.append('flag', flag);
 
         if (penerima == "") {
           Swal.fire("Perhatian", "Penerima tidak boleh kosong", "error");
@@ -604,6 +623,113 @@
               console.error('Terjadi kesalahan:', error);
             });
         }
+      }
+    })
+  }
+
+  function simpanDraft() {
+    event.preventDefault();
+
+    const tahun = new Date().getFullYear();
+    const tanggal = $('#tanggal').val();
+    const penerima = $('#penerima').val();
+    const pemeriksa = $('#pemeriksa').val();
+
+    const isiSurat = tinymce.activeEditor.getContent();
+    const tembusan = $('#tembusan').val();
+
+    const selectElement = document.getElementById("pemeriksa");
+    const selectedOption = selectElement.options[selectElement.selectedIndex];
+    const kodeJabatan = selectedOption.getAttribute('data-kode'); // Mendapatkan nilai user.username
+    const email = selectedOption.getAttribute('data-email');
+    const divisi = selectedOption.getAttribute('data-divisi');
+
+    const sifatPenyampaian = $('#sifatPenyampaian').val();
+    const sifatPengamanan = $('#sifatPengamanan').val();
+    const sifat = (sifatPenyampaian == "biasa") ? "-" : "Segera";
+    const setSifatPengamanan = (sifatPengamanan == "rahasia") ? "-R" : "";
+
+    const perihal = $('#perihal').val();
+    const jumlahLampiran = $("#jumlah-lampiran").val();
+    const jenisLampiran = $("#tipe-lampiran").val();
+    const lampiran = jumlahLampiran + " " + jenisLampiran;
+    const kodeKlasifikasi = $('#kodeKlasifikasi').val();
+
+    $.ajax({
+      url: '/notadinas/proses-konsep',
+      method: 'POST',
+      data: {
+        tanggal
+      },
+      success: function(response) {
+        const noNotaDinas = `${response.noAgenda}/${kodeKlasifikasi}/${kodeJabatan}/${tahun}${setSifatPengamanan}`;
+
+        const formData = new FormData();
+        const attachment = document.querySelector('#attachment');
+        for (let i = 0; i < attachment.files.length; i++) {
+          formData.append('file', attachment.files[i]);
+        }
+
+        var selectedTembusan = $('#myForm select[name="tembusan[]"]').val();
+        for (var i = 0; i < selectedTembusan.length; i++) {
+          formData.append('tembusan[]', selectedTembusan[i]);
+        }
+
+        const split = response.noAgenda.split('-'); // Pisahkan nomor dan sisipan
+
+        formData.append('noNotaDinas', noNotaDinas);
+        formData.append('noAgenda', split[0]);
+        formData.append('tanggal', tanggal);
+        formData.append('tahun', tahun);
+        formData.append('dari', pemeriksa); // pemeriksa
+        formData.append('kepada', penerima); // penerima
+        formData.append('pemeriksa', pemeriksa);
+        formData.append('perihal', perihal);
+        formData.append('jumlahLampiran', jumlahLampiran);
+        formData.append('jenisLampiran', jenisLampiran);
+        formData.append('kodeKlasifikasi', kodeKlasifikasi);
+        formData.append('sifatPenyampaian', sifatPenyampaian);
+        formData.append('sifatPengamanan', sifatPengamanan);
+        formData.append('isiSurat', isiSurat);
+        formData.append('email', email);
+        formData.append('divisi', divisi);
+
+        if (penerima == "") {
+          Swal.fire("Perhatian", "Penerima tidak boleh kosong", "error");
+        } else if (pemeriksa == "") {
+          Swal.fire("Perhatian", "Pemeriksa tidak boleh kosong", "error");
+        } else if (tanggal == "") {
+          Swal.fire("Perhatian", "Tanggal tidak boleh kosong", "error");
+        } else if (kodeKlasifikasi == "") {
+          Swal.fire("Perhatian", "Kode klasifikasi tidak boleh kosong", "error");
+        } else if (sifat == "") {
+          Swal.fire("Perhatian", "Sifat tidak boleh kosong", "error");
+        } else if (perihal == "") {
+          Swal.fire("Perhatian", "Perihal tidak boleh kosong", "error");
+        } else if (isiSurat == "") {
+          Swal.fire("Perhatian", "Isi surat tidak boleh kosong", "error");
+        } else {
+          fetch('/notadinas/draft', {
+              method: 'POST',
+              body: formData
+            })
+            .then(response => {
+              console.log(response);
+              if (response.ok) {
+                console.log(response);
+                Swal.fire("Berhasil", "Nota dinas berhasil dikirim", "success");
+              } else {
+                Swal.fire("Perhatian", "Bad request", "error");
+                console.error(response);
+              }
+            })
+            .catch(error => {
+              console.error('Terjadi kesalahan:', error);
+            });
+        }
+      },
+      error: function(error) {
+        console.error('Terjadi kesalahan:', error);
       }
     })
   }

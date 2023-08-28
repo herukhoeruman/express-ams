@@ -111,14 +111,11 @@ module.exports = {
       const username = req.session.user.username;
       const jabatan = req.session.user.jabatan.sebutanJabatan;
       console.log(jabatan);
-      // const notaDinasTerkirim = await NotaDinas.find({
-      //   pengirim: jabatan,
-      //   // flag: 2,
-      // });
 
       const notaDinasTerkirim = await NotaDinasSent.find({
         pengirim: jabatan,
       }).populate("notaDinasId");
+
       res.render("notadinas/terkirim/index", {
         notaDinasTerkirim,
         title: "Nota Dinas",
@@ -130,6 +127,162 @@ module.exports = {
       });
     } catch (err) {
       console.log(err);
+    }
+  },
+
+  viewDraft: async (req, res) => {
+    try {
+      const username = req.session.user.username;
+      const jabatan = req.session.user.jabatan.sebutanJabatan;
+
+      const notaDinas = await NotaDinas.find({ flag: 0 }).sort({
+        createdAt: -1,
+      });
+
+      res.render("notadinas/konsep/index", {
+        notaDinas,
+        title: "Nota Dinas",
+        subtitle: "Draft Nota Dinas",
+        namaLengkap: req.session.user.namaLengkap,
+        username,
+        jabatan: req.session.user.jabatan,
+        role: req.session.user.role,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  viewEditDraft: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const notaDinas = await NotaDinas.findOne({ _id: id });
+
+      const users = await Users.find();
+      const klasifikasi = await Klasifikasi.find();
+
+      res.render("notadinas/konsep/edit", {
+        notaDinas,
+        users,
+        klasifikasi,
+        title: "Nota Dinas",
+        subtitle: "Draft Nota Dinas",
+        namaLengkap: req.session.user.namaLengkap,
+        username: req.session.user.username,
+        jabatan: req.session.user.jabatan,
+        role: req.session.user.role,
+      });
+    } catch (err) {
+      console.log(err);
+      res.redirect("/notadinas");
+    }
+  },
+
+  actionSimpanDraft: async (req, res) => {
+    try {
+      const {
+        noNotaDinas,
+        noAgenda,
+        tanggal,
+        tahun,
+        dari,
+        kepada,
+        pemeriksa,
+        perihal,
+        jumlahLampiran,
+        jenisLampiran,
+        kodeKlasifikasi,
+        sifatPenyampaian,
+        sifatPengamanan,
+        isiSurat,
+        tembusan,
+        keterangan,
+        email,
+        divisi,
+      } = req.body;
+      const pengirim = req.session.user.jabatan.sebutanJabatan;
+      const setDate = new Date(tanggal);
+      setDate.setUTCHours(0);
+      setDate.setUTCMinutes(0);
+      setDate.setUTCSeconds(0);
+      setDate.setUTCMilliseconds(0);
+
+      const nomor = noNotaDinas.replace(/\//g, "_");
+
+      const document = path.resolve(
+        config.rootPath,
+        `public/document/nota-dinas/NOTA_DINAS_${nomor}.pdf`
+      );
+      const filename = document.split("\\").pop();
+
+      let attachmentFileName = null;
+      if (req.file) {
+        const filePath = req.file.path;
+        attachmentFileName = req.file.originalname;
+        const targetPath = path.resolve(
+          config.rootPath,
+          `public/upload/attachment/${attachmentFileName}`
+        );
+        console.log(filePath);
+        console.log(targetPath);
+        console.log(attachmentFileName);
+
+        const src = fs.createReadStream(filePath);
+        const dest = fs.createWriteStream(targetPath);
+        src.pipe(dest);
+      }
+
+      const x = noNotaDinas.split("/");
+      let setNoAgendaSisipan;
+      if (x[0].length === 3) {
+        setNoAgendaSisipan = 0;
+      } else {
+        const y = x[0].split("-");
+        setNoAgendaSisipan = y[1];
+      }
+
+      const newNotaDinas = new NotaDinas({
+        noNotaDinas,
+        noAgenda,
+        noAgendaSisipan: setNoAgendaSisipan,
+        tanggal,
+        date: setDate,
+        tahun,
+        dari,
+        kepada,
+        pemeriksa,
+        pengirim,
+        perihal,
+        jumlahLampiran,
+        jenisLampiran,
+        kodeKlasifikasi,
+        sifatPenyampaian,
+        sifatPengamanan,
+        isiSurat,
+        tembusan,
+        keterangan,
+        attachment: attachmentFileName,
+        email,
+        divisi,
+        document: filename,
+        flag: 0,
+      });
+      const savedNotaDinas = await newNotaDinas.save();
+      res.status(200).json({ savedNotaDinas });
+    } catch (err) {
+      console.log(err);
+      res.status(400).json({ err });
+    }
+  },
+
+  actionEditDraft: async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      await NotaDinas.findOneAndUpdate({ _id: id }, { $set: { flag: 1 } });
+      res.status(200).json({ message: "Nota Dinas berhasil terkirim" });
+    } catch (error) {
+      console.log(error);
     }
   },
 
@@ -826,7 +979,8 @@ module.exports = {
         jumlahLampiran,
         jenisLampiran,
         kodeKlasifikasi,
-        sifat,
+        sifatPenyampaian,
+        sifatPengamanan,
         isiSurat,
         tembusan,
         keterangan,
@@ -897,7 +1051,8 @@ module.exports = {
         jumlahLampiran,
         jenisLampiran,
         kodeKlasifikasi,
-        sifat,
+        sifatPenyampaian,
+        sifatPengamanan,
         isiSurat,
         tembusan,
         keterangan,
