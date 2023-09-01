@@ -76,4 +76,102 @@ module.exports = {
     req.session.destroy();
     res.redirect("/");
   },
+
+  viewProfile: async (req, res) => {
+    try {
+      const { username } = req.params;
+
+      const profile = await Users.findOne({ username: username });
+      const users = await Users.find();
+
+      res.render("users/profile", {
+        profile,
+        users,
+        title: "Account Profile",
+        subtitle: "",
+        count: 0,
+        namaLengkap: req.session.user.namaLengkap,
+        username: req.session.user.username,
+        jabatan: req.session.user.jabatan,
+        email: req.session.user.email,
+        role: req.session.user.role,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  actionChangePassword: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { newPassword, retypePassword, currentPassword } = req.body;
+
+      const user = await Users.findById({ _id: id });
+
+      if (!user) {
+        return res.status(404).json({ message: "Pengguna tidak ditemukan" });
+      }
+
+      const isPasswordValid = await bcrypt.compare(
+        currentPassword,
+        user.password
+      );
+
+      if (!isPasswordValid) {
+        return res.status(401).json({ message: "Password saat ini salah" });
+      }
+
+      const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+      await Users.findByIdAndUpdate(
+        { _id: id },
+        { password: hashedNewPassword }
+      );
+
+      res.status(200).json({ message: "Password berhasil diubah" });
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
+  actionUpdateProfile: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const {
+        username,
+        namaLengkap,
+        email,
+        nomorTlp,
+        namaUnit,
+        kodeSejab,
+        sebutanJabatan,
+      } = req.body;
+
+      const jabatan = {
+        namaUnit,
+        kodeSejab,
+        sebutanJabatan,
+      };
+
+      const isUser = await Users.findOne({ _id: id });
+
+      if (!isUser) {
+        return res.status(401).json({ message: "Pengguna tidak ditemukan" });
+      }
+
+      await Users.findByIdAndUpdate(
+        { _id: id },
+        {
+          username,
+          namaLengkap,
+          email,
+          nomorTlp,
+          jabatan,
+        }
+      );
+
+      res.status(200).json({ message: "Profil berhasil diubah" });
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };

@@ -87,6 +87,15 @@
                           <span class="menu-title">Nota Dinas</span>
                         </a>
                       </div>
+
+                      <div class="menu-item">
+                        <a href="#" class="menu-link px-1 py-3" data-bs-toggle="modal" data-bs-target="#attachmentModal<%= notaDinas[i]._id %>">
+                          <span class="menu-bullet me-0">
+                            <span class="bullet bullet-dot"></span>
+                          </span>
+                          <span class="menu-title">Attachment</span>
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -136,8 +145,44 @@
                         </div>
                       </div>
                       <div class="modal-body">
-                        <p id="errorMessage<%= notaDinas[i].notaDinasId._id %>" style="display: none;">Dokumen belum tersedia.</p>
                         <iframe src="/document/nota-dinas/<%= notaDinas[i].notaDinasId.tahun %>/signed/<%= notaDinas[i].notaDinasId.document %>" width="100%" height="1080" type="application/pdf"></iframe>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- modal view attachment pdf -->
+                <div class="modal fade modal-lg" tabindex="-1" id="attachmentModal<%= notaDinas[i]._id %>">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h3 class="modal-title"><%= notaDinas[i].notaDinasId.noNotaDinas %> </h3>
+                        <div class="btn btn-icon btn-sm btn-active-light-primary ms-2" data-bs-dismiss="modal" aria-label="Close">
+                          <span class="svg-icon svg-icon-1">
+                            <span class="svg-icon svg-icon-primary svg-icon-2x">
+                              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                  <g transform="translate(12.000000, 12.000000) rotate(-45.000000) translate(-12.000000, -12.000000) translate(4.000000, 4.000000)" fill="currentColor">
+                                    <rect x="0" y="7" width="16" height="2" rx="1" />
+                                    <rect opacity="0.3" transform="translate(8.000000, 8.000000) rotate(-270.000000) translate(-8.000000, -8.000000) " x="0" y="7" width="16" height="2" rx="1" />
+                                  </g>
+                                </g>
+                              </svg>
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+                      <div class="modal-body">
+                        <% if(notaDinas[i].notaDinasId.attachment !== null) { %>
+                        <iframe src="/upload/attachment/<%= notaDinas[i].notaDinasId.attachment %>" width="100%" height="1080" type="application/pdf"></iframe>
+                        <% } else  { %>
+                        <div class="d-flex align-items-center rounded py-5 px-5 bg-light-primary ">
+                          <i class="las la-info-circle fs-3x text-primary me-5"></i>
+                          <div class="text-gray-700 fw-bold fs-6">
+                            Nota Dinas ini tidak memiliki lampiran
+                          </div>
+                        </div>
+                        <% } %>
                       </div>
                     </div>
                   </div>

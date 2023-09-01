@@ -24,8 +24,8 @@ const transporter = nodemailer.createTransport({
   port: 465,
   secure: true,
   auth: {
-    user: "heru@gsp.co.id",
-    pass: "kmxhzrrripuntgte",
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
 });
 
@@ -112,9 +112,12 @@ module.exports = {
       const jabatan = req.session.user.jabatan.sebutanJabatan;
       console.log(jabatan);
 
-      const notaDinasTerkirim = await NotaDinasSent.find({
+      // const notaDinasTerkirim = await NotaDinasSent.find({
+      //   pengirim: jabatan,
+      // }).populate("notaDinasId");
+      const notaDinasTerkirim = await NotaDinas.find({
         pengirim: jabatan,
-      }).populate("notaDinasId");
+      });
 
       res.render("notadinas/terkirim/index", {
         notaDinasTerkirim,
@@ -133,9 +136,9 @@ module.exports = {
   viewDraft: async (req, res) => {
     try {
       const username = req.session.user.username;
-      const jabatan = req.session.user.jabatan.sebutanJabatan;
+      const divisi = req.session.user.jabatan.namaUnit;
 
-      const notaDinas = await NotaDinas.find({ flag: 0 }).sort({
+      const notaDinas = await NotaDinas.find({ flag: 0, divisi: divisi }).sort({
         createdAt: -1,
       });
 
@@ -290,9 +293,10 @@ module.exports = {
     try {
       const username = req.session.user.username;
       const jabatan = req.session.user.jabatan.sebutanJabatan;
-      const notaDinas = await NotaDinas.find({ pemeriksa: jabatan }).sort({
-        createdAt: -1,
-      });
+      const notaDinas = await NotaDinas.find({
+        pemeriksa: jabatan,
+        flag: { $ne: 0 },
+      }).sort({ createdAt: -1 });
 
       const notaDinasApproved = await NotaDinas.find({ flag: 2 });
 
@@ -491,6 +495,7 @@ module.exports = {
               isiSurat,
               tembusan,
               // keterangan,
+              attachment: "",
               email,
               divisi,
               flag,
@@ -753,7 +758,7 @@ module.exports = {
           .replace("{{id}}", id);
 
         const info = await transporter.sendMail({
-          from: "heru@gsp.co.id",
+          from: process.env.EMAIL_USER,
           to: user.email,
           subject: "Nota Dinas Masuk",
           text: "Hello world?",
@@ -1256,7 +1261,7 @@ module.exports = {
             .replace("{{id}}", id);
 
           const info = await transporter.sendMail({
-            from: "heru@gsp.co.id",
+            from: process.env.EMAIL_USER,
             to: user.email,
             subject: "Nota Dinas Masuk",
             text: "Hello world?",
@@ -1403,7 +1408,7 @@ module.exports = {
                   .replace("{{isiSurat}}", notaDinas.isiSurat);
 
                 return transporter.sendMail({
-                  from: "heru@gsp.co.id",
+                  from: process.env.EMAIL_USER,
                   to: user.email,
                   subject: "Nota Dinas Masuk",
                   text: "Hello world?",
