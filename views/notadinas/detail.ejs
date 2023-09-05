@@ -20,19 +20,12 @@
         <div class="row p-1">
           <div class="col-2"> Nomor Nota Dinas </div>
           <div class="col-4">:
-            <a class="btn-icon pe-auto" href="" data-bs-toggle="modal" data-bs-target="#modal">
+            <a class="btn-icon pe-auto" href="" data-bs-toggle="modal" data-bs-target="#modalSigned">
               <%= notaDinas.noNotaDinas  %>
             </a>
           </div>
         </div>
-        <div class="row p-1">
-          <div class="col-2"> Digital Signature </div>
-          <div class="col-4">:
-            <a class="btn-icon pe-auto" href="" data-bs-toggle="modal" data-bs-target="#modalSigned">
-              <%= notaDinas.noNotaDinas  %> - Signed
-            </a>
-          </div>
-        </div>
+
         <div class="row p-1">
           <div class="col-2"> Tanggal</div>
           <div class="col-4">: <%= notaDinas.tanggal  %> </div>
@@ -47,7 +40,13 @@
         </div>
         <div class="row p-1">
           <div class="col-2">Tembusan</div>
-          <div class="col-4">: <%= notaDinas.tembusan %></div>
+          <div class="col-4">:
+            <% if(notaDinas.tembusan.length > 0) { %>
+            <%=  notaDinas.tembusan %>
+            <% } else { %>
+            -
+            <% } %>
+          </div>
         </div>
         <div class="row p-1">
           <div class="col-2">Hal</div>
@@ -55,15 +54,24 @@
         </div>
         <div class="row p-1">
           <div class="col-2">Lampiran</div>
-          <div class="col-4">: <%= notaDinas.lampiran %></div>
+          <div class="col-4">: <%= notaDinas.jumlahLampiran %> <%= notaDinas.jenisLampiran %></div>
         </div>
+
         <div class="row p-1">
           <div class="col-2">Kode Klasifikasi</div>
           <div class="col-4">: <%= notaDinas.kodeKlasifikasi %></div>
         </div>
         <div class="row p-1">
           <div class="col-2">Sifat</div>
-          <div class="col-4">: <%= notaDinas.sifat  %></div>
+          <div class="col-4">: <%= notaDinas.sifatPenyampaian  %></div>
+        </div>
+        <div class="row p-1">
+          <div class="col-2"> Attachment</div>
+          <div class="col-6">:
+            <a class="btn-icon pe-auto" href="" data-bs-toggle="modal" data-bs-target="#modalAttachment">
+              <%= notaDinas.attachment  %>
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -71,7 +79,7 @@
 </div>
 
 <!-- modal view document pdf -->
-<div class="modal fade modal-lg" tabindex="-1" id="modal">
+<div class="modal fade modal-lg" tabindex="-1" id="modalAttachment">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -92,7 +100,7 @@
         </div>
       </div>
       <div class="modal-body">
-        <iframe src="/document/nota-dinas/<%= notaDinas.tahun %>/<%= notaDinas.document %>" width="100%" height="1080" type="application/pdf"></iframe>
+        <iframe src="/upload/attachment/<%= notaDinas.attachment %>" width="100%" height="1080" type="application/pdf"></iframe>
       </div>
     </div>
   </div>
@@ -120,7 +128,12 @@
         </div>
       </div>
       <div class="modal-body">
-        <iframe src="/document/nota-dinas/<%= notaDinas.tahun %>/signed/<%= notaDinas.document %>" width="100%" height="1080" type="application/pdf"></iframe>
+        <!-- <iframe src="/document/nota-dinas/<%# notaDinas.tahun %>/signed/<%# notaDinas.document %>" width="100%" height="1080" type="application/pdf"></iframe> -->
+        <% if (notaDinas.flag ===  2) { %>
+          <iframe src="/document/nota-dinas/<%= notaDinas.tahun %>/signed/<%= notaDinas.document %>" width="100%" height="1080" type="application/pdf"></iframe>
+          <% } else { %>
+          <iframe src="/document/nota-dinas/<%= notaDinas.tahun %>/<%= notaDinas.document %>" width="100%" height="1080" type="application/pdf"></iframe>
+          <% } %>
       </div>
     </div>
   </div>

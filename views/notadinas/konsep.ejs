@@ -111,8 +111,8 @@
                       <div class="col-md-8">
                         <select class="form-select" name="sifatPenyampaian" id="sifatPenyampaian" data-control="select2" data-placeholder="pilih sifat penyampaian" data-allow-clear="true">
                           <option></option>
-                          <option value="biasa">Biasa</option>
-                          <option value="segera">Segera</option>
+                          <option value="-">Biasa</option>
+                          <option value="Segera">Segera</option>
                         </select>
                       </div>
                     </div>
@@ -124,7 +124,7 @@
                       <div class="col-md-8">
                         <select class="form-select" name="sifatPengamanan" id="sifatPengamanan" data-control="select2" data-placeholder="pilih sifat pengamanan" data-allow-clear="true">
                           <option></option>
-                          <option value="biasa">Biasa</option>
+                          <option value="-">Biasa</option>
                           <option value="rahasia">Rahasia</option>
                         </select>
                       </div>
@@ -216,10 +216,14 @@
                 <div class="tab-pane fade" id="kt_tab_pane_3" role="tabpanel">
                   <div class="form-group mb-5">
                     <label class="form-label" for="attachment"> Upload Dokumen Surat/Fax </label>
-                    <input type="file" name="attachment" id="attachment" class="dropify" data-height="100" data-default-file="" multiple />
+                    <input type="file" name="attachment" id="attachment" class="dropify" data-height="100" accept="application/pdf" />
                     <div class="text-danger">
                       <i>*Drop File atau klik disini untuk mengupload.</i>
                     </div>
+                  </div>
+
+                  <div class="pdf-container">
+                    <embed id="viewerAttachment" src="" type="application/pdf" width="100%" height="850px" />
                   </div>
                 </div>
               </div>
@@ -288,6 +292,29 @@
     maxDate: "today",
   });
 
+  const attachment = document.getElementById('attachment');
+  const pdfViewer = document.getElementById('viewerAttachment');
+  const pdfContainer = document.querySelector('.pdf-container');
+  const removeButton = document.querySelector('.dropify-clear');
+
+  attachment.addEventListener('change', function(event) {
+    const selectedFile = event.target.files[0];
+    if (selectedFile && selectedFile.type === 'application/pdf') {
+      pdfViewer.src = URL.createObjectURL(selectedFile);
+      pdfContainer.style.display = 'block';
+      removeButton.classList.remove('hidden');
+    } else {
+      alert('Mohon pilih file PDF.');
+    }
+  });
+
+  removeButton.addEventListener('click', function() {
+    attachment.value = ''; // Menghapus nilai input file
+    pdfViewer.src = '';
+    pdfContainer.style.display = 'none';
+    removeButton.classList.add('hidden');
+  });
+
   const btnPreview = document.querySelector("#generate-pdf");
   btnPreview.addEventListener("click", function() {
     btnPreview.setAttribute("data-kt-indicator", "on");
@@ -338,7 +365,7 @@
     const sifatPenyampaian = $('#sifatPenyampaian').val();
     const sifatPengamanan = $('#sifatPengamanan').val();
 
-    const sifat = (sifatPenyampaian == "biasa") ? "-" : "Segera";
+    // const sifat = (sifatPenyampaian == "biasa") ? "-" : "Segera";
     const setSifatPengamanan = (sifatPengamanan == "rahasia") ? "-R" : "";
 
     const perihal = $('#perihal').val();
@@ -347,11 +374,6 @@
     const tembusan = $('#tembusan').val();
 
     console.log("tembusan:", tembusan);
-
-    // const valueNoAgenda = `<%# typeof lastNoAgenda !== 'undefined' && lastNoAgenda !== null ? lastNoAgenda.noAgenda + 1 : 1 %>`;
-    // const valueNoAgenda = `<%= noAgenda %>`;
-    // const nomor = valueNoAgenda.toString().padStart(3, '0');
-    // const nomorNotaDinas = `${nomor}/${kodeKlasifikasi}/${kodeJabatan}/${tahunIni}`;
 
     if (penerima == "") {
       Swal.fire("Perhatian", "Penerima tidak boleh kosong", "error");
@@ -450,7 +472,7 @@
           doc.text(`: Yth. ${penerima}`, 140, 200);
           doc.text(`: ${pemeriksa}`, 140, 220);
           doc.text(`: ${formattedDate}`, 140, 240);
-          doc.text(`: ${sifat}`, 140, 260);
+          doc.text(`: ${sifatPenyampaian}`, 140, 260);
           doc.text(`: ${lampiran}`, 140, 280);
           doc.text(`: ${perihal}`, 140, 300);
 
@@ -531,7 +553,7 @@
     //
     const sifatPenyampaian = $('#sifatPenyampaian').val();
     const sifatPengamanan = $('#sifatPengamanan').val();
-    const sifat = (sifatPenyampaian == "biasa") ? "-" : "Segera";
+    // const sifat = (sifatPenyampaian == "biasa") ? "-" : "Segera";
     const setSifatPengamanan = (sifatPengamanan == "rahasia") ? "-R" : "";
 
     const perihal = $('#perihal').val();
@@ -598,7 +620,7 @@
           Swal.fire("Perhatian", "Tanggal tidak boleh kosong", "error");
         } else if (kodeKlasifikasi == "") {
           Swal.fire("Perhatian", "Kode klasifikasi tidak boleh kosong", "error");
-        } else if (sifat == "") {
+        } else if (sifatPenyampaian == "") {
           Swal.fire("Perhatian", "Sifat tidak boleh kosong", "error");
         } else if (perihal == "") {
           Swal.fire("Perhatian", "Perihal tidak boleh kosong", "error");
@@ -613,7 +635,16 @@
               console.log(response);
               if (response.ok) {
                 console.log(response);
-                Swal.fire("Berhasil", "Nota dinas berhasil dikirim", "success");
+                // Swal.fire("Berhasil", "Nota dinas berhasil dikirim", "success");
+                Swal.fire({
+                  title: "Berhasil",
+                  text: "Nota dinas berhasil dikirim",
+                  icon: "success"
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    location.reload(); // Menggunakan fungsi location.reload() untuk merefresh halaman
+                  }
+                });
               } else {
                 Swal.fire("Perhatian", "Bad request", "error");
                 console.error(response);
@@ -646,7 +677,7 @@
 
     const sifatPenyampaian = $('#sifatPenyampaian').val();
     const sifatPengamanan = $('#sifatPengamanan').val();
-    const sifat = (sifatPenyampaian == "biasa") ? "-" : "Segera";
+    // const sifat = (sifatPenyampaian == "biasa") ? "-" : "Segera";
     const setSifatPengamanan = (sifatPengamanan == "rahasia") ? "-R" : "";
 
     const perihal = $('#perihal').val();
@@ -702,7 +733,7 @@
           Swal.fire("Perhatian", "Tanggal tidak boleh kosong", "error");
         } else if (kodeKlasifikasi == "") {
           Swal.fire("Perhatian", "Kode klasifikasi tidak boleh kosong", "error");
-        } else if (sifat == "") {
+        } else if (sifatPenyampaian == "") {
           Swal.fire("Perhatian", "Sifat tidak boleh kosong", "error");
         } else if (perihal == "") {
           Swal.fire("Perhatian", "Perihal tidak boleh kosong", "error");
@@ -717,7 +748,16 @@
               console.log(response);
               if (response.ok) {
                 console.log(response);
-                Swal.fire("Berhasil", "Nota dinas berhasil dikirim", "success");
+                // Swal.fire("Berhasil", "Nota dinas berhasil dikirim", "success");
+                Swal.fire({
+                  title: "Berhasil",
+                  text: "Nota dinas berhasil disimpan sebagai draft",
+                  icon: "success"
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    location.reload(); // Menggunakan fungsi location.reload() untuk merefresh halaman
+                  }
+                });
               } else {
                 Swal.fire("Perhatian", "Bad request", "error");
                 console.error(response);

@@ -24,13 +24,11 @@ const notaDinasSchema = mongoose.Schema(
     kodeKlasifikasi: String,
     sifatPenyampaian: {
       type: String,
-      enum: ["biasa", "segera"],
-      default: "biasa",
+      default: "-",
     },
     sifatPengamanan: {
       type: String,
-      enum: ["biasa", "rahasia"],
-      default: "biasa",
+      default: "-",
     },
     isiSurat: String,
     tembusan: [String],

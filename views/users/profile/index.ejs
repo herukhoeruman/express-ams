@@ -1,0 +1,238 @@
+<%- include ../../partials/header.ejs %>
+<%- include ../../partials/navbar.ejs %>
+<%- include ../../partials/sidebar.ejs %>
+<div id="kt_app_toolbar" class="py-3 py-lg-6">
+  <div id="kt_app_toolbar_container" class="app-container">
+
+    <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
+      <h1 class="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">
+        Account Settings
+      </h1>
+      <ol class="breadcrumb text-muted fs-7 fw-semibold pt-1">
+        <li class="breadcrumb-item"><a href="/" class="">Home</a></li>
+        <li class="breadcrumb-item text-muted">settings</li>
+      </ol>
+    </div>
+
+    <div class="card shadow-sm mt-3">
+      <div class="card-header">
+        <h3 class="card-title">My Profile</h3>
+      </div>
+      <div class="card-body">
+        <div class="row mb-5 d-flex align-items-center">
+          <div class="col-md-4">
+            <label class="required form-label">Username</label>
+          </div>
+          <div class="col-md-8">
+            <input type="text" id="username" name="username" class="form-control" placeholder="username" value="<%= profile.username %>" required />
+          </div>
+        </div>
+        <div class="row mb-5 d-flex align-items-center">
+          <div class="col-md-4">
+            <label class="required form-label">Nama Lengkap</label>
+          </div>
+          <div class="col-md-8">
+            <input type="text" id="namaLengkap" name="namaLengkap" class="form-control" placeholder="nama lengkap" value="<%= profile.namaLengkap %>" required />
+          </div>
+        </div>
+
+        <div class="row mb-5 d-flex align-items-center">
+          <div class="col-md-4">
+            <label class="required form-label">Email</label>
+          </div>
+          <div class="col-md-8">
+            <input type="email" id="email" name="email" class="form-control" placeholder="email" value="<%= profile.email %>" required />
+          </div>
+        </div>
+        <div class="row mb-5 d-flex align-items-center">
+          <div class="col-md-4">
+            <label class="required form-label">No. Telp</label>
+          </div>
+          <div class="col-md-8">
+            <input type="number" id="nomorTlp" name="nomorTlp" class="form-control" placeholder="no.telp" value="<%= profile.nomorTlp %>" required />
+          </div>
+        </div>
+        <div class="row mb-5 d-flex align-items-center">
+          <div class="col-md-4">
+            <label class="required form-label">Nama Unit</label>
+          </div>
+          <div class="col-md-8">
+            <select class="form-control form-select" id="namaUnit" name="namaUnit" data-control="select2" data-close-on-select="true" data-placeholder="pilih divisi" data-allow-clear="true" required>
+              <option></option>
+              <% users.forEach(user=> { %>
+              <option value="<%= user.jabatan.namaUnit %>" <%= user.jabatan.namaUnit === jabatan.namaUnit  ? 'selected' : '' %>>
+                <%= user.jabatan.namaUnit %>
+              </option>
+              <% }) %>
+            </select>
+          </div>
+        </div>
+        <div class="row mb-5 d-flex align-items-center">
+          <div class="col-md-4">
+            <label class="required form-label">Kode Sejab</label>
+          </div>
+          <div class="col-md-8">
+            <input type="text" id="kodeSejab" name="kodeSejab" class="form-control" placeholder="kode sejab" value="<%= profile.jabatan.kodeSejab %>" required />
+          </div>
+        </div>
+        <div class="row mb-5 d-flex align-items-center">
+          <div class="col-md-4">
+            <label class="required form-label">Sebutan Jabatan</label>
+          </div>
+          <div class="col-md-8">
+            <input type="text" id="sebutanJabatan" name="sebutanJabatan" class="form-control" placeholder="sejab" value="<%= profile.jabatan.sebutanJabatan %>" required />
+          </div>
+        </div>
+      </div>
+      <div class="card-footer d-flex justify-content-end">
+        <button class="btn btn-primary" onclick="updateProfile()">Simpan</button>
+      </div>
+    </div>
+
+    <div class="card shadow-sm mt-3">
+      <div class="card-header">
+        <h3 class="card-title">Reset Password</h3>
+      </div>
+      <div class="card-body">
+        <div class="row mb-5 d-flex align-items-center">
+          <div class="col-md-4">
+            <label class="required form-label">Password Saat ini</label>
+          </div>
+          <div class="col-md-8">
+            <input type="text" id="currentPassword" name="currentPassword" class="form-control" placeholder="Password saat ini" required />
+          </div>
+        </div>
+        <div class="row mb-5 d-flex align-items-center">
+          <div class="col-md-4">
+            <label class="required form-label">Password Baru</label>
+          </div>
+          <div class="col-md-8">
+            <input type="text" id="new-password" name="new-password" class="form-control" placeholder="Password baru" required />
+          </div>
+        </div>
+        <div class="row mb-5 d-flex align-items-center">
+          <div class="col-md-4">
+            <label class="required form-label">Konfirmasi Password</label>
+          </div>
+          <div class="col-md-8">
+            <input type="text" id="retype-password" name="retype-password" class="form-control" placeholder="Konfirmasi password baru" required />
+          </div>
+        </div>
+        <div class=" d-flex justify-content-end">
+          <button class="btn btn-primary" type="submit" id="submit-button" onclick="changePassword()">Simpan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+</div>
+</div>
+<%- include ../../partials/footer.ejs %>
+<%- include ../../partials/js.ejs %>
+
+<script>
+  function updateProfile() {
+    const username = document.getElementById('username').value;
+    const namaLengkap = document.getElementById('namaLengkap').value;
+    const email = document.getElementById('email').value;
+    const nomorTlp = document.getElementById('nomorTlp').value;
+    const namaUnit = document.getElementById('namaUnit').value;
+    const kodeSejab = document.getElementById('kodeSejab').value;
+    const sebutanJabatan = document.getElementById('sebutanJabatan').value;
+
+    if (!username || !namaLengkap || !email || !nomorTlp || !namaUnit || !kodeSejab || !sebutanJabatan) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Data tidak boleh kosong!',
+      })
+      return;
+    }
+
+
+    $.ajax({
+      url: '/user/profile/update/<%- profile._id %>',
+      type: 'PUT',
+      data: {
+        username,
+        namaLengkap,
+        email,
+        nomorTlp,
+        namaUnit,
+        kodeSejab,
+        sebutanJabatan
+      },
+      success: function(data) {
+        console.log(data);
+        Swal.fire({
+          icon: 'success',
+          title: 'Berhasil',
+          text: data.message,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = "/logout";
+          }
+        });
+      },
+      error: function(err) {
+        console.log(err);
+        if (err.status === 401) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: err.responseJSON.message,
+          })
+        }
+      }
+    })
+
+  }
+
+  function changePassword() {
+    const newPassword = document.getElementById('new-password').value;
+    const retypePassword = document.getElementById('retype-password').value;
+    const currentPassword = document.getElementById('currentPassword').value;
+
+    if (!currentPassword || !newPassword || !retypePassword) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Data tidak boleh kosong!',
+      })
+      return;
+    }
+
+    $.ajax({
+      url: '/user/profile/<%- profile._id %>',
+      type: 'PUT',
+      data: {
+        newPassword,
+        currentPassword
+      },
+      success: function(data) {
+        console.log(data);
+        Swal.fire({
+          icon: 'success',
+          title: 'Berhasil',
+          text: data.message,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = "/logout"; // Mengarahkan ke halaman /persetujuan
+          }
+        });
+      },
+      error: function(err) {
+        console.log(err);
+        if (err.status === 401) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: err.responseJSON.message,
+          })
+        }
+      }
+    })
+  }
+</script>

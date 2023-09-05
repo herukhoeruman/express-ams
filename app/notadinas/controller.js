@@ -24,8 +24,8 @@ const transporter = nodemailer.createTransport({
   port: 465,
   secure: true,
   auth: {
-    user: "heru@gsp.co.id",
-    pass: "kmxhzrrripuntgte",
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
 });
 
@@ -112,9 +112,14 @@ module.exports = {
       const jabatan = req.session.user.jabatan.sebutanJabatan;
       console.log(jabatan);
 
-      const notaDinasTerkirim = await NotaDinasSent.find({
+      // const notaDinasTerkirim = await NotaDinasSent.find({
+      //   pengirim: jabatan,
+      // }).populate("notaDinasId");
+
+      const notaDinasTerkirim = await NotaDinas.find({
         pengirim: jabatan,
-      }).populate("notaDinasId");
+        flag: { $ne: 0 },
+      });
 
       res.render("notadinas/terkirim/index", {
         notaDinasTerkirim,
@@ -135,7 +140,12 @@ module.exports = {
       const username = req.session.user.username;
       const jabatan = req.session.user.jabatan.sebutanJabatan;
 
-      const notaDinas = await NotaDinas.find({ flag: 0 }).sort({
+      console.log("[JABATAN]", jabatan);
+
+      const notaDinas = await NotaDinas.find({
+        flag: 0,
+        pengirim: jabatan,
+      }).sort({
         createdAt: -1,
       });
 
@@ -213,7 +223,9 @@ module.exports = {
         config.rootPath,
         `public/document/nota-dinas/NOTA_DINAS_${nomor}.pdf`
       );
-      const filename = document.split("\\").pop();
+
+      // const filename = document.split("\\").pop();
+      const filename = `NOTA_DINAS_${nomor}.pdf`;
 
       let attachmentFileName = null;
       if (req.file) {
@@ -290,7 +302,10 @@ module.exports = {
     try {
       const username = req.session.user.username;
       const jabatan = req.session.user.jabatan.sebutanJabatan;
-      const notaDinas = await NotaDinas.find({ pemeriksa: jabatan }).sort({
+      const notaDinas = await NotaDinas.find({
+        pemeriksa: jabatan,
+        flag: { $ne: 0 },
+      }).sort({
         createdAt: -1,
       });
 
@@ -491,6 +506,7 @@ module.exports = {
               isiSurat,
               tembusan,
               // keterangan,
+              attachment: "",
               email,
               divisi,
               flag,
@@ -753,7 +769,7 @@ module.exports = {
           .replace("{{id}}", id);
 
         const info = await transporter.sendMail({
-          from: "heru@gsp.co.id",
+          from: process.env.EMAIL_USER,
           to: user.email,
           subject: "Nota Dinas Masuk",
           text: "Hello world?",
@@ -1003,7 +1019,8 @@ module.exports = {
         config.rootPath,
         `public/document/nota-dinas/NOTA_DINAS_${nomor}.pdf`
       );
-      const filename = document.split("\\").pop();
+      // const filename = document.split("\\").pop();
+      const filename = `NOTA_DINAS_${nomor}.pdf`;
 
       //!
       let attachmentFileName = null;
@@ -1161,6 +1178,12 @@ module.exports = {
         "jabatan.sebutanJabatan": notaDinas.kepada,
       });
 
+      const jenisLampiran = notaDinas.jenisLampiran;
+      const jumlahLampiran = notaDinas.jumlahLampiran;
+      const lampiran = !jumlahLampiran
+        ? "-"
+        : `${jumlahLampiran} ${jenisLampiran}`;
+
       if (flag == "2") {
         const tembusanArray = notaDinas.tembusan; // Ambil array tembusan dari notaDinas
         const savePromises = []; // Untuk menyimpan promise-promise penyimpanan
@@ -1249,14 +1272,14 @@ module.exports = {
             .replace("{{kepada}}", notaDinas.kepada)
             .replace("{{dari}}", notaDinas.dari)
             .replace("{{tanggal}}", notaDinas.tanggal)
-            .replace("{{sifat}}", notaDinas.sifat)
-            .replace("{{lampiran}}", notaDinas.jumlahLampiran)
+            .replace("{{sifat}}", notaDinas.sifatPenyampaian)
+            .replace("{{lampiran}}", lampiran)
             .replace("{{hal}}", notaDinas.perihal)
             .replace("{{isiSurat}}", notaDinas.isiSurat)
             .replace("{{id}}", id);
 
           const info = await transporter.sendMail({
-            from: "heru@gsp.co.id",
+            from: process.env.EMAIL_USER,
             to: user.email,
             subject: "Nota Dinas Masuk",
             text: "Hello world?",
@@ -1403,7 +1426,7 @@ module.exports = {
                   .replace("{{isiSurat}}", notaDinas.isiSurat);
 
                 return transporter.sendMail({
-                  from: "heru@gsp.co.id",
+                  from: process.env.EMAIL_USER,
                   to: user.email,
                   subject: "Nota Dinas Masuk",
                   text: "Hello world?",
@@ -1464,6 +1487,7 @@ module.exports = {
       const clientId = "TkhRZ7XmPVEOTNtY3XWq7htqWoGpJntl";
 
       const filename = document.split("\\").pop();
+      // const filename = `NOTA_DINAS_${nomor}.pdf`;
       const crn = "ams-gsp-nodejs";
       const timestamp = new Date().toLocaleString();
       const key = "RAHASIA";

@@ -6,12 +6,12 @@
     <%# include ../../partials/message.ejs %>
     <div class="page-title d-flex flex-column justify-content-center flex-wrap me-3">
       <h1 class="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">
-        Nota Dinas Masuk
+        Nota Dinas Draft
       </h1>
       <ol class="breadcrumb text-muted fs-7 fw-semibold pt-1">
         <li class="breadcrumb-item"><a href="/" class="">Home</a></li>
         <li class="breadcrumb-item"><a href="/notadinas" class="">Nota Dinas</a></li>
-        <li class="breadcrumb-item text-muted">Masuk</li>
+        <li class="breadcrumb-item text-muted">Draft</li>
       </ol>
     </div>
 
@@ -19,14 +19,7 @@
       <div class="card-body">
         <table id="kt_datatable_dom_positioning" class="table table-row-bordered gy-5 gs-7 border rounded">
           <div class="row flex justify-content-end">
-            <div class="col-md-2">
-              <select id="filterCombo" class="form-select form-select mb-4">
-                <option value="">Semua</option>
-                <option value="false">Belum dibaca</option>
-                <option value="true">Sudah dibaca</option>
-              </select>
-            </div>
-            <div class="col-2">
+            <div class="col-2 mb-2">
               <input type="text" class="form-control form-control" id="searchInput" placeholder="Pencarian...">
             </div>
           </div>

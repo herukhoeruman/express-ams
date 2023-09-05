@@ -110,19 +110,6 @@
                         </div>
                       </div>
 
-                      <!-- <div class="row mb-5 d-flex align-items-center">
-                        <div class="col-md-4">
-                          <label class="required form-label" for="sifat">Sifat</label>
-                        </div>
-                        <div class="col-md-8">
-                          <select class="form-select" name="sifat" id="sifat" data-control="select2" data-placeholder="Pilih sifat" data-allow-clear="true" disabled>
-                            <option></option>
-                            <option value="Segera" <%= notaDinas.sifat === "Segera" ? "selected" : "" %>>Segera</option>
-                            <option value="Amat Segera" <%= notaDinas.sifat === "Amat Segera" ? "selected" : "" %>>Amat Segera </option>
-                          </select>
-                        </div>
-                      </div> -->
-
                       <div class="row mb-5 d-flex align-items-center">
                         <div class="col-md-4">
                           <label class="required form-label" for="sifat">Sifat Penyampaian</label>
@@ -130,8 +117,8 @@
                         <div class="col-md-8">
                           <select class="form-select" name="sifatPenyampaian" id="sifatPenyampaian" data-control="select2" data-placeholder="pilih sifat penyampaian" data-allow-clear="true" disabled>
                             <option></option>
-                            <option value="biasa" <%= notaDinas.sifatPenyampaian === "biasa" ? "selected" : "" %>>Biasa</option>
-                            <option value="segera" <%= notaDinas.sifatPenyampaian === "segera" ? "selected" : "" %>>Segera </option>
+                            <option value="-" <%= notaDinas.sifatPenyampaian === "-" ? "selected" : "" %>>Biasa</option>
+                            <option value="Segera" <%= notaDinas.sifatPenyampaian === "Segera" ? "selected" : "" %>>Segera </option>
                           </select>
                         </div>
                       </div>
@@ -143,7 +130,7 @@
                         <div class="col-md-8">
                           <select class="form-select" name="sifatPengamanan" id="sifatPengamanan" data-control="select2" data-placeholder="pilih sifat pengamanan" data-allow-clear="true" disabled>
                             <option></option>
-                            <option value="biasa" <%= notaDinas.sifatPengamanan === "biasa" ? "selected" : "" %>>Biasa</option>
+                            <option value="-" <%= notaDinas.sifatPengamanan === "-" ? "selected" : "" %>>Biasa</option>
                             <option value="rahasia" <%= notaDinas.sifatPengamanan === "rahasia" ? "selected" : "" %>>Rahasia</option>
                           </select>
                         </div>
@@ -211,6 +198,11 @@
                         <i>*Drop File atau klik disini untuk mengupload.</i>
                       </div>
                     </div>
+                    <% if (notaDinas.attachment) {%>
+                    <embed id="viewerAttachment" src="/upload/attachment/<%= notaDinas.attachment %>" width="100%" height="850px"></embed>
+                    <% }else { %>
+                    <iframe id="viewerAttachment" src="" type="application/pdf" width="100%" height="850px"></iframe>
+                    <%} %>
                   </div>
                 </div>
 
@@ -312,6 +304,29 @@
     maxDate: "today",
   });
 
+  const attachment = document.getElementById('attachment');
+  const pdfViewer = document.getElementById('viewerAttachment');
+  const pdfContainer = document.querySelector('.pdf-container');
+  const removeButton = document.querySelector('.dropify-clear');
+
+  attachment.addEventListener('change', function(event) {
+    const selectedFile = event.target.files[0];
+    if (selectedFile && selectedFile.type === 'application/pdf') {
+      pdfViewer.src = URL.createObjectURL(selectedFile);
+      pdfContainer.style.display = 'block';
+      removeButton.classList.remove('hidden');
+    } else {
+      alert('Mohon pilih file PDF.');
+    }
+  });
+
+  removeButton.addEventListener('click', function() {
+    attachment.value = ''; // Menghapus nilai input file
+    pdfViewer.src = '';
+    pdfContainer.style.display = 'none';
+    removeButton.classList.add('hidden');
+  });
+
   const btnPreview = document.querySelector("#generate-pdf");
   btnPreview.addEventListener("click", function() {
     btnPreview.setAttribute("data-kt-indicator", "on");
@@ -361,7 +376,7 @@
     const sifatPenyampaian = $('#sifatPenyampaian').val();
     const sifatPengamanan = $('#sifatPengamanan').val();
 
-    const sifat = (sifatPenyampaian == "biasa") ? "-" : "Segera";
+    // const sifat = (sifatPenyampaian == "biasa") ? "-" : "Segera";
     const setSifatPengamanan = (sifatPengamanan == "rahasia") ? "-R" : "";
 
     const perihal = $('#perihal').val();
@@ -386,7 +401,7 @@
       Swal.fire("Perhatian", "Tanggal tidak boleh kosong", "error");
     } else if (kodeKlasifikasi == "") {
       Swal.fire("Perhatian", "Kode klasifikasi tidak boleh kosong", "error");
-    } else if (sifat == "") {
+    } else if (sifatPenyampaian == "") {
       Swal.fire("Perhatian", "Sifat tidak boleh kosong", "error");
     } else if (perihal == "") {
       Swal.fire("Perhatian", "Perihal tidak boleh kosong", "error");
@@ -458,7 +473,7 @@
       doc.text(`: Yth. ${penerima}`, 140, 200);
       doc.text(`: ${pemeriksa}`, 140, 220);
       doc.text(`: ${tanggal}`, 140, 240);
-      doc.text(`: ${sifat}`, 140, 260);
+      doc.text(`: ${sifatPenyampaian}`, 140, 260);
       doc.text(`: ${lampiran}`, 140, 280);
       doc.text(`: ${perihal}`, 140, 300);
 
@@ -530,8 +545,7 @@
     const divisi = selectedOption.getAttribute('data-divisi');
     console.log("pemeriksa:", email);
 
-    //
-    const sifat = $('#sifat').val();
+    // const sifat = $('#sifat').val();
     const perihal = $('#perihal').val();
     const jumlahLampiran = $("#jumlah-lampiran").val();
     const jenisLampiran = $("#tipe-lampiran").val();
@@ -576,7 +590,7 @@
       Swal.fire("Perhatian", "Tanggal tidak boleh kosong", "error");
     } else if (kodeKlasifikasi == "") {
       Swal.fire("Perhatian", "Kode klasifikasi tidak boleh kosong", "error");
-    } else if (sifat == "") {
+    } else if (sifatPenyampaian == "") {
       Swal.fire("Perhatian", "Sifat tidak boleh kosong", "error");
     } else if (perihal == "") {
       Swal.fire("Perhatian", "Perihal tidak boleh kosong", "error");
@@ -642,7 +656,7 @@
 
     const sifatPenyampaian = $('#sifatPenyampaian').val();
     const sifatPengamanan = $('#sifatPengamanan').val();
-    const sifat = (sifatPenyampaian == "biasa") ? "-" : "Segera";
+    // const sifat = (sifatPenyampaian == "biasa") ? "-" : "Segera";
     const setSifatPengamanan = (sifatPengamanan == "rahasia") ? "-R" : "";
 
     const perihal = $('#perihal').val();
@@ -737,7 +751,7 @@
           doc.text(`: Yth. ${penerima}`, 140, 200);
           doc.text(`: ${pemeriksa}`, 140, 220);
           doc.text(`: ${tanggal}`, 140, 240);
-          doc.text(`: ${sifat}`, 140, 260);
+          doc.text(`: ${sifatPenyampaian}`, 140, 260);
           doc.text(`: ${lampiran}`, 140, 280);
           doc.text(`: ${perihal}`, 140, 300);
 

@@ -76,8 +76,8 @@ module.exports = {
         port: 465,
         secure: true,
         auth: {
-          user: "heru@gsp.co.id",
-          pass: "kmxhzrrripuntgte",
+          user:  process.env.EMAIL_USER,
+          pass:  process.env.EMAIL_PASS,
         },
       });
 
@@ -92,7 +92,7 @@ module.exports = {
         .replace("{{username}}", username);
 
       const info = await transporter.sendMail({
-        from: "heru@gsp.co.id",
+        from: process.env.EMAIL_USER,
         to: email,
         subject: "Password default Aplikasi AMS",
         text: "Hello world?",

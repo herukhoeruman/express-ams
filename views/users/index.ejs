@@ -103,20 +103,27 @@
                               <input type="email" id="email" name="email" class="form-control" value="<%= users[i].email %>" />
                             </div>
                           </div>
-                          <div class="row mb-5 d-flex align-items-center">
+                          <!-- <div class="row mb-5 d-flex align-items-center">
                             <div class="col-md-4">
                               <label class="required form-label">Kode Unit</label>
                             </div>
                             <div class="col-md-8">
                               <input type="text" id="kodeUnit" name="kodeUnit" class="form-control" value="<%= users[i].jabatan.kodeUnit %>" />
-                            </div>
-                          </div>
+                            </div> -->
+                          <!-- </div> -->
                           <div class="row mb-5 d-flex align-items-center">
                             <div class="col-md-4">
                               <label class="required form-label">Nama Unit</label>
                             </div>
                             <div class="col-md-8">
-                              <input type="text" id="namaUnit" name="namaUnit" class="form-control" value="<%= users[i].jabatan.namaUnit %>" />
+                              <select class="form-control form-select" id="namaUnit" name="namaUnit" data-control="select2" data-dropdown-parent="modalEdit_<%= users[i]._id %>" data-close-on-select="true" data-allow-clear="true" required>
+                                <option></option>
+                                <% users.forEach(user=> { %>
+                                <option value="<%= user.jabatan.namaUnit %>" <%= user.jabatan.namaUnit === users[i].jabatan.namaUnit  ? 'selected' : '' %>>
+                                  <%= user.jabatan.namaUnit %>
+                                </option>
+                                <% }) %>
+                              </select>
                             </div>
                           </div>
                           <div class="row mb-5 d-flex align-items-center">
@@ -141,7 +148,7 @@
                               <label class="form-label"> Role</label>
                             </div>
                             <div class="col-md-8">
-                              <select class=" form-control form-select" name="role" id="role" data-control="select2" data-placeholder="pilih role" data-allow-clear="true">
+                              <select class=" form-control form-select" name="role" id="role" data-control="select2" data-dropdown-parent="modalEdit_<%= users[i]._id %>" data-placeholder="pilih role" data-allow-clear="true">
                                 <option></option>
                                 <option value="admin" <%=users[i].role==="admin" ? "selected" : "" %>>admin</option>
                                 <option value="user" <%=users[i].role==="user" ? "selected" : "" %>>user</option>
@@ -216,7 +223,7 @@
               <label class="required form-label">Username</label>
             </div>
             <div class="col-md-8">
-              <input type="text" id="username" name="username" class="form-control" />
+              <input type="text" id="username" name="username" class="form-control" placeholder="username" required />
             </div>
           </div>
 
@@ -225,7 +232,7 @@
               <label class="required form-label">Email</label>
             </div>
             <div class="col-md-8">
-              <input type="email" id="email" name="email" class="form-control" />
+              <input type="email" id="email" name="email" class="form-control" placeholder="email" required />
             </div>
           </div>
           <div class="row mb-5 d-flex align-items-center">
@@ -233,23 +240,31 @@
               <label class="required form-label">No. Telp</label>
             </div>
             <div class="col-md-8">
-              <input type="number" id="nomorTlp" name="nomorTlp" class="form-control" />
+              <input type="number" id="nomorTlp" name="nomorTlp" class="form-control" placeholder="no. telp" required />
             </div>
           </div>
-          <div class="row mb-5 d-flex align-items-center">
+          <!-- <div class="row mb-5 d-flex align-items-center">
             <div class="col-md-4">
               <label class="required form-label">Kode Unit</label>
             </div>
             <div class="col-md-8">
-              <input type="text" id="kodeUnit" name="kodeUnit" class="form-control" />
+              <input type="text" id="kodeUnit" name="kodeUnit" class="form-control" required />
             </div>
-          </div>
+          </div> -->
           <div class="row mb-5 d-flex align-items-center">
             <div class="col-md-4">
               <label class="required form-label">Nama Unit</label>
             </div>
             <div class="col-md-8">
-              <input type="text" id="namaUnit" name="namaUnit" class="form-control" />
+              <!-- <input type="text" id="namaUnit" name="namaUnit" class="form-control" /> -->
+              <select class="form-control form-select" id="namaUnit" name="namaUnit" data-control="select2" data-dropdown-parent="#modalAdd" data-close-on-select="true" data-placeholder="pilih divisi" data-allow-clear="true" required>
+                <option></option>
+                <% users.forEach(user=> { %>
+                <option value="<%= user.jabatan.namaUnit %>">
+                  <%= user.jabatan.namaUnit %>
+                </option>
+                <% }) %>
+              </select>
             </div>
           </div>
           <div class="row mb-5 d-flex align-items-center">
@@ -257,7 +272,7 @@
               <label class="required form-label">Kode Sejab</label>
             </div>
             <div class="col-md-8">
-              <input type="text" id="kodeSejab" name="kodeSejab" class="form-control" />
+              <input type="text" id="kodeSejab" name="kodeSejab" class="form-control" required placeholder="kode sejab" />
             </div>
           </div>
           <div class="row mb-5 d-flex align-items-center">
@@ -265,16 +280,16 @@
               <label class="required form-label">Sebutan Jabatan</label>
             </div>
             <div class="col-md-8">
-              <input type="text" id="sebutanJabatan" name="sebutanJabatan" class="form-control" />
+              <input type="text" id="sebutanJabatan" name="sebutanJabatan" class="form-control" placeholder="sebutan jabatan" required />
             </div>
           </div>
 
           <div class="row mb-5 d-flex align-items-center">
             <div class="col-md-4">
-              <label class="form-label"> Role</label>
+              <label class="required form-label"> Role</label>
             </div>
             <div class="col-md-8">
-              <select class=" form-control form-select" name="role" id="role" data-control="select2" data-placeholder="pilih role" data-allow-clear="true">
+              <select class=" form-control form-select " name="role" id="role" data-control="select2" data-dropdown-parent="#modalAdd" data-placeholder="pilih role" data-allow-clear="true">
                 <option></option>
                 <option value="admin">Admin</option>
                 <option value="user">User</option>
