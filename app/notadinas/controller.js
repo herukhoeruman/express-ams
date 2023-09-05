@@ -138,7 +138,7 @@ module.exports = {
   viewDraft: async (req, res) => {
     try {
       const username = req.session.user.username;
-      const jabatan = req.session.user.jabatan.sebutanJabatan;
+      const divisi = req.session.user.jabatan.namaUnit;
 
       console.log("[JABATAN]", jabatan);
 
